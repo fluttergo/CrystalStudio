@@ -33,14 +33,14 @@ fn 门4_复制粘贴3x3_逐字节核对() {
     };
     let mut doc = 文档(&副本);
     let mut ed = EditSession::default();
-    let 目标 = Selection::new(200, 200, 202, 202);
+    let 避开 = Selection::new(200, 200, 202, 202);
     let 原图 = Map::parse(&原字节).expect("原字节应能解析");
     let 高 = 原图.height;
-    let Some((sx, sy)) = 找地表3x3(&原图, Some(目标)) else {
+    let Some((sx, sy)) = 找地表3x3(&原图, Some(避开)) else {
         panic!("0.map 上找不到 3×3 全是地表图号的区域 —— 样本变了？");
     };
     let 源 = Selection::new(sx, sy, sx + 2, sy + 2);
-    println!("GATE4 源选区={源:?} 目标={目标:?}");
+    println!("GATE4 源选区={源:?} 粘贴点击点=(200,200)");
 
     // ① 设选区 + 复制（Ctrl+C）
     assert!(
@@ -54,12 +54,39 @@ fn 门4_复制粘贴3x3_逐字节核对() {
     assert_eq!(copy.changed, 0, "复制不改地图");
     assert!(!ed.dirty(), "复制不置脏（磁盘上没有要保存的东西）");
 
-    // ② 粘贴到 (200,200)（Ctrl+V，锚点 = 鼠标格）
+    // ①b **粘贴锚点**（内核 `Clipboard::anchor` = `RegionCopy.cs:70`）：地表可见 ⇒ 左上角按
+    //     **源的奇偶**往左上对齐，所以"点在哪"不等于"贴到哪"。
+    //     这里故意点 (201,200)：与源左上角（本例是 (0,336)，双偶）**异奇偶** ⇒ 落点被对齐回
+    //     (200,200)，正是下面逐格断言与差异格集合要用的那一块。
+    //     ⚠ 若哪天 0.map 让源块落在奇数列上，下面的 `目标` 会跟着锚点变（不用改断言）。
+    let (cx, cy) = (201u16, 200u16);
+    let (ax, ay) = {
+        let clip = ed.clipboard().expect("复制后剪贴板应存在");
+        assert_eq!(clip.source(), Some((sx, sy)), "剪贴板必须记住源左上角");
+        assert!(clip.ground(), "地表可见 ⇒ 要按奇偶重算锚点");
+        clip.anchor(cx, cy)
+            .expect("源块在图内 ⇒ 点击点重算后至多退到 (200,199)，不会是负锚点")
+    };
+    let 目标 = Selection::new(ax, ay, ax + 2, ay + 2);
+    assert_eq!(
+        (ax, ay),
+        (
+            (i32::from(cx) - ((i32::from(cx) - i32::from(sx)) & 1)) as u16,
+            (i32::from(cy) - ((i32::from(cy) - i32::from(sy)) & 1)) as u16
+        ),
+        "锚点必须逐字等于 `RegionCopy.cs:70` 的公式"
+    );
+    println!(
+        "GATE4 粘贴点击点=({cx},{cy}) ⇒ 锚点=({ax},{ay})（源左上角=({sx},{sy})，\
+         点击点与源异奇偶 ⇒ 落点被对齐）"
+    );
+
+    // ② 粘贴：Ctrl+V 传的是**鼠标格**（点击点），落点由上面的锚点决定
     let paste = selection_ops::apply(
         &mut ed,
         &mut doc.doc.as_mut().expect("文档").map,
         Cmd::Paste,
-        Some((目标.x0, 目标.y0)),
+        Some((cx, cy)),
     )
     .expect("有鼠标格就有回执");
     assert!(!paste.warn, "粘贴不该被拒：{}", paste.text);

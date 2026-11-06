@@ -25,7 +25,7 @@
 //! | [`Command::ClearSelection`] | [`EditSession::clear_selection`] | `MapViewport.cs:103-108`（`Deselect`，**不清剪贴板**） |
 //! | [`Command::CopySelection`] | [`EditSession::copy_selection`] | `RegionCopy.cs:101`、`:21-27`（整块都抓，含空格） |
 //! | [`Command::CutSelection`] | [`EditSession::cut_selection`] | `RegionCopy.cs:102`、`:108`、`:45-69`（复制 + 清空，一步撤销） |
-//! | [`Command::PasteSelection`] | [`EditSession::paste_clipboard`] | `RegionCopy.cs:72-91`（复用 `stamp::plan_stamp`；逐格越界跳过） |
+//! | [`Command::PasteSelection`] | [`EditSession::paste_clipboard`] | `RegionCopy.cs:72-91`（复用 `stamp::plan_stamp`；逐格越界跳过）；`:70` 锚点按源奇偶重算、负锚点整块拒绝 |
 //! | [`Command::DeleteSelection`] | [`EditSession::delete_selection`] | `RegionCopy.cs:45-69`（三族按层清 + 库号写 0） |
 //! | [`Command::FillSelection`] | [`EditSession::fill_selection`] | `MapViewport.cs:540`（地表取 `step=1`，见 `selection.rs` §五） |
 //! | [`Command::Undo`] / [`Command::Redo`] | [`EditSession::undo`] / [`EditSession::redo`] | `edit.rs:1289-1323`（**一次一步**，与 GUI 的 `--edit-undo N` 循环等价） |
@@ -179,14 +179,19 @@ pub enum Command {
     ///
     /// `changed` = 真的清掉的格数。
     CutSelection,
-    /// **粘贴剪贴板**，以 `(x, y)` 为左上角。来源：`RegionCopy.cs:72-91`。
+    /// **粘贴剪贴板**，`(x, y)` = **点击格**（鼠标格），不是粘贴左上角。
+    /// 来源：`RegionCopy.cs:121-122`（先 `Anchor` 再 `CanPaste`）+ `:72-91`（`Paste`）。
+    ///
+    /// 真正的左上角由 [`crate::Clipboard::anchor`] 按上游 `RegionCopy.cs:70` 的公式重算：
+    /// 复制时地表可见 ⇒ 按**源的奇偶**往左上对齐；算出来为负 ⇒ **整块拒绝**（`Refused`，一格不写）。
+    /// 无源剪贴板（[`crate::Clipboard::from_cells`] 造的）与"复制时地表不可见"⇒ 不重算。
     ///
     /// 逐格越界跳过（`note` 里报 `skipped`）、三族图号为 0 的族不写、保留目标格 `bit15`、
     /// Type5 闸门（剪贴板里有 `bk≠0` ⇒ 拒绝），整次 = 一步撤销。
     PasteSelection {
-        /// 左上角世界格 X。
+        /// 点击格（鼠标所在世界格）X —— **不是**左上角。
         x: u16,
-        /// 左上角世界格 Y。
+        /// 点击格（鼠标所在世界格）Y —— **不是**左上角。
         y: u16,
     },
     /// **删除选区内容**（三族按层清 + 库号字节写 0，**整次 = 一步撤销**）。
@@ -414,10 +419,22 @@ pub fn apply(session: &mut EditSession, cmd: Command) -> Result<Outcome, CoreErr
             )),
         },
         Command::PasteSelection { x, y } => {
+            // ⚠ 回执里的坐标必须是**实际锚点**、不是点击点（2026-11-06）：
+            // `paste_clipboard` 会先按上游 `RegionCopy.cs:70` 的 `Anchor` 把左上角按**源的奇偶**
+            // 往左上对齐（地表可见时点击点常常不是落点）⇒ 报点击点就是假陈述。
+            // 这里**只读**算一次（`clipboard()` 是不可变借用、`anchor` 是纯函数，不改任何状态）；
+            // `None`（负锚点）时坐标不会被用到（回执走拒绝分支）。
+            let (锚x, 锚y) = session
+                .clipboard()
+                .and_then(|c| c.anchor(x, y))
+                .unwrap_or((x, y));
             let out = session.paste_clipboard(x, y);
             let (n, note) = match &out {
                 PlaceOutcome::Placed { cells, skipped } => {
-                    let mut s = format!("粘贴 {cells} 格到 ({x},{y})");
+                    let mut s = format!("粘贴 {cells} 格到 ({锚x},{锚y})");
+                    if (锚x, 锚y) != (x, y) {
+                        s.push_str(&format!("（点击点 ({x},{y}) 已按源奇偶对齐）"));
+                    }
                     if *skipped > 0 {
                         s.push_str(&format!("（越界跳过 {skipped} 格）"));
                     }
@@ -429,7 +446,7 @@ pub fn apply(session: &mut EditSession, cmd: Command) -> Result<Outcome, CoreErr
                     }
                     (*cells, Some(s))
                 }
-                // 拒绝：原因原样给出（剪贴板为空 / 全部越界 / Type5）
+                // 拒绝：原因原样给出（剪贴板为空 / 锚点为负 / 全部越界 / Type5）
                 PlaceOutcome::Refused { reason } => (0, Some(reason.clone())),
             };
             Ok(session.outcome(n, note))

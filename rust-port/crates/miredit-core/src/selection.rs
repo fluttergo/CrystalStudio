@@ -79,22 +79,40 @@
 //! | 3 | 抓取时**整块必须在图内**，否则抛异常 | `RegionCopy.cs:17`（`if (… !document.Contains(x + width - 1, y + height - 1)) throw`）⇒ 本 crate 的选区恒在图内（§一 第 2 条），这条**不可达** |
 //! | 4 | 粘贴**逐族判断**：某族图号为 0 ⇒ 该族不写（不把目标格的该族清成 0） | `RegionCopy.cs:78-82`（`pasteGround = ground && (source.BackImage & 0x1FFFFFFF) != 0` … `if (!pasteGround && !pasteMiddle && !pasteObjects && !pasteCollision) continue;`） |
 //! | 5 | 粘贴**保留目标格自己的阻挡位** | `RegionCopy.cs:84`（`target.BackImage = (target.BackImage & 0x60000000) \| (source.BackImage & ~0x60000000)`） |
-//! | 6 | 地表粘贴会**按源的奇偶重算锚点** | `RegionCopy.cs:70`（`Anchor`：`x - ((x - sourceX) & 1)`） |
+//! | 6 | 地表粘贴会**按源的奇偶重算锚点** | `RegionCopy.cs:70`（`Anchor`：`x - ((x - sourceX) & 1)`）⇒ 本 crate **2026-11-06 已逐字对齐**（[`Clipboard::anchor`]，见本节末「差异 B 已撤销」） |
 //! | 7 | 粘贴**整块必须图内**，否则整次失败 | `RegionCopy.cs:71`（`CanPaste`）、`:74`（`if (!CanPaste(document, x, y)) return false;`）、`:120`（`"Region extends outside the map"`） |
 //! | 8 | 复制**按图层可见性过滤**：隐藏层的族不抓（字段填 0）；三层全关 ⇒ 拒绝 | `RegionCopy.cs:106`（`if (!VisibleLayers.Any(v => v) && !CollisionVisible) { …"Show at least one layer to copy"… return; }`）、`:107`（`VisibleLayers[0..2]` 传进快照） |
 //! | 9 | 粘贴**不看当前可见性**，只用复制时定格的层选择 | `RegionCopy.cs:3`（`A detached snapshot: layer choices are captured when copying, not when pasting.`）、`:78-82`（`pasteGround = ground && …`） |
 //!
 //! **与官方的三处有意差异**（都已登记，不是悄悄改）：
 //!
+//! ⚠ **2026-11-06 订正：原「差异 B（不按源奇偶重算锚点）」已撤销**，改为**逐字对齐**上游
+//! `RegionCopy.cs:70` 的 `Anchor`（[`Clipboard::anchor`]）：
+//!
+//! ```text
+//! Anchor(x, y) = ground ? (x - ((x - sourceX) & 1), y - ((y - sourceY) & 1)) : (x, y)
+//!   sourceX/sourceY = 复制时选区左上角（`RegionCopy.cs:18`）
+//!   ground          = 复制时**地表层是否可见**（`RegionCopy.cs:107` 传给构造函数、`:19` 存下），
+//!                     不是"抓到的内容里有没有地表"
+//! ```
+//!
+//! 上游 `PlaceRegion` 是**先** `Anchor(hover.X, hover.Y)` **再** `CanPaste`（`RegionCopy.cs:121-122`）
+//! ⇒ 重算出来的锚点若为负，`CanPaste` 的 `document.Contains(x, y)` 直接 false ⇒ **整块拒绝**
+//! （只弹 "Region extends outside the map"，一格不写）。本 crate 等价地
+//! [`crate::PlaceOutcome::Refused`]（见 [`crate::EditSession::paste_clipboard`]）。
+//!
+//! 为什么之前那条理由（"本 crate 地表逐格落笔、没有 2×2 网格概念"）不成立：粘贴块的**对齐**
+//! 是上游的**用户可见行为**（同一块地皮再贴一次必须落在原格上，否则同名图块会错位一格），
+//! 与渲染网格、落笔粒度是两件事；渲染层"只铺偶偶格"（`miredit-render/src/compose.rs`）
+//! 恰恰说明偶数对齐才是能看见的位置。
+//!
+//! 剩下的三处差异：
+//!
 //! - **差异 A（对应第 7 条）**：官方粘贴是**整块拒绝**，本 crate 按任务书 §三.3 要求
 //!   **逐格跳过**并在 [`crate::PlaceOutcome::Placed`] 的 `skipped` 里如实报数。
 //!   依据是官方自己就有一条逐格判据（`PlacedStamps.cs:80` 的 `MapBoundary + continue`），
 //!   与 `stamp.rs` 模块文档 §二 同一条理由、同一份实现。
-//! - **差异 B（对应第 6 条）**：官方按源的奇偶重算锚点（`RegionCopy.cs:70`），本 crate 直接以
-//!   调用方给的 `(x, y)` 为左上角。理由：本 crate 的地表落笔是**逐格**的
-//!   （`session.rs:22-26` 已记档的差异：`paint()` 三层都逐格写，没有 2×2 网格概念），
-//!   重算锚点只会让粘贴位置与用户点的位置错开 1 格。
-//! - **差异 C（2026-11-05 订正）**：官方 `RegionCopy` 抓的是**整格**（`RegionCopy.cs:24` 的
+//! - **差异 B（2026-11-05 订正；原「差异 C」）**：官方 `RegionCopy` 抓的是**整格**（`RegionCopy.cs:24` 的
 //!   `document.Get(x+dx, y+dy).Copy()`），本 crate 现在也**整格抓** —— [`Clipboard::capture`]
 //!   把 `StampCellInput` 的 10 个附加字段一并填上：门索引/门偏移/光照/前景动画帧+节拍在
 //!   12/14 B 布局里**有字节**（`mir2-map/src/cell.rs:184-195` 的 off6/7/11/8/9）⇒ 照抄；
@@ -105,7 +123,7 @@
 //!   但**光照不搬** —— C# 的 `Paste` 里没有 `Light` 这一行（`:84-86`），本 crate 不擅自加。
 //!   即：整格快照里有 `light`，粘贴路径**不用**它（印章路径 `MergeStamp` 才用，见
 //!   `stamp.rs` 模块文档 §一 第 10 条）。仍搬不动的只剩 5 个"视图无字节"的动画字段与 36 B 尾区。
-//! - **差异 D（2026-11-05 新增）**：官方「三层全关就拒绝复制」的判据里还带一个
+//! - **差异 C（2026-11-05 新增；原「差异 D」）**：官方「三层全关就拒绝复制」的判据里还带一个
 //!   **碰撞层可见**的条件（`RegionCopy.cs:106` 的 `&& !CollisionVisible`）；本 crate 的
 //!   剪贴板**不抓阻挡位**（[`Clipboard::capture`] 只取低 15 位，`bit15` 由粘贴时的
 //!   目标格保留矩阵决定）⇒ 三层全关就等于"没有任何可抓的东西"，**不需要**碰撞层这个第二条件。
@@ -122,6 +140,11 @@
 //! ① 闸门 —— 粘贴**不套**占用闸门与坐标重复闸门（`RegionCopy.cs:71` 的 `CanPaste` 只判边界）；
 //! ② 附加字段 —— 粘贴按 `RegionCopy.cs:84-86` 搬门/门偏移 + 前景动画、**不碰光照**，
 //! 印章按 `PlacedStamps.cs:93-94` 搬（门/光照都是"非 0 才搬"）。逐条见 `stamp.rs` §一 第 10 条。
+//!
+//! ⚠ **锚点在进 `plan_stamp` 之前算**（`RegionCopy.cs:121-122` 的顺序）：
+//! [`crate::EditSession::paste_clipboard`] 先 `clip.anchor(x, y)`，再把**锚点**当左上角交给
+//! `plan_stamp`；负锚点 ⇒ 整块拒绝（连 `plan_stamp` 都不进）。**不许**在 `stamp.rs` 里再算一次
+//! —— 印章路径没有"源坐标"这个概念，锚点只属于剪贴板。
 //!
 //! # 五、`FillSelection` 的地表步长（**有意与 C# 不同**）
 //!
@@ -257,17 +280,33 @@ impl Selection {
 ///
 /// 复用 [`StampCellInput`]（`dx`/`dy` + 三族图号/库号 + 门/光照/动画），因此粘贴可以直接走
 /// [`crate::stamp::plan_stamp`]（模块文档 §四）。抓取口径是**整格**（`RegionCopy.cs:24`），
-/// 不是只抓三族 —— 详见 [`Self::capture`] 与模块文档 §三 差异 C。
+/// 不是只抓三族 —— 详见 [`Self::capture`] 与模块文档 §三 差异 B。
 ///
 /// 字段私有：格表只能由 [`crate::EditSession::copy_selection`] 产生，
 /// 或由上层用 [`Self::from_cells`] 显式造（网页版要能"把上次复制的区域带回来"）。
 ///
 /// ⚠ 图号只存**低 15 位**（`& 0x7FFF`），理由见 [`Self::capture`]。
+///
+/// # 为什么还要记 `source` / `ground`（2026-11-06 新增）
+///
+/// 它们只为了一件事：复刻上游 `RegionCopy.Anchor`（`RegionCopy.cs:70`）的**奇偶重算**——
+/// 那个公式要吃「复制时选区左上角 (`sourceX`/`sourceY`，`:18`)」与「复制时地表层可见 (`ground`，`:19`)
+/// 两个量。**不记就无法在粘贴时重算**（用别的东西凑都是猜测）。
+/// 二者都只是**元数据**，不参与格表；[`Self::from_cells`] 造的无源剪贴板两者都缺 ⇒
+/// [`Self::anchor`] 原样返回 `(x, y)`（= 旧行为，见该方法的文档）。
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Clipboard {
     cells: Vec<StampCellInput>,
     w: u16,
     h: u16,
+    /// 复制时选区**左上角**（`RegionCopy.cs:18` 的 `sourceX = x; sourceY = y;`）。
+    /// `None` = 无源剪贴板（[`Self::from_cells`] 造的）。
+    source: Option<(u16, u16)>,
+    /// 复制时**地表层是否可见**（`RegionCopy.cs:107` 传给构造函数的 `ground`、`:19` 存下）。
+    ///
+    /// ⚠ 是"复制那一刻的地表可见性"，**不是**"抓到的格表里有没有地表内容" ——
+    /// 上游 `Anchor`（`:70`）判的就是这个 flag，两者混淆会让锚点在对空地表块上算错。
+    ground: bool,
 }
 
 impl Clipboard {
@@ -291,18 +330,86 @@ impl Clipboard {
         self.cells.is_empty()
     }
 
+    /// 复制时选区**左上角**（`RegionCopy.cs:18` 的 `sourceX/sourceY`）。
+    ///
+    /// `None` = 无源剪贴板（[`Self::from_cells`] 造的，没有"从哪来"这回事）。
+    pub const fn source(&self) -> Option<(u16, u16)> {
+        self.source
+    }
+
+    /// 复制时**地表层是否可见**（`RegionCopy.cs:107` 的 `VisibleLayers[0]`）。
+    ///
+    /// `false` ⇒ 粘贴**不重算锚点**（上游 `Anchor` 的 `ground ? … : (x, y)` 后半支）。
+    /// 注意它**不是**"剪贴板里有没有地表内容"：地表隐藏时抓到的 `bk` 固然全是 0，
+    /// 但地表可见而选区内恰好没有地表图号时，本方法仍是 `true`（上游同样如此）。
+    pub const fn ground(&self) -> bool {
+        self.ground
+    }
+
+    /// **粘贴锚点**：把"鼠标/点击格"换算成真正的粘贴左上角。
+    ///
+    /// 逐字复刻上游 `RegionCopy.cs:70`：
+    ///
+    /// ```text
+    /// C#:  public (int X, int Y) Anchor(int x, int y)
+    ///          => ground ? (x - ((x - sourceX) & 1), y - ((y - sourceY) & 1)) : (x, y);
+    /// 本仓: ground && source.is_some() ? (x - ((x - sourceX) & 1), y - ((y - sourceY) & 1)) : (x, y)
+    /// ```
+    ///
+    /// - `ground` 为假、或没有 `source`（[`Self::from_cells`] 造的无源剪贴板）⇒ **原样**返回
+    ///   `Some((x, y))`：无源剪贴板**不做奇偶重算**（没有 `sourceX` 就没法算，猜一个就是编数据）。
+    /// - **负锚点**（点在地图最左/最上列且源原点奇偶对不上）⇒ `None`。
+    ///   对应上游 `PlaceRegion`（`:121-122`）先 `Anchor` 再 `CanPaste`：负坐标必然
+    ///   `Contains` 为 false ⇒ `Paste` 返回 false ⇒ **整块拒绝、一格不写**。
+    ///   ⇒ 调用方拿到 `None` 必须**整块拒绝**，不许把它当成 `(0, y)` 之类夹到图内。
+    ///
+    /// ⚠ 用 `i32` 算再收窄：`u16` 直接减会下溢（`0u16 - 1u16` 是 panic/回绕，不是 `-1`）。
+    /// 负数的 `& 1` 语义与 C# 一致（补码：`(-1) & 1 == 1`），所以右边不必再加分支。
+    ///
+    /// 注意本方法只**计算**，不改任何状态：粘贴时会话拿结果当 `plan_stamp` 的左上角
+    /// （见 [`crate::EditSession::paste_clipboard`]）。
+    pub fn anchor(&self, x: u16, y: u16) -> Option<(u16, u16)> {
+        let (Some((sx, sy)), true) = (self.source, self.ground) else {
+            return Some((x, y));
+        };
+        let (x, y) = (i32::from(x), i32::from(y));
+        let ax = x - ((x - i32::from(sx)) & 1);
+        let ay = y - ((y - i32::from(sy)) & 1);
+        if ax < 0 || ay < 0 {
+            return None;
+        }
+        // 到这里必然在 0..=u16::MAX 内：ax = x 或 x-1，x ≤ 65535
+        Some((ax as u16, ay as u16))
+    }
+
     /// 用一份现成的格表造剪贴板（上层把"上次复制的区域"带回来时用）。
     ///
     /// `w × h` 必须等于 `cells.len()`，否则 `None` —— 宽高与格数对不上时，
     /// 粘贴出来的矩形会是歪的，宁可拒绝。
+    ///
+    /// ⚠ **无源剪贴板**：`source = None`、`ground = false` ⇒ [`Self::anchor`] **原样**返回
+    /// `(x, y)`，即**不做奇偶重算**（保持本方法在 2026-11-06 之前的行为）。
+    /// 理由：奇偶重算需要 `sourceX/sourceY`，而这条路根本不知道源在哪；
+    /// 按猜测填一个源坐标会让"网页带回来的剪贴板"莫名其妙错位一格。
+    /// 要吃到上游对齐语义，只能走 [`crate::EditSession::copy_selection`] 那条真实复制路径。
     pub fn from_cells(w: u16, h: u16, cells: Vec<StampCellInput>) -> Option<Self> {
         if w == 0 || h == 0 || cells.len() != usize::from(w) * usize::from(h) {
             return None;
         }
-        Some(Self { cells, w, h })
+        Some(Self {
+            cells,
+            w,
+            h,
+            source: None,
+            ground: false,
+        })
     }
 
     /// 从地图上抓一块矩形（**整块都抓，空格也抓**）。来源：`RegionCopy.cs:21-27`。
+    ///
+    /// 除了格表，还记两样**元数据**（2026-11-06，供 [`Self::anchor`] 复刻 `RegionCopy.cs:70`）：
+    /// `source = Some((选区左上角 x, y))`（`RegionCopy.cs:18`）与 `ground = vis[0]`
+    /// （`RegionCopy.cs:19`/`:107` 的"复制那一刻地表可见"）。
     ///
     /// # 为什么只存低 15 位
     ///
@@ -333,9 +440,14 @@ impl Clipboard {
     /// **复制那一刻定格**的 —— `RegionCopy.cs:3` 的原注释
     /// 「A detached snapshot: layer choices are captured when copying, not when pasting.」，
     /// 构造函数的 `ground/middle/objects` 参数由 `:107` 传入、`Paste`（`:78-82`）只读这三个
-    /// 快照 flag。本 crate 没有这份 flag（[`StampCellInput`] 里没有布尔位），
+    /// 快照 flag。本 crate 没有逐族的布尔位（[`StampCellInput`] 里没有），
     /// 于是等价做法 = **复制时就把隐藏层抹成 0** ⇒ 粘贴侧（`stamp::合并粘贴附加字段`）
     /// 的判据仍是"该族有值才写"，结果与 C# 逐字节一致。
+    ///
+    /// ⚠ 只有**地表那一格 flag** 被额外存进 [`Self::ground`]（2026-11-06），但它**不参与**
+    /// 逐族过滤 —— 它唯一的用途是 [`Self::anchor`] 的奇偶重算（`RegionCopy.cs:70`）。
+    /// 中层/物体的可见性依旧只体现在"字段被抹成 0"上（本 crate 不需要它们的 flag：
+    /// `Paste` 里 `middle`/`objects` 只影响是否写该族，而"该族有没有值"已经等价表达）。
     ///
     /// ⚠ `light` **不随层过滤**：它不是任何一族的字段（C# `Cell.Light` 是整格属性），
     /// 且粘贴路径**根本不写它**（`RegionCopy.cs:84-86` 里没有 `Light`，见 `stamp.rs` 的
@@ -407,7 +519,16 @@ impl Clipboard {
             usize::from(w) * usize::from(h),
             "选区已被 clamp_to 裁到图内 ⇒ 抓到的格数必须正好是 宽×高"
         );
-        Self { cells, w, h }
+        Self {
+            cells,
+            w,
+            h,
+            // 源左上角：`RegionCopy.cs:18` 的 `sourceX = x; sourceY = y;`（`Anchor` 要用，`:70`）
+            source: Some((x0, y0)),
+            // 「复制那一刻地表层可见」：`RegionCopy.cs:107` 传给构造函数的 `VisibleLayers[0]`
+            // ⚠ 不是"抓到的格表里有地表内容"，见 [`Self::ground`] 的文档
+            ground: 抓地表,
+        }
     }
 }
 
@@ -619,6 +740,9 @@ mod tests {
         assert_eq!((clip.width(), clip.height()), (3, 3));
         assert_eq!(clip.cells().len(), 9, "整块都抓（含空格）");
         assert!(!clip.is_empty());
+        // 元数据（2026-11-06）：源左上角 = 选区左上角（`RegionCopy.cs:18`）、地表可见（`:107`）
+        assert_eq!(clip.source(), Some((2, 3)), "source 必须是复制时选区左上角");
+        assert!(clip.ground(), "三层默认全开 ⇒ ground 为真");
         // 行优先 + 相对左上角
         let 首 = clip.cells()[0];
         assert_eq!((首.dx, 首.dy), (0, 0));
@@ -728,7 +852,7 @@ mod tests {
         assert_eq!((plan.changes[0].x, plan.changes[0].y), (2, 2));
     }
 
-    /// `from_cells` 的宽高/格数自洽闸门。
+    /// `from_cells` 的宽高/格数自洽闸门 + **无源剪贴板不做奇偶重算**（2026-11-06）。
     #[test]
     fn 造剪贴板校验宽高() {
         let cells = vec![
@@ -742,6 +866,46 @@ mod tests {
         assert!(Clipboard::from_cells(0, 2, cells.clone()).is_none());
         let c = Clipboard::from_cells(2, 2, cells).expect("2×2");
         assert_eq!((c.width(), c.height()), (2, 2));
+        // 无源剪贴板：`source`/`ground` 都缺 ⇒ 锚点原样返回（= 2026-11-06 之前的旧行为）
+        assert_eq!(c.source(), None, "from_cells 不知道源在哪儿");
+        assert!(!c.ground(), "from_cells 没有地表可见性这回事");
+        for (x, y) in [(0u16, 1u16), (1, 1), (7, 9), (65535, 65535)] {
+            assert_eq!(c.anchor(x, y), Some((x, y)), "无源剪贴板不许重算锚点：({x},{y})");
+        }
         assert!(Clipboard::default().is_empty());
+        assert_eq!(Clipboard::default().source(), None);
+        assert!(!Clipboard::default().ground());
+    }
+
+    /// **粘贴锚点按源奇偶重算** —— 逐字对齐上游 `RegionCopy.cs:70` 的 `Anchor`。
+    ///
+    /// 单测只钉公式与边界（负锚点 / 无源 / 地表不可见）；会话级的"真的写到哪个格"由
+    /// `tests/selection_clipboard.rs::A016_粘贴锚点按源奇偶` 验。
+    #[test]
+    fn 锚点按源奇偶() {
+        let map: Map = 造图(8, 8, CellFormat::New14);
+        // 源 = (1,3)..(3,5)：左边奇、上边奇（这样两种奇偶都能验到）
+        let clip = Clipboard::capture(&map, Selection::new(1, 3, 3, 5), [true; 3]);
+        assert_eq!(clip.source(), Some((1, 3)));
+        assert!(clip.ground());
+        // 点击点与源同奇偶 ⇒ 不挪（`(x-sourceX)&1 == 0`）
+        assert_eq!(clip.anchor(1, 3), Some((1, 3)), "同奇偶：锚点 = 点击点");
+        assert_eq!(clip.anchor(5, 9), Some((5, 9)));
+        // 点击点与源异奇偶 ⇒ 往左上各挪一格
+        assert_eq!(clip.anchor(2, 4), Some((1, 3)), "异奇偶：x/y 都 -1");
+        assert_eq!(clip.anchor(0, 0), None, "源原点奇 ⇒ 点 (0,0) 重算成负数 ⇒ 拒绝");
+        assert_eq!(clip.anchor(0, 4), None, "只有 x 为负也必须整块拒绝");
+        assert_eq!(clip.anchor(2, 0), None, "只有 y 为负也必须整块拒绝");
+        assert_eq!(clip.anchor(1, 5), Some((1, 5)), "(1,5) 与源 (1,3) 同奇偶 ⇒ 合法");
+        // 边界：源在 (0,0) ⇒ 偶数对齐，永远不会为负
+        let 零源 = Clipboard::capture(&map, Selection::new(0, 0, 1, 1), [true; 3]);
+        assert_eq!(零源.anchor(0, 0), Some((0, 0)));
+        assert_eq!(零源.anchor(1, 1), Some((0, 0)));
+        assert_eq!(零源.anchor(65535, 65535), Some((65534, 65534)));
+        // 地表**不可见** ⇒ 不重算（上游 `ground ? … : (x, y)` 的后半支）
+        let 关地表 = Clipboard::capture(&map, Selection::new(1, 3, 3, 5), [false, true, true]);
+        assert!(!关地表.ground());
+        assert_eq!(关地表.anchor(2, 4), Some((2, 4)), "地表不可见 ⇒ 原样");
+        assert_eq!(关地表.anchor(0, 0), Some((0, 0)), "不重算就永远不会出现负锚点");
     }
 }

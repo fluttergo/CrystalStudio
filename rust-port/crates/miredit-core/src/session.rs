@@ -1050,11 +1050,25 @@ impl EditSession {
         Some((w, h))
     }
 
-    /// 以 `(x, y)` 为**左上角**粘贴剪贴板；返回放置结果。
+    /// 以 `(x, y)` 为**鼠标/点击格**粘贴剪贴板；返回放置结果。
     ///
-    /// 来源：`RegionCopy.cs:72-91`（`Paste`）。语义与 [`Self::place_stamp`] **同一份实现**：
+    /// 来源：`RegionCopy.cs:72-91`（`Paste`）+ `:70`（`Anchor`）+ `:121-122`（`PlaceRegion`）。
+    /// 语义与 [`Self::place_stamp`] **同一份实现**：
     /// 逐格越界跳过（`skipped` 如实报数）、三族图号为 0 的族不写、保留目标格 `bit15`、
     /// Type5 闸门、整次 = 一步撤销（`selection.rs` 模块文档 §三/§四）。
+    ///
+    /// # 锚点规则（2026-11-06 对齐上游，**粘贴落点 ≠ 点击点**）
+    ///
+    /// 上游 `PlaceRegion`（`RegionCopy.cs:121-122`）是**先** `Anchor(hover.X, hover.Y)` **再**
+    /// `CanPaste`：`Anchor`（`:70`）在地表层可见时按**源的奇偶**把左上角往左上对齐
+    /// （`x - ((x - sourceX) & 1)`），负锚点 ⇒ `CanPaste` 为 false ⇒ **整块拒绝**。
+    /// 本方法逐条照此执行（公式与边界全在 [`Clipboard::anchor`]）：
+    ///
+    /// 1. 先 `clip.anchor(x, y)`，拿到 `Some((ax, ay))` 才进 `plan_stamp`（用 **`(ax, ay)`** 当左上角）；
+    /// 2. `anchor` 返回 `None`（负锚点）⇒ **整块拒绝**，剪贴板放回、地图一个字节不动、
+    ///    原因里点名"锚点为负"与 `CanPaste`（**不许**夹到 `(0, y)` 硬贴，也不许与"剪贴板为空"混为一谈）；
+    /// 3. 无源剪贴板（[`Clipboard::from_cells`] 造的）与"复制时地表不可见"⇒ 不重算，
+    ///    `(x, y)` 就是左上角（= 2026-11-06 之前的旧行为）。
     ///
     /// 剪贴板为空 ⇒ [`PlaceOutcome::Refused`] + 中文原因，地图一个字节不动。
     pub fn paste_clipboard(&mut self, x: u16, y: u16) -> PlaceOutcome {
@@ -1067,12 +1081,28 @@ impl EditSession {
             self.note = Some(reason.clone());
             return PlaceOutcome::Refused { reason };
         };
+        // ── ① 锚点（`RegionCopy.cs:70`，先 Anchor 再 CanPaste：`:121-122`）──
+        let Some((ax, ay)) = clip.anchor(x, y) else {
+            // 负锚点：上游 `CanPaste` 的 `document.Contains(x, y)` 必然 false ⇒ `Paste` 返回
+            // false、`PlaceRegion` 只弹一句 "Region extends outside the map"，**一格不写**。
+            // 这里等价地整块拒绝，并且**先把剪贴板放回**（拒绝不许吃掉剪贴板）。
+            let 源 = clip.source().unwrap_or((x, y));
+            self.sel.clip = Some(clip);
+            let reason = format!(
+                "按源奇偶重算后的粘贴锚点为负（点击 ({x},{y})，剪贴板源左上角 ({},{})，\
+                 复制时地表可见 ⇒ 左上角要往左上对齐一格），整块拒绝（对应 C# `CanPaste`，\
+                 RegionCopy.cs:70-71）—— 地图一个字节都没动",
+                源.0, 源.1
+            );
+            self.note = Some(reason.clone());
+            return PlaceOutcome::Refused { reason };
+        };
         // 口径 = C# `RegionCopy.Paste`（`RegionCopy.cs:72-91`）：前置只有 `CanPaste`（纯边界），
         // **没有**占用闸门、也没有坐标重复概念 ⇒ 走 [`PlanMode::Paste`]。
         // ⚠ 这条差异必须留着：印章的"落点已有物件 ⇒ 整枚拒绝"（`PlacedStamps.cs:63`）
         //    在粘贴路径上会把「往有物件的区域贴一块地表」也一起毙掉，而 C# 是允许的。
-        let out = self.place_stamp_with_mode(x, y, clip.cells(), PlanMode::Paste);
-        // 放回：剪贴板要能反复粘贴（C# 粘完提示"Region pasted · Ctrl+V to paste again"，`:121`）
+        let out = self.place_stamp_with_mode(ax, ay, clip.cells(), PlanMode::Paste);
+        // 放回：剪贴板要能反复粘贴（C# 粘完提示"Region pasted · Ctrl+V to paste again"，`:123`）
         self.sel.clip = Some(clip);
         // 拒绝原因的文案要说得清是"粘贴"被拒（`plan_stamp` 的原文是给印章写的，带"印章"字样）
         match out {
