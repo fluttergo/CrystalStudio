@@ -1,6 +1,0 @@
-<linker>
-  <!-- Keep the existing Avalonia reflection bindings usable. -->
-  <assembly fullname="CrystalStudio" preserve="all" />
-  <assembly fullname="Avalonia.Themes.Fluent" preserve="all" />
-  <assembly fullname="Avalonia.Fonts.Inter" preserve="all" />
-</linker>

@@ -1,438 +1,146 @@
 # Crystal Studio
 
-基于 Avalonia 11 和 .NET 10 的 Crystal 地图编辑器，保留原版紧凑界面、地图编辑、对象分类、面板停靠和生成器。
+> 仓库名 `CrystalStudio-Rust`；软件显示名 **`Crystal Studio`**（两个词，C/S 大写）。`miredit-*` / `mir2-*` 只是 crate 与二进制的技术标识，不是产品名。
 
-The Crystal map editor based on Avalonia 11 and .net 10 retains the original compact interface, map editing, object classification, panel docking, and generator.
+**Crystal Studio** 是传奇 M2 系地图编辑器（上游为 C# / Avalonia 实现）的 **Rust 全量移植**：8 个单向依赖的 crate，PC 原生版与网页版共用同一编辑内核，覆盖 **9 种地图格式**的判别、解析与写回。
 
-> 原作者: https://github.com/Lilcooldoode
-> author: https://github.com/Lilcooldoode
+上游参照：[`fluttergo/CrystalStudio`](https://github.com/fluttergo/CrystalStudio)，本仓对齐的上游基线提交为 `901dbe2f`。上游 HEAD `6450da90` 仅新增 CellHover + NativeAOT 发布链，未改变地图格式/渲染/资产解码。
 
-## Build from Source
+## 一、能力
 
-Requires the .NET 10 SDK. Keep the `CrystalStudio`, `catalogue` and
-`Objects` folders together, then run these commands from their parent folder:
+| 项 | 内容 |
+|---|---|
+| 地图格式 | **9 种**：`Old12` / `Wemade2010` / `Shanda14` / `Shanda2012`（36 B/格）/ `AntiHack` / `Mir3-Wemade` / `Mir3-Shanda` / `Heroes34` / `CrystalCs`（C# 版） |
+| 格式保真 | 写回走**原格式**；未建模的尾部/未知区字节原样保留，不猜测语义（带尾块的地图按宽松口径也能打开，并如实标注未解字节数） |
+| 渲染 | 三层合成（地表 / 中层 / 物体）、四档缩放（25% / 50% / 100% / 200%）、门帧偏移（开/闭门）、地图光照三档（白天 / 黎明·黄昏 / 夜晚）、低/高阻挡标记 |
+| 编辑 | 图层切换、笔刷（3..31 奇数边长）、Bresenham 描线、BFS 连通填充、橡皮擦、吸管、撤销/重做、矩形选区与剪贴板、印章（`.X`）放置、原格式保存 |
+| PC 版 | egui 原生窗口，浅色金主题，中文界面；菜单 5 个 / 40 项（含 3 个子菜单）；地图列表面板；网格抽稀；多种诊断与导出开关 |
+| 网页版 | axum 后端 + 原生 JS 前端（不引框架 / CDN / npm），桌面与手机浏览器适配，WebSocket 推送脏标记与重绘区域 |
+| 导出 | 选区导出、小地图（官方三档预设或指定像素）、1:1 渲染转储 |
 
-```powershell
-dotnet build CrystalStudio.sln -c Debug
-dotnet build CrystalStudio.sln -c Release
-dotnet run --project CrystalStudio/CrystalStudio.csproj -c Release
-./Publish-Avalonia.ps1
-```
-
-发布脚本默认先执行自动验证，然后生成包含 .NET 运行时的 Windows x64 版本，目录为项目根目录的 `Build/Release`。`catalogue` 和 `Objects` 会一并复制。可通过 `-OutputDirectory` 指定其他目录。
-
-Windows x64 NativeAOT 使用 Release 发布方式。可以双击本目录的 `AotBuild.win-x64.bat`，或者执行：
-
-```powershell
-.\AotBuild.win-x64.bat
-# PowerShell 入口
-.\Publish-Avalonia.ps1 -Aot
-# 自定义输出目录；已验证源码时可以跳过测试
-.\AotBuild.win-x64.bat -OutputDirectory 'E:\Build\CrystalStudio AOT' -SkipTests
-```
-
-AOT 默认输出为 `../Build/CrystalStudioAvalonia/aot/win-x64/CrystalStudio.exe`，并保留旁边的 `catalogue`、`Objects` 和其他发布文件。脚本不依赖启动时的工作目录，默认先执行测试，测试或发布失败时返回非零退出码。完整发布日志保存在项目的 `Build/logs/publish-日期时间.log`；批处理失败时会等待按回车，输入被重定向的自动构建不会等待。普通发布继续使用 ReadyToRun；只有 `-Aot` 或独立批处理入口启用 NativeAOT。
-
-编译环境需要 .NET 10 SDK、Visual Studio Build Tools 的“使用 C++ 的桌面开发”及 Windows SDK。Skia、HarfBuzz 和 GLES 原生 DLL 由 NuGet 包提供并随发布输出，无需旧服务端的 `NativeStaticLibrary` 目录。分发时须保留整个发布目录，包括这些 DLL；编辑器本身仍为 NativeAOT，无需安装 .NET 运行时。设置、语言、笔刷、分类和地图附加元数据使用 JSON 源生成，现有 JSON 字段及树木指纹保持兼容；Avalonia 的现有反射绑定通过裁剪描述文件保留。
-
-界面沿用原版 32×32 工具按钮、16–18 图标、26 高度的图层行以及紧凑页签。地图和交互覆盖层独立保存绘制结果，因此鼠标悬停不会重新提交地图；缩略视图按图集批量绘制，并保留原有层次、透明叠加、动画和灯光逻辑。
-
-`CRYSTALSTUDIO_PROFILE` 可指定独立配置目录；未设置时继续使用原版用户配置目录。当前验证目标为 Windows x64；其他平台尚未验收。游戏资源仍需要原版支持的 Crystal `.lib`，资源格式以设置中的 Default / Sanxiu 选项为准。
-
-Palette 的 Categories 使用左侧纵向分类 Tab，右侧按面板宽度排列预览网格。卡片底部仅显示精简名称，鼠标悬停后显示完整标题、副标题及对象路径。保留 Type、Region、Environment、Facing 分组及搜索；每页 24 项，切换分类时记住页码、滚动位置和选中对象，方向键可按网格选择。
-
-分类预览仅为可见卡片加载，切换分类或页码时取消旧请求；后台预览并发上限为 2，最近使用的缩略图最多缓存 128 张，因此无需一次生成整个分类的预览。
-
-GUI 支持简体中文和 English。通过 **View → Language (restart required)**（**视图 → 语言（重启后生效）**）或 **Edit → Settings**（**编辑 → 设置**）选择语言。选择后自动保存，下次启动生效，当前窗口继续使用原语言。首次启动时默认使用系统界面语言；非中文系统默认使用英文。
-
-语言设置独立于资源目录保存，首次配置资源目录前也可选择语言。界面文字、内置分类及选项提供中英文显示；物体名称、资源文件名、文件路径和分类保存标识保留原文，因此地图与物体格式保持兼容。外部异常详情及未登记的目录名称可能仍显示原文。
-
-解决方案为根目录的 `CrystalStudio.sln`，包含编辑器和测试项目。Debug、Release 主程序分别输出到 `Build/Debug/CrystalStudio.exe`、`Build/Release/CrystalStudio.exe`；测试程序位于各自的 `Tests` 子目录。此前的 GUI、语言重启、地图保存和性能验证记录见 [VALIDATION.md](VALIDATION.md)。
-
-Game artwork is not included. Select the game client root containing **Data**
-(Crystal `.lib` libraries) and **Map** (`.map` files).
-
-设置中选择客户端根目录，例如 `D:\App\LomcnClient`。素材从 `Data` 或 `Data\Map` 加载，地图从同级 `Map` 读取；旧 Data 配置会转换为根目录显示，保存设置时也使用根目录。独立的平铺素材目录继续支持。
-
-左侧「工具 / 地图」页签分别显示现有工具、工具选项、图层、单元格检查器，以及 Map 及子目录中的 `.map` 列表。地图页顶部支持按文件名过滤，忽略大小写，并提供刷新和完整路径提示。单击打开，重复点击切回已有标签并保留未保存内容；素材无法读取时仍可浏览地图。界面随现有语言设置显示中英文。拖动侧栏与画布之间的竖线调整宽度，拖动工具面板之间的横线调整高度；拖标题可改变位置或成为浮动窗口，已有布局会保留。若已锁定布局，请先在「视图」中取消「锁定面板布局」。
-
-生成器不再要求外部素材像素指纹与原始素材一致，允许替换图片。仍检查素材能否读取、图片编号、必要尺寸和模板结构；内置目录及地图编辑元数据的完整性校验保留。
-
-## 快速创建地图
-
-从 **文件 → 快速创建地图…**（`Ctrl+Alt+N`）进入。原有 `Ctrl+N` 空白地图入口继续保留。
-
-1. **选择创建方案**：支持空白地图、基础地形、野外地图和地下城。可选“素材测试场 / 野外探索区 / 城镇外围 / 小型地下城”用途模板，或载入自己的生成预设。推荐尺寸根据地图类型过滤，支持横纵向尺寸、交换宽高、锁定比例，并显示地图格数和基础地表图块数量。地表图块通常覆盖 `2 × 2` 个地图格，不等同于角色移动距离或游玩时长。
-2. **调整与预览**：生成地图默认显示风格、疏密和随机种子等常用设置；其余参数放入“高级生成参数”。可返回“上一步：地图设置”：仅修改名称、输出目录或保存偏好时保留当前预览；修改尺寸、类型或生成参数时重新预览，并保留当前种子和参数。取消设置页返回预览，取消生成预览则退出创建，不改动现有地图。
-3. **确认创建**：预览中直接显示名称、类型、尺寸、是否保存、完整输出路径和待保存预设。空白地图可跳过预览。勾选“创建后立即保存”才显示并校验输出目录；未勾选时可以直接创建临时地图。现有同名地图不会被静默覆盖，保存失败时地图仍保留在编辑器中。
-
-**素材预检**区分必需与可选资源：野外地图先检查选中风格的基础地表，再加载装饰与水系，缺少必需地表时无需等待装饰扫描。地下城检查地面和墙体。缺少可选河岸、海岸、悬崖、装饰、城镇或入口素材时，会省略相关功能并提示，不因此阻止整张地图创建；岛屿风格仍需要完整的岛屿海岸。省略边界装饰不会移除野外地图的不可通行外围。生成结果中的数量不足、空间受限等提示仍显示在预览底部。
-
-**最近候选**最多保留五组种子、生成参数和小缩略图，点击缩略图可恢复参数并重新生成。收藏可防止候选被新结果自动淘汰；五个全部收藏后，需要先取消一个收藏才能保留新候选。切换总览和局部细节不会新增候选。候选仅在本次创建会话内保留，不跨窗口关闭或程序重启保存；尺寸或类型不同的候选不可直接恢复。恢复时使用当前已加载素材，不承诺在素材或目录版本变化后得到完全一致的结果，也不额外常驻五张完整地图。
-
-**预览交互**支持滚轮缩放、拖动平移、缩放按钮和适应视图。双击指定位置或点击“检查视图中心”会从当前生成结果重绘该位置附近的局部细节，不重新规划地图；“返回总览”退出局部视图。放大总览只是放大预览图，不等于提高素材精度。预览获得焦点后可用 `+ / -` 缩放、方向键平移、`Home` 适应视图、`Enter` 检查视图中心。原有“重新随机”仅更换种子，“随机化”更换较大范围的生成参数，二者继续保留。
-
-用途模板是现有生成参数的组合，并非固定布局：城镇数量和房间数量是请求值，实际结果受素材、地图尺寸和空间影响；目前不会固定预留城镇、出生点或主路线区域。
-
-**预设管理**支持重命名、复制、删除、导入和导出。创建页“高级创建选项”可在创建成功后保存或更新预设；同名更新仅在最终创建时确认，不会在进入预览或返回设置时反复确认。拒绝最终覆盖会留在当前预览，空白地图则留在其创建页。预设最多 50 个，仅保存类型、尺寸和生成参数，不携带地图名称、输出目录或立即保存偏好；选择预设不会覆盖当前本机设置。导入同名预设时会拒绝覆盖，可先重命名或删除已有预设。管理操作立即生效，删除预设不会删除地图文件。
-
-配置目录下的 `map-creation.json` 升级为版本 2，读取旧版本时迁移生成预设，同时保留上次使用的本机输出设置。新导出的预设不包含这些本机设置。生成配方仍写入地图旁的 `.creation.json`，用于记录生成来源，不是手工编辑成果的完整备份。独立恢复快照继续沿用现有机制。
-
-本轮不包含候选持久化、玩法连通性检查、固定布局约束和局部保护式重生成。局部预览重绘不是局部地图重生成。自动化界面测试使用测试素材，不能代替实际游戏素材下的地图效果验收。
-
-## Getting Started
-
-1. Start the editor using the command above, or run `CrystalStudio.exe` from a published release.
-2. Open **Edit > Settings** and select your game client root containing **Data** and **Map**. Libraries load from Data; legacy Data settings display and save as the client root. Standalone library folders remain supported.
-3. Select the left **Maps** tab and click a `.map` file to open it. The list includes subfolders and supports filename search and refresh. The **Tools** tab contains tools, tool options, layers and the cell inspector. **File > Open Map** and **File > New Map** remain available.
-4. Choose a tool and an asset, then edit the map.
-5. Save with **Ctrl+S**.
-
-For published releases, keep the `catalogue` and `Objects` folders beside the
-executable. They contain the editor's brushes, objects and generator data.
-
-## Quick Create Map
-
-Use **File > Quick Create Map** (**Ctrl+Alt+N**) to choose a map type, dimensions,
-and optional saved preset. Turn off **Save the map after creation** to create an
-unsaved map without selecting an output folder. When saving immediately, the
-wizard checks for filename collisions and files blocking the output directory;
-existing maps are never overwritten.
-
-Changing settings marks the preset selection as custom. Editing dimensions keeps
-the preset's generator parameters; changing the map type restores that type's
-current draft, or its last-used parameters if no draft exists. User-defined preset names are displayed unchanged in either
-language. Automatic filenames increment existing numeric suffixes, for example
-`NewMap_2` to `NewMap_3`.
-
-Terrain, province, and dungeon previews provide **Back to map settings**, which
-preserves the creation form and current generator parameters without adding a map
-or saving a preset. Returning from map settings without confirming keeps the
-current preview. **Cancel** on the preview exits creation without changing the workspace.
-
-Previews support mouse-wheel zoom, left/middle-button drag to pan, and **Fit
-preview** to return to the whole image. When the preview has keyboard focus,
-`+` / `-` zoom, arrow keys pan, and `0` / `Home` fit the image. Zoom is relative to
-the fitted preview bitmap, not the map's original artwork resolution, and never
-changes the generator parameters. In Quick Create, double-click a location or use
-**Inspect centre** to redraw local detail without replanning the map; **Overview**
-returns to the whole preview. Standalone generator windows retain the fixed detail crop.
-
-Sliders also have exact numeric inputs that follow the same ranges and discrete
-steps. Terrain patch amount is entered as a percentage. Province scenes and
-dungeon themes retain their adjustments when revisited within a preview window;
-first-time selections still use the existing defaults. **Change seed** only
-changes the seed, while **Randomize settings** retains its original broader
-randomization behaviour. Map generation, file formats, and saving rules are unchanged.
-
-## Basic Controls
-
-- **Mouse wheel:** Zoom.
-- **Middle mouse button** or **Space + drag:** Move around the map.
-- **Ctrl+Z:** Undo.
-- **Ctrl+Shift+Z:** Redo.
-- **F1:** Show all keyboard shortcuts.
-
-Use the **Layers** panel to show or hide map layers and collisions.
-
-The **Tools** menu contains the town, terrain, province and dungeon generators. Check the preview before applying a result. Province and dungeon generation replace the current map and can be undone.
-
-----
-
-# 笔刷原理
-
-当前实现中，**Library 的 Set 是按图片编号规则组织的自动地形笔刷；Categories 的物体是由多个地图单元格组成的 `.X` 模板。** 两者都引用 `.lib` 中的图片，但是组织方式和使用方式不同。
-
-**Library 的 Set 如何提取**
-
-程序先根据资源目录和文件名注册 Library ID，然后读取 `.lib` 的图片偏移表。需要某张图片时，按偏移读取尺寸、坐标和压缩数据，通过 GZip 解压为 BGRA 像素。对应 [Assets.cs](CrystalStudio/Assets.cs)。
-
-Set 分组依赖固定的编号布局：
-
-| 布局 | 典型资源 | 每组编号跨度 | 用途 |
-| :--- | :--- | ---: | :--- |
-| Mir2 | `Tiles.lib` | 50 | 地表自动过渡 |
-| Mir3 | `Tiles30c.lib` | 30 | 一组包含 A、B 两种地形方向 |
-| Mir3Mini | `Tiles5c.lib` | 5 | 随机中心图块，不处理过渡边缘 |
-| Small | `SmTiles.lib` | 60 | 中间层自动过渡 |
-
-例如 Mir2 的 `Set n`，起始图片编号为：
+## 二、架构（8 crate，依赖单向）
 
 ```text
-start = n × 50
+基础层（无内部依赖）
+  mir2-map      地图字节 / 单元格模型
+  mir2-format   9 种格式的判别与读写（只依赖 std）
+  mir2-stamp    .X 印章格式
+  mir2-assets   图库解码（Mir2 .wil/.wix、.wzl/.wzx；原版 Crystal .lib）/ 帧锚点
+
+第二层
+  miredit-render  合成 / 缩放 / 光照 / 门帧     ← mir2-map, mir2-assets, mir2-stamp
+
+第三层
+  miredit-core    编辑内核（命令 / 会话 / 撤销） ← mir2-map, mir2-format, mir2-stamp, mir2-assets
+
+第四层（两者互不依赖）
+  miredit-gui     PC 原生版（egui）             ← 上述 + miredit-render, miredit-core
+  miredit-web     网页版后端（axum），前端在 web/ ← 上述全部
 ```
 
-组内部分编号有固定含义：
+依赖只允许自上向下；`mir2-format` 故意保持零第三方依赖，便于把格式层单独复用与对拍。
 
-- `+0～4`：中心区域的随机变体。
-- `+5～8`：四个外角。
-- `+10～13`：四个内凹角。
-- `+15、16`：上边；`+17、18`：下边。
-- `+20、22`：左边；`+21、23`：右边。
+## 三、构建与测试
 
-因此，资源必须遵循这些布局规则，任意连续 50 张图片不一定能组成有效 Set。规则见 [AutoTileBrush.cs](CrystalStudio/AutoTileBrush.cs)。
-
-Palette 中的 Set 缩略图也是临时组合出来的。Mir2 使用以下九张图，排列成一个完整地形区域，再缩小到 96×64：
-
-```text
-+5     +15     +6
-+20    +0      +21
-+7     +17     +8
+```bash
+cargo build --workspace
+cargo test --workspace
+cargo clippy --all-targets -- -D warnings
 ```
 
-对应 [TilePatternPreview.cs](CrystalStudio/TilePatternPreview.cs)。
+通过/失败的具体条数以**实际运行结果**为准（`cargo test` 会自己打印），本文件不锁定会过期的数字。
 
-实际检查当前使用的 `Tiles.lib`：共有 **155,305 张图片**，按整数除法显示 **3,106 个 Set**，末尾不足一组的 5 张不会单独列为 Set。列表生成逻辑见 [MainWindow.axaml.cs](CrystalStudio/MainWindow.axaml.cs)。
+**公开 CI**：[`.github/workflows/ci.yml`](.github/workflows/ci.yml) 在上述同三条命令上跑，且**不设任何素材环境变量** ——
+素材相关用例自己打印 `[skip]` / `[跳过]` 后返回，所以「没有游戏素材」也是全绿。CI 不跑 `cargo fmt`、不下载素材、不跑 Docker。
 
-**接缝处边缘平滑的原理**
+发布构建：
 
-平滑主要由**美术资源预先绘制的过渡轮廓，以及程序对边、角图块的正确选择**实现。
-
-程序将每张地形图块的四个顶点表示为四个位：
-
-```text
-左上 1 ───── 右上 2
-  │             │
-左下 4 ───── 右下 8
+```bash
+cargo build -p miredit-gui --release
+cargo build -p miredit-web --release
 ```
 
-每个位表示该顶点是否被当前地形覆盖。例如：
+> **前置依赖**：WIL/WZL 解码器已 vendored 在 `vendor/wil2atlas/`（decoder-only，MIT；来源与逐文件 SHA256 见 `vendor/wil2atlas/NOTICE`），
+> `crates/mir2-assets` 以仓库内相对路径引用它 —— **无需外部 path 依赖**，clone 后可直接构建。
+>
+> 本项目**不使用 `cargo fmt`**，代码风格靠既有约定与 clippy 维持，见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
-| 覆盖掩码 | 选择的形状 |
-| ---: | :--- |
-| 15：四角都有 | 中心 |
-| 12：下面两角有 | 上边缘 |
-| 3：上面两角有 | 下边缘 |
-| 8：只有右下角有 | 左上外角 |
-| 14：只有左上角没有 | 左上内凹角 |
+## 四、运行
 
-绘制时，算法执行以下步骤：
+### 4.1 PC 版
 
-1. 从周围已有图块恢复共享顶点的覆盖状态。
-2. 将笔刷内部涉及的顶点标记为覆盖。
-3. 重新计算受影响图块及周围图块的四角掩码。
-4. 根据掩码选择中心、边缘或角图，并在同类变体中随机选取。
-
-因为相邻图块使用同一组共享顶点，所以边缘形状能够保持连续。对于掩码 `6`、`9` 这种仅对角覆盖的情况，现有图集没有对应形状，代码会将其填为完整覆盖，并继续更新邻居。
-
-地表图块通常是 96×64，覆盖 **2×2 个 48×32 地图单元格**，因此绘制坐标还会对齐到偶数格。
-
-另外，我抽查了当前资源 **Set 1 的中心、外角、内角和边缘共五张图，像素 Alpha 全部为 255**。因此，这一组的过渡背景已经绘制在图片中；放到不匹配的底色上，仍可能出现明显边界。普通 Set 笔刷不会自动为任意两种材质生成新的过渡图。
-
-**Categories 中的物体如何取得**
-
-当前加载过程是：
-
-```text
-catalogue/palette.json
-    → 分类、名称、文件路径
-    → Objects/对应对象.X
-    → 相对坐标和各层图片引用
-    → 从当前 .lib 读取图片
-    → 组合显示并作为物体模板放置
+```bash
+cargo run -p miredit-gui --release -- --map /path/to/some.map
+cargo run -p miredit-gui --release -- --help
 ```
 
-分类来自 JSON 中的 `type`、`subtype`、`regions`、`regionGroups`、`environments`、`tags`、`direction` 等字段，并非根据图片内容实时识别。加载与分组见 [StampCategories.cs](CrystalStudio/StampCategories.cs)。
+常用开关：`--map <文件>` 打开指定地图、`--map-list-root <目录>` 指定地图列表根、`--no-window` 配合 `--dump-render` / `--edit-*` 跑无人值守诊断。
 
-当前有 **9,159 条分类记录**，对应文件全部存在；`Objects` 目录实际有 **9,170 个 `.X` 文件**，其中 11 个未登记在分类索引中。因此，仅向目录复制 `.X` 文件，不会自动使其出现在 Categories。
+### 4.2 网页版
 
-当前分类缩略图会读取 `.X`，使用实际 Library 图片按图层和坐标重新绘制。虽然索引包含 `preview` PNG 路径，但这个界面的预览使用实时组合流程，见 [CategoryPalette.cs](CrystalStudio/CategoryPalette.cs)。
+后端配置**全部走环境变量**（没有对应命令行参数）：
 
-项目提供两种生成物体的方法：
-
-- **Export Selection**：选择地图区域，导出其中非空单元格，将坐标转换为相对选区中心的坐标，保存为 `.X`。它保留单元格各层内容，因此选区中的地面也可能一起导出。
-- **New Stamp**：创建对象编辑页，可以绘制或粘贴复制的地图内容；保存时裁剪空白、调整相对原点，并同步更新分类索引。包含地表图块时，原点按偶数格对齐。见 [MainWindow.StampEditing.cs](CrystalStudio/MainWindow.StampEditing.cs)。
-
-`Identify Objects` 使用已有 `.X` 模板，通过图片编号和相对位置在地图中匹配对象。当前项目没有找到最初生成这批对象和分类的批处理脚本，因此无法确认最初的 9,159 个对象由人工整理还是外部工具生成。
-
-**物体 `.X` 的保存格式**
-
-`.X` 保存的是**相对坐标、图片引用和单元格属性**。图片像素仍在 `.lib` 中，名称和分类仍在 `palette.json` 中。
-
-当前保存器写入 **v2、小端序二进制格式**，现有 `Objects` 目录中的 9,170 个文件也全部是 v2。读写实现见 [Document.cs](CrystalStudio/Document.cs)。
-
-文件头共 7 字节：
-
-```text
-43 23          ASCII "C#"
-02             版本号
-CellCount      Int32，单元格数量
+```bash
+MIREDIT_BIND=127.0.0.1:8080 \
+MIREDIT_MAP_ROOT=/path/to/maps \
+MIREDIT_CLIENT_ROOT=/path/to/client-root \
+MIREDIT_PALETTE_JSON=/path/to/crystalstudio/catalogue/palette.json \
+MIREDIT_WEB_ROOT=/path/to/repo/web \
+cargo run -p miredit-web --release
 ```
 
-随后依次保存每个单元格：
+| 变量 | 作用 | 未设置时 |
+|---|---|---|
+| `MIREDIT_BIND` | 监听地址（缺省 `0.0.0.0:8080`） | 用缺省值 |
+| `MIREDIT_MAP_ROOT` | `/api/map/open` 的白名单根 | 地图端点一律 503（**不猜目录**） |
+| `MIREDIT_CLIENT_ROOT` | 图库（客户端）扫描根 | 出图 / 素材端点 503 |
+| `MIREDIT_PALETTE_JSON` | 印章目录索引 `palette.json` | `/api/stamps` 503 |
+| `MIREDIT_WEB_ROOT` | 静态前端目录（缺省 = 本仓 `web/`，中立回退） | 找不到 ⇒ `GET /` 404（不伪造页面） |
 
-| 字段，按写入顺序 | 类型／字节数 | 含义 |
-| :--- | :--- | :--- |
-| X、Y | Int32 × 2，8 字节 | 相对放置原点的格子坐标，可以为负 |
-| BackLibrary | Int16，2 字节 | 地表资源库 ID |
-| BackImage | Int32，4 字节 | 地表图号及标志 |
-| MiddleLibrary | Int16，2 字节 | 中间层资源库 ID |
-| MiddleImage | UInt16，2 字节 | 中间层图号 |
-| ForegroundCount | Byte，1 字节 | 当前实现允许 0 或 1 |
-| 前景记录，可选 | 6 字节 | Library:Int16、Image:Int16、Frames:Byte、Tick:Byte |
-| Door、DoorOffset | Byte × 2 | 门及偏移 |
-| MiddleFrames、MiddleTick | Byte × 2 | 中间层动画 |
-| TileAnimation、TileOffset | Int16 × 2 | 地表动画参数 |
-| TileFrames、Light | Byte × 2 | 地表动画帧数、灯光值 |
+> ⚠ **没有任何内置路径指向某台开发机**（2026-11-06 起）。四个路径变量都**必须显式设置**才
+> 能真的服务数据；不设就是"如实不可用"（503/404 + 启动横幅点名缺哪个变量），不会去猜一个
+> `GodotClient/maps` 之类的相对目录。接口契约见 [web/README.md](web/README.md)。
 
-因此，每个单元格占 **29 字节，无前景图**，或 **35 字节，有前景图**。
+### 4.3 PC 版的素材根
 
-还有几个格式细节：
+PC 版与网页版共用同一套环境变量（**没有内建缺省根**）：
 
-- 图号使用 **1 起始编号**，0 表示无图；访问 `.lib` 时减 1。
-- `BackImage` 的低 29 位保存图号；`0x20000000`、`0x40000000` 分别表示低、高阻挡。
-- 前景图号取 `Image & 0x7FFF`，需要保留其他标志位。
-- 文件没有独立的宽高字段，通过单元格坐标范围计算边界。
-- 读取器兼容 v0、v1、v2，重新保存统一写为 v2。
-
-例如实际文件 `mir_00000.X` 是一个摊位模板，包含 **25 个单元格、8 个前景图片引用、18 个带阻挡属性的单元格**，没有地表或中间层图片，文件大小为：
-
-```text
-7 + 25 × 29 + 8 × 6 = 780 字节
+```bash
+MIREDIT_CLIENT_ROOT=/path/to/client-root \
+cargo run -p miredit-gui --release -- --map /path/to/some.map
 ```
 
-这也说明，一个看起来完整的物体可以由多张图片和额外的阻挡单元格共同组成。
+| 变量 | 作用 | 未设置时 |
+|---|---|---|
+| `MIREDIT_CLIENT_ROOT` | 图库扫描根（`.wzl/.wzx`、`.wil/.wix`、`.lib`） | 界面/状态栏如实报「资源库装载失败」，图库 0 个（**不 panic**） |
+| `MIR2_STAMP_PALETTE` | 印章目录索引 `palette.json` | 印章面板如实报「加载失败」（不静默空表） |
 
-## 地图物体提取工具
 
-通过 **Tools → Extract Map Objects**（工具 → 提取地图物体）打开独立窗口。选择当前地图、当前选区或地图目录，并指定 Crystal `.lib` 资源目录，然后开始扫描。目录模式递归读取 `.map`；无效文件会记录为警告，因此不会阻止其他文件的处理。
+## 五、游戏素材（不随本仓分发）
 
-工具读取当前地图快照，或者依次读取目录中的地图。扫描、复核和导出均不修改源地图、主编辑器历史或未保存标记。主编辑器可以继续使用；后续编辑不会自动改变已经生成的候选，需要重新扫描。
+本仓**只含代码**。地图编辑器需要客户端素材才能出图：
 
-识别顺序为有效放置元数据、已有 `.X` 模板、剩余前景图片。已有模板按照较大的内容优先匹配。新发现的图片仅在资源库相同、图片序号范围不超过 32、实际显示矩形相交或相距不超过 1 像素时分组；同组不重复使用同一图片引用。因此，连续树木和重复墙体不会仅凭地图格相邻就全部合并。超过 512 张图片或 64×64 格的自动分组保留为单独候选，供人工复核。缺少图片尺寸时保持单独候选，并显示警告。
+- **地图**：`.map` 文件目录 → 网页版 `MIREDIT_MAP_ROOT`，PC 版 `--map` / `--map-list-root`。
+- **图库**：客户端根目录（Mir2 的 `.wil/.wix`、`.wzl/.wzx`，或原版 Crystal `.lib`）→ 网页版与 PC 版**都**用 `MIREDIT_CLIENT_ROOT`（2026-11-06 起 PC 版也走环境变量，不再有内置常量）。
+- **印章**：`catalogue/palette.json` 与并列的 `Objects/*.X` → 网页版 `MIREDIT_PALETTE_JSON`，PC 版 `MIR2_STAMP_PALETTE`。
 
-已有物体继承目录分类；其他候选只有在至少 80% 的组成图片支持同一分类、且没有同票分类时才获得分类建议，否则为“待分类”。工具不推测没有证据的地区、环境或方向。所有扫描结果初始均为未确认。
+缺素材时各端点/界面如实报错（404 / 503 / 「图库未就绪」），**不会**画占位图冒充成功。
 
-使用纵向分类标签、缩略图网格、名称/来源搜索和状态筛选查看候选，每页最多 48 项。缩略图仅在可见时请求，同时最多生成两张预览。标题显示简短名称，完整名称和识别依据位于提示中。详情同时显示独立物体与地图上下文；绿色矩形表示组成图片的格子锚点，所选图片显示为金色。粉色与蓝色分别表示低、高碰撞。
+## 六、文档
 
-- 可多选候选，批量设置名称、分类和确认状态，也可排除候选。
-- 可通过图片列表或预览中的锚点选择部件，然后拆分或排除图片；锚点上的碰撞随拆分部件移动。
-- 合并使用首个候选的代表位置和同图中最近的所选部件确定相对位置；相同相对位置的重复实例一起合并，没有对应部件的来源继续保留。合并后需要重新确认。
-- 新物体默认仅选择其前景锚点上的实际碰撞。周围两格内的其他碰撞作为未选中的建议，可逐格调整；重复内容只提供所有来源共同存在的碰撞建议。
-- “撤销/重做”仅作用于提取窗口的复核操作。
-- 选区扫描使用整张地图上下文识别完整物体。跨边界物体保留完整内容，并默认不导出；可在详情中明确允许保存完整跨界物体。
+| 文件 | 内容 |
+|---|---|
+| [docs/架构蓝图.md](docs/架构蓝图.md) | 分层、模块边界、里程碑 |
+| [docs/地图格式规格.md](docs/地图格式规格.md) | 9 种格式的逐字段字节布局与判别/读写口径 |
+| [docs/README.md](docs/README.md) | 文档索引 |
+| [web/README.md](web/README.md) | 网页版接口契约（端点 / 错误码 / WebSocket / 前端行为） |
+| [docker/README.md](docker/README.md) | 容器部署说明 |
+| [layout/README-crystalstudio-ui.md](layout/README-crystalstudio-ui.md) | 上游界面真值数据（`crystalstudio-ui.json` / `crystalstudio-strings.json`）的口径 |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | 贡献流程 |
 
-确认后选择“保存已确认项至调色板”。同一内容只保存一次；不同动画、碰撞、门或灯光属性形成不同指纹。与已有目录物体完全相同的内容复用原文件，并保存人工确认的名称与分类；其他已有分类信息和自定义字段继续保留。复用文件不会因分类变化而移动。新物体使用标准 `.X` v2 格式，路径为：
+## 七、说明
 
-```text
-Objects/Extracted/<分类>/<SHA-256内容指纹>.X
-catalogue/extractions/<会话编号>-<报告编号>.json
-```
-
-`catalogue/palette.json` 保留已有字段和未知字段；物体条目增加来源地图和坐标记录。报告包含全部候选的指纹、识别依据、确认状态、来源及实际输出。保存成功后主窗口 Palette 立即刷新。
-
-保存顺序为新物体文件、报告、分类索引。索引使用原子替换；失败或提交前取消时，只移除本次创建的文件。提取窗口与物体编辑器共用写入锁，并在提交前检测其他程序造成的索引变化；检测到变化会停止保存并保留外部修改。
-
-物体边界扫描使用本地规则。地图通常没有可靠的物体边界信息，因此自动候选不能保证符合美术原始物体的划分，必须人工检查。预览代表去重物体的第一处来源，其他来源坐标保留在详情和报告中。语言仍在下次启动时生效。
-
-## AI 设置与识图矫正
-
-打开设置并展开 **AI 设置**，分别配置“视觉识图 AI”“生图 AI”“对话 AI”。每类单独保存服务商、基础地址、密钥和模型；修改 AI 配置无需重新加载素材库。配置保存在当前用户配置目录的 `settings.json`，请勿将该文件作为公开配置分享。
-
-预设与 `MapGenerator/web` 对齐：OpenAI / 兼容中转、Google Gemini / Nano Banana、火山方舟、阿里云百炼、智谱、SiliconFlow、Stability AI、本地 SD WebUI / Forge、自定义请求模板。Stability 和 SD WebUI 仅用于生图。Gemini、百炼使用各自原生协议，其他兼容服务使用 OpenAI 协议；桌面端直接请求服务，无需 web 项目的浏览器代理。
-
-高级设置可覆盖请求路径、鉴权方式、超时时间、附加 JSON、响应字段路径及生图尺寸格式。自定义服务的 JSON 为完整请求体，其他服务将其合并至默认请求体。支持 `{{model}}`、`{{prompt}}`、`{{system}}`、`{{image}}`、`{{images}}`、`{{width}}`、`{{height}}`、`{{size}}`、`{{n}}` 变量；例如响应路径可写为 `choices[0].message.content` 或 `data[0].b64_json`。模型应填写服务商实际提供的模型名或接入点编号。测试按钮调用当前页填写的配置，生图测试会实际生成一张图片并展示结果。
-
-提取扫描完成后，可多选候选并点击 **AI 识别并筛选所选**，也可 **AI 识别并筛选全部未审核**。工具将独立物体图和地图上下文发送给“视觉识图 AI”，先判断完整性，再生成名称、目录中已有的分类及可见依据。明确不完整的物件从当前候选中剔除；完整和无法确定的物件保留为未审核，审核后通过“保存已确认项至调色板”导出。状态栏显示检查、剔除和不确定项数量。
-
-批次全部成功后一次性应用名称更新与剔除，撤销 / 重做作用于整个批次。取消、超时、请求失败或返回缺少完整性判定时，候选结果保持原样。此操作仅更改提取窗口的候选列表，保留物体的原始图片、碎片、碰撞和来源数据。识别判定及剔除数量写入日志；日志不包含请求密钥。
-
-### 识图提示词与完整性判定
-
-原提示词只要求“根据图片矫正名称与类别”，返回 `name`、`category`、`reason`。因此，即使依据已经说明“屋顶结构属于建筑的一部分”，程序也只更新名称和分类。当前提示词版本为 `object-completeness-v1`，实现位于 `CrystalStudio/ObjectExtraction.Ai.cs`；返回 JSON 必须增加 `completeness`：
-
-| 判定 | 可见证据与处理 |
-| :--- | :--- |
-| `complete` | 游戏视角下轮廓和结构完整，可独立使用，保留待审核 |
-| `incomplete` | 仅为母物体的屋面窄条、檐角、半片屋顶、侧边等残片，剔除 |
-| `uncertain` | 像素、遮挡或边界不足以形成可靠结论，保留并标明完整性不确定 |
-
-第一张图只表示实际提取的候选；第二张图辅助判断归属，周围母建筑的像素不能算作候选已有内容。旧名称、分类及模板匹配也不作为完整性证据。提示词明确区分完整物件和表面残片，因此完整房屋、帐篷、瞭望塔以及细长的旗杆、柱子和结构完整的可复用墙段，不能仅因尺寸、比例或可拼接就被判为残缺。`reason` 必须说明可见依据；不完整项应说明缺失主体或截断结构。
-
-识别仍需模型判断，因此无法保证所有素材都准确。无法确定的结果继续保留给人工审核；明确剔除的结果也可以通过撤销恢复。
-
-## 村镇与郊野场景
-
-在“文件 → 快速创建地图…”中选择“室外省域”，或打开省域生成器，将“场景主题”设为“村镇与郊野”。新建预览默认使用此主题；已有旧版参数保留“自然荒野”的选择。建议使用比奇林地风格、320×320 或 512×512 的地图，先生成 1～2 个村落，再调整河流、悬崖、林地和内部植被。
-
-村镇与郊野主题复用完整原生建筑和物件：住户周围组合菜畦、储物罐、推车与小植物，公告牌和长椅靠近公共建筑或道路。菜畦和工作院生成通往村路的短支路，村落之间沿可通行土地连接；放不下的细节会省略，不通过重叠物件或堵路强行凑数。村落支路使用较窄的地表过渡，保留院落边缘草地。
-
-省域低矮植被会优先分布在林缘、道路两侧和干燥岸边，随内部植被参数调整。完整物件范围必须避开保留通路、已有物件、碰撞区和不兼容地表，不直接覆盖原生河岸或悬崖。带有未经确认底图的装饰仍排除，例如当前目录中的井不会强行放进省域。城镇独立生成器也可以选择“丰富生活场景”装饰。
-
-主题、种子和参数随快速创建配方保存，配方增加城镇目录和装饰地表审核目录的哈希，并标记生成器版本。相同种子、参数和素材可复现布局；历史配方不会自动变成新主题，但新版本增加的生态细节可能改变历史省域的生成结果。旧地图文件不会自动添加场景；需要重新生成预览并确认应用。
-
-目前提供村镇与郊野、森林遗迹、矿区与采石场主题；湿地等独立主题尚未增加。可通行性依据编辑器地图碰撞，不代替服务端寻路、传送点、NPC 或刷怪配置。
-
-## 编辑保护与地图检查
-
-新建地图的宽高范围仍为 16～4096，但总格数不能超过 1600 万；新建、读取、保存和恢复使用相同的总量限制。
-
-右键“单元格属性／选区属性”只应用修改过的字段。选区内 Light、门编号或门偏移存在不同值时，该字段显示为空；留空表示保留各格原值，输入 `0` 表示将该字段设为零。操作仍支持撤销和重做。
-
-有未保存修改的地图及对象编辑标签每分钟生成一次恢复快照，位置为配置目录的 `recovery` 子目录。异常退出后，下次启动会在状态栏提示可用快照数量，通过“文件 → 恢复未保存地图…”打开；恢复内容作为未保存的新标签打开，不直接覆盖原文件。保存、明确放弃修改或正常退出后会清理本会话快照；其他仍在运行的编辑器会话不参与恢复。快照以最近一次成功写入为准，不能恢复尚未生成快照的修改。恢复读取失败时保留文件并记录日志。新快照采用地图文件与 JSON 清单，兼容读取此前版本的 JSON 快照，并保留对象原点与分类信息。
-
-覆盖保存地图或 `.X` 对象时，旁边的同名 `.bak` 文件保留上一版完整内容。需要回退时，先复制备份，再将副本改为 `.map` 或 `.X` 后打开。
-
-“工具 → 检查地图”检查缺失资源库、无效或空图片、开门图像引用、缺少前景或没有可行走邻格的门，以及按高低碰撞计算的八方向独立可行走区域。可取消检查，结果最多显示 1000 项，选择结果后点击“定位”会居中并选中对应单元格。独立区域可能是设计需要，检查不会自动修改地图；未加载资源库时跳过图片引用检查。服务端传送点、刷怪区等外部配置不在本项检查范围内。
-
-图层行右侧的锁定复选框独立于显示开关，锁定状态在本次会话内按地图标签保留。锁定后不能绘制、擦除或填充该层；对象层锁定也保护 Light 和门属性。跨图层的剪切／粘贴、对象放置／移动／删除、特殊笔刷、城墙和生成器应用要求先解锁所有图层，以避免只修改部分图层。复制与查看不受影响，撤销／重做仍可回退已经完成的操作。
-
-## 日志与异常诊断
-
-程序启动时自动创建 UTF-8 日志，默认目录为 `%LOCALAPPDATA%\CrystalStudio\Logs`；设置 `CRYSTALSTUDIO_PROFILE` 时，使用该配置目录下的 `Logs`。如果无法创建日志目录，则尝试 `%TEMP%\CrystalStudio\Logs`，并记录原目录的初始化错误。
-
-每次启动使用独立文件，文件名包含启动时间、进程 ID 和会话标识。记录包含时间及本地时区、级别、进程/线程 ID、操作上下文、异常类型、内部异常和调用堆栈。提取工具记录扫描与导出结果、警告、候选选择和预览错误；资源读取错误记录资源文件、资源库及图片编号。复现问题后，可按时间找到本次启动的 `.log` 文件。
-
-日志同步写入并立即刷新，致命异常额外请求磁盘刷新。单文件达到 8 MiB 后创建后续文件，创建文件时保留最新 20 个程序日志；其他正在运行的实例所占用的文件继续保留，非程序日志文件不参与清理。
-
-全局监听覆盖 UI 调度器、进程未处理异常及未观察的后台任务异常，Avalonia 的警告和错误也写入文件。已知操作异常保留原有错误提示；UI 或进程致命异常记录后继续正常的终止流程，因此不会在未知状态下强行继续编辑。启动和顶层异常返回非零退出码。操作系统强制结束进程、断电及无法执行托管处理器的原生故障，不能保证留下最终异常记录。
-
-## 森林遗迹场景
-
-在“室外省域”的“场景主题”中选择“森林遗迹”，调整“遗迹空地数量”（1～4）。建议使用 320×320 或 512×512 地图；主题固定使用比奇林地素材，提高草地覆盖，默认不生成村镇。
-
-每处遗迹由完整原生倒塌木屋或烧毁屋架、覆藤残墙、入口石像与散落木料组合，周围生成低矮植物。入口保留可行走空地，通过窄支路连接已有道路；不同遗迹连接同一片可通行土地，不跨越没有桥的河流强行连接。后续树木和灌木避开遗迹入口及道路。河岸、悬崖和已有村镇不会被遗迹覆盖，空间不足时按实际能安全放下的数量生成。
-
-仅采用经过真实素材渲染审查、没有异色地面底板的遗迹对象，并检查图片能解码且整件物体不是全透明。核心废墟或残墙素材不可用时停止此主题生成；可选细节缺失时使用可用对象。生成配方版本为 quick-map-v5，继续保存主题和数量参数。
-
-
-## 矿区与采石场场景
-
-在“室外省域”的“场景主题”中选择“矿区与采石场”，调整“采掘场数量”（1～4）。建议使用 320×320 或 512×512 地图；主题固定比奇林地风格，默认开启悬崖，降低内部植被密度，不生成村镇。也可关闭悬崖，或按需要调整河流。
-
-每处采掘场组合完整原生矿口、成组岩块与碎石、矿车、分拣容器、成堆木料、仓储箱和补给桶。采掘面位于场地后侧，装卸与仓储位于两侧；五格宽车道连接矿口、采石面、分拣区、仓储区和地图已有道路。优先选择靠近悬崖的安全地块，避开河岸、已有建筑和悬崖本体；后续植被保留车道与作业空间。
-
-只使用经真实素材审查、没有异色地面底板的完整物件。必需角色的素材不可用时停止生成；可选细节缺失或地块拥挤时按实际安全结果生成，不裁切或重叠物件凑数。矿口是地图场景物件，服务端的进入矿洞、矿石产出、NPC 和采集逻辑需要另外配置。
-
-
-## 天宫、海底与异星地牢
-
-打开“地牢与洞穴生成器”，在“世界主题”中选择“天宫”“海底”或“外星球”。经典模式继续提供原有地牢和洞穴。建议使用 320×320 或 512×512；主题锁定匹配的地牢类型与原生素材，仍可调整种子、房间数量、大小和通道宽度，也支持随机化及参数恢复。
-
-天宫使用中轴殿堂、成对庭院和连接桥，配白色云海、浅色石地、蓝色几何镶嵌、亭阁与成对雕像。海底使用中心圣所、环形礁室与多条放射通路，珊瑚沿礁壁形成聚落。异星使用错位撞击盆地、不可通行的陨坑核心和折线裂隙，以最小生成树连接盆地，增加部分回游路线，搭配暗色玄武岩、红色裂纹地面、水晶与菌类。
-
-所有主题复用经过真实素材预览审查的完整原生物件与地砖，保留原生墙体美术。装饰避开主要通路及房间中心，并检查最终墙体碰撞连通性；地图空间不足时减少房间数量，预览显示实际结果。配方版本更新为 quick-map-v5，记录主题和生成参数。此功能生成编辑器场景，不创建服务端传送、NPC 或刷怪配置。
-
-## 小地图导出尺寸
-
-“文件 → 导出小地图”先打开尺寸面板，再选择 PNG 保存位置。默认“小”，宽高均为地图原始像素尺寸的 1/4；“中”为 1/2，“大”为 1:1。原始像素尺寸按每格 48×32 计算，例如 100×60 格地图对应小 1200×480、中 2400×960、大 4800×1920 像素。
-
-切换预设会填充宽、高输入框，也可以直接输入自定义正整数。自定义比例与地图不同则保留地图比例、居中留黑边。尺寸过大时不能导出。大尺寸使用原始素材精度，中、小按输出比例读取素材；导出仍包含全部美术图层，保持不透明 PNG，不受当前图层显示开关影响。
-
-## 裁剪地图
-
-用选择工具（M）框选需要保留的范围，点击工具栏选择按钮旁的“裁剪到选区”，或选择“工具 → 裁剪到选区”。地图尺寸缩到选区，范围内所有图层、碰撞、门和灯光数据保留，对齐后裁剪范围的左上角移至新地图原点。为保持 2×2 地砖对齐，边界最多向外扩一格，并限制在原地图范围内。
-
-完整保留的物件更新坐标；跨边界物件只保留范围内的地图单元，不再作为完整物件记录。裁剪支持 Ctrl+Z 撤销及重做，先前的编辑历史继续保留；实际写入文件仍需保存。没有选区或存在锁定图层时按钮禁用，此操作用于地图编辑。
-
-## 吸管、手形平移与编辑菜单
-
-工具栏“吸管”支持点击地砖和中间层素材，在素材列表中定位对应图片；地砖任一格都按完整 2×2 地砖拾取。拾取不会绘制，选好后切回笔刷或铅笔继续编辑。原有右键拾取保留。
-
-工具栏“手形平移”支持按住左键拖动画布，不写入地图。中键拖动、空格加拖动继续可用。“编辑”菜单增加“复制可见图层”“剪切可见图层”“粘贴区域”，与 Ctrl+C、Ctrl+X、Ctrl+V 使用相同操作。粘贴进入预览后点击地图放置，Escape 取消；在吸管或手形模式中也可以放置粘贴内容。没有选区时禁用复制和剪切，没有复制内容时禁用粘贴，存在锁定图层时禁用剪切和粘贴。
-
-## 选区移动与地图扩边
-
-使用选择工具（M）框选，再按住选区内部拖动，松开鼠标应用移动。移动包含所有图层、碰撞、门和灯光，与图层显示开关无关；源范围清空，目标矩形被完整覆盖，包括源区域中的空白格。支持重叠移动，拖动预览不会提前修改地图，Esc 取消，红色目标框表示越界、不会放置。选区向外对齐完整 2×2 地砖，位移按 2 格对齐。完整物件随区域更新坐标；被选区切开或被目标覆盖的物件取消完整物件记录，未覆盖的单元仍保留。
-
-打开“工具 → 地图扩边”，分别输入左、上、右、下增加的格数。四边支持非负偶数，至少一边大于 0；面板显示新尺寸并检查地图大小限制。新区域为空白，原内容和完整物件随左、上扩边量平移，素材格式保留。选区移动和扩边都需要解锁所有图层，支持撤销／重做；扩边用于地图编辑页，原文件需保存后才会改变。
+- 界面与文档全中文；官方界面译文的 key 与上游 `Localization/Strings.json` 对齐。
+- **不许假数据**：格式字节布局、光照 alpha、网格阈值、小地图尺寸等数值一律回源上游；上游确实不可得时才显式标注「原版不可得 ⇒ 自定值」并写明依据。
+- 许可证：**MIT**，见 [LICENSE](LICENSE)。
+- Docker：`docker/README.md` 描述的是**尚未在 CI 或任何机器上实跑验证**的编排（开发机无 Docker 环境），请以实际构建结果为准。
