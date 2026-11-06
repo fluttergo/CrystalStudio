@@ -2,7 +2,9 @@
 //! 「笔刷：物体 图号 N · 资源库 M」「落笔 fr_img + btArea」、右「单元格 x,y」与「● 资源库 N 个」。
 //!
 //! 几何（高 30 = 1px 分隔线 + 29px 内容；左右内边距 16）见 [`crate::metrics`]；
-//! 颜色（底色 `#F7F8F9`、正文 `#434D5A`）见 [`crate::theme`]；文案见 [`crate::ui_text`]。
+//! 颜色见 [`crate::theme`]：底色取 `t::ui().status_bar`、**正文取 `t::ui().status_bar_text`**
+//! （官方 `MainWindow.axaml:84` 的 `Status` 用独立键 `ThemeADB8C9` = `#ADB8C9`，
+//! 不是通用正文色 `text` —— 深色下两者差一档）；文案见 [`crate::ui_text`]。
 //!
 //! # 八段全是真实数据
 //!
@@ -187,7 +189,7 @@ pub fn dyn_labels(p: &Painter, l: &Layout, d: &DocText) -> Vec<DynLabel> {
                     pos2(hint_x, cy),
                     Align2::LEFT_CENTER,
                     Rect::from_min_max(pos2(hint_x, inner.top()), pos2(right, inner.bottom())),
-                    t::ui().text,
+                    t::ui().status_bar_text,
                 ),
             ));
             hint_x += w + m::STATUS_SEG_GAP;
@@ -264,7 +266,7 @@ pub fn dyn_labels(p: &Painter, l: &Layout, d: &DocText) -> Vec<DynLabel> {
                 Align2::LEFT_CENTER,
                 // 只占左半幅：右半幅是工具/当前层/笔刷/落笔/坐标/库状态，别把它们的墨迹算到左段头上
             Rect::from_min_max(pos2(inner.left(), inner.top()), pos2(mid_x, inner.bottom())),
-                t::ui().text,
+                t::ui().status_bar_text,
             ),
         ),
         DynLabel::new(
@@ -279,7 +281,7 @@ pub fn dyn_labels(p: &Painter, l: &Layout, d: &DocText) -> Vec<DynLabel> {
                 pos2(tool_x, inner.top()),
                 pos2(layer_x - m::STATUS_SEG_GAP, inner.bottom()),
             ),
-                t::ui().text,
+                t::ui().status_bar_text,
             ),
         ),
         DynLabel::new(
@@ -310,7 +312,7 @@ pub fn dyn_labels(p: &Painter, l: &Layout, d: &DocText) -> Vec<DynLabel> {
                 pos2(brush_x, inner.top()),
                 pos2(hint_x - m::STATUS_SEG_GAP, inner.bottom()),
             ),
-                t::ui().text,
+                t::ui().status_bar_text,
             ),
         ),
         DynLabel::new(
@@ -342,7 +344,7 @@ pub fn dyn_labels(p: &Painter, l: &Layout, d: &DocText) -> Vec<DynLabel> {
                 pos2(inner.left(), inner.top()),
                 pos2(coord_right + m::TEXT_CLIP_SLACK, inner.bottom()),
             ),
-                t::ui().text,
+                t::ui().status_bar_text,
             ),
         ),
         DynLabel::new(
@@ -357,7 +359,7 @@ pub fn dyn_labels(p: &Painter, l: &Layout, d: &DocText) -> Vec<DynLabel> {
                 pos2(lib_left - m::TEXT_CLIP_SLACK, inner.top()),
                 pos2(inner.right() + m::TEXT_CLIP_SLACK, inner.bottom()),
             ),
-                t::ui().text,
+                t::ui().status_bar_text,
             ),
         ),
     ];
@@ -834,5 +836,79 @@ mod tests {
             let op = labs.iter().find(|x| x.name == "status.op").expect("op");
             assert_eq!(op.color, want, "warn={warn} 时的颜色不对");
         }
+    }
+
+    /// **正文段用状态栏专用色**（审计项 H A-004）：左 / 工具 / 笔刷 / 坐标 / 库数 / 印章
+    /// 六段都取 `t::ui().status_bar_text`，**不是**通用正文色 `t::ui().text`；
+    /// 同时强调段（当前层）与说明段（落笔）不许被"顺手全换"。
+    ///
+    /// 为什么必须有这条：色板加了字段、绘制处忘了换（或只换一半），编译和几何用例都发现不了
+    /// —— 那正是"深色下状态栏正文比官方亮一档"的原始缺陷形态。
+    ///
+    /// ⚠ **两档主题各核一遍**，判据不同：浅色下 `status_bar_text` 与 `text` 恰好**同值**
+    /// （官方 `ThemeService.Avalonia.cs:47` 的常量支就是 `#434D5A`，见 `theme::tests`），
+    /// 所以"两色必须不同"只能断言在深色档；浅色档只核"取的是哪个角色"（值相同也照样成立）。
+    #[test]
+    fn 正文段用状态栏专用色() {
+        let ctx = fonts::measure_ctx();
+        let p = Painter::new(
+            ctx,
+            egui::LayerId::debug(),
+            Rect::from_min_size(pos2(0.0, 0.0), egui::vec2(m::WINDOW_W, m::WINDOW_H)),
+        );
+        let l = 窗口();
+        let mut d = 文案("资源库 117 个", "单元格 380,310", "0.map · 700×700 格");
+        // 印章段是可选的：给一个真实长度的印章名，让它真实出现后再核色。
+        d.status_stamp = Some(tx::fill(tx::STAMP_STATUS_TMPL, &[("name", "mir_00000")]));
+        let body = [
+            "status.left",
+            "status.tool",
+            "status.brush",
+            "status.coord",
+            "status.lib",
+            "status.stamp",
+        ];
+        for dark in [false, true] {
+            t::set_dark(dark);
+            let labs = dyn_labels(&p, &l, &d);
+            let get = |n: &str| {
+                labs.iter().find(|x| x.name == n).unwrap_or_else(|| {
+                    panic!(
+                        "dark={dark} 缺 {n}；实有段：{:?}",
+                        labs.iter().map(|x| x.name).collect::<Vec<_>>()
+                    )
+                })
+            };
+            for name in body {
+                assert_eq!(
+                    get(name).color,
+                    t::ui().status_bar_text,
+                    "dark={dark}：{name} 的正文色必须是 status_bar_text（官方 ThemeADB8C9）"
+                );
+            }
+            // 非正文段保持原色：当前层是"破坏性信息"用强调金；落笔是"说明"用次要色。
+            assert_eq!(
+                get("status.layer").color,
+                t::ui().accent_dark,
+                "dark={dark}：当前层仍是强调金（不许被本单顺手改成正文色）"
+            );
+            assert_eq!(
+                get("status.hint").color,
+                t::ui().text_muted,
+                "dark={dark}：落笔说明仍是次要色（不许被本单顺手改成正文色）"
+            );
+            if dark {
+                // 深色下"专用色"与通用正文**必须不同**，否则换没换都看不出来（浅色恰好同值）。
+                for name in body {
+                    assert_ne!(
+                        get(name).color,
+                        t::ui().text,
+                        "dark=1：{name} 不许再用通用正文色 text（那是 #E5E9F0，亮一档）"
+                    );
+                }
+            }
+        }
+        // 复位，别污染同进程其它用例（线程局部，但仍按纪律还原）。
+        t::set_dark(false);
     }
 }

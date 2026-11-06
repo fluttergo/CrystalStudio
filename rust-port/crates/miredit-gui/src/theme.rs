@@ -84,6 +84,17 @@ pub struct Palette {
     pub text: Color32,
     /// 次要/占位/禁用文字色。
     pub text_muted: Color32,
+    /// **状态栏正文色**（`Status` 那段「就绪」/「打开失败…」的文字）。
+    ///
+    /// ⚠ **不是 `text` 的别名**：官方给状态栏正文**单独的键** `ThemeADB8C9`
+    /// （`App.axaml:55`；消费点 `MainWindow.axaml:84` 的 `Status` TextBlock
+    /// `Foreground="{DynamicResource ThemeADB8C9}"`），深色下它比 `text`
+    /// （`Window` 的 `Foreground` `#E5E9F0`）**暗一档**。借用 `text` 会让状态栏正文
+    /// 比官方亮一档 —— 审计项 H A-004 就是这一条。
+    ///
+    /// 浅色侧两者**同值** `#434D5A`，那是 `ThemeService.Avalonia.cs:47` 常量支的结果
+    /// （见 `LIGHT.status_bar_text` 的算式），不是抄错角色。
+    pub status_bar_text: Color32,
 
     // ── 强调色族 ──
     /// 强调色（主按钮填充 / 选中描边 / 图标）。
@@ -209,6 +220,16 @@ pub const LIGHT: Palette = Palette {
     text: Color32::from_rgb(0x43, 0x4D, 0x5A),
     // 次要文字。搜索框占位符最暗像素 (1158,406) = `#9EA4AB`。
     text_muted: Color32::from_rgb(0x9E, 0xA4, 0xAB),
+    // 状态栏正文。官方: `MainWindow.axaml:84` 的 `Status` TextBlock
+    //       `Foreground="{DynamicResource ThemeADB8C9}"`，键定义 `App.axaml:55` = `#ADB8C9`。
+    //       浅色按 `ThemeService.Avalonia.cs:43-47` 现算（**非蓝键、lum ≥ 0.4 那一支**）：
+    //         blue   = B−R = 201−173 = 28 ≤ 35 ⇒ 不是蓝键（不走 `:46`）
+    //         lum    = (173×.2126 + 184×.7152 + 201×.0722)/255 = 182.889/255 = 0.71721 ≥ 0.4
+    //         ⇒ `:47` 的后半支是**常量** `Color.FromRgb(67, 77, 90)` = **#434D5A**
+    //           （不是 `Blend(White, #A3ADB9, …)` 那一支 —— 那一支只在 lum < 0.4 时用）
+    //       旁证：截图状态栏正文 (104,924) 取样 = `#434D5A` ⇒ 与 `LIGHT.text` **同值**
+    //       （同值是官方变换的结论；深色侧两者不同，见 `DARK.status_bar_text`）。
+    status_bar_text: Color32::from_rgb(0x43, 0x4D, 0x5A),
 
     // 强调金。`Set Library Folder` 按钮 (1230,610)-(1390,625) 直方图：`#CC9629` 占 79.8%。
     accent: Color32::from_rgb(0xCC, 0x96, 0x29),
@@ -347,6 +368,14 @@ pub const DARK: Palette = Palette {
     text: Color32::from_rgb(0xE5, 0xE9, 0xF0),
     // 官方: ThemeService.Avalonia.cs:50 `resources["Muted"] = Brush("Theme929CAB")`。
     text_muted: Color32::from_rgb(0x92, 0x9C, 0xAB),
+    // 官方: App.axaml:55 `ThemeADB8C9` = `#ADB8C9`；消费点 `MainWindow.axaml:84`
+    //       `Status` TextBlock 的 `Foreground="{DynamicResource ThemeADB8C9}"`。
+    //       ⚠ 状态栏那一行有**三个文字角色**，别合并：正文 = 本键（`#ADB8C9`）、
+    //       `Coordinates` 与 `LibraryStatus` = `Muted`（`#929CAB`，见 `text_muted`）、
+    //       圆点 = `ThemeD1AD77`（见 `status_dot`）。
+    //       旧值借的是 `text`（`#E5E9F0`）⇒ 深色下状态栏正文比官方**亮一档**（本单订正）；
+    //       浅色侧没有视觉变化（`:47` 的常量支恰好也是 `#434D5A`）。
+    status_bar_text: Color32::from_rgb(0xAD, 0xB8, 0xC9),
 
     // 官方: App.axaml:70 命名刷 `Accent` = `#8498FF`（ThemeService.Avalonia.cs:32 的默认 accent
     //       也是 `Color.FromRgb(132,152,255)`）。
@@ -506,6 +535,7 @@ mod tests {
             ("status_bar", LIGHT.status_bar, DARK.status_bar),
             ("text", LIGHT.text, DARK.text),
             ("text_muted", LIGHT.text_muted, DARK.text_muted),
+            ("status_bar_text", LIGHT.status_bar_text, DARK.status_bar_text),
             ("accent", LIGHT.accent, DARK.accent),
             ("accent_dark", LIGHT.accent_dark, DARK.accent_dark),
             ("accent_soft", LIGHT.accent_soft, DARK.accent_soft),
@@ -536,7 +566,7 @@ mod tests {
             ("menu_popup_border", LIGHT.menu_popup_border, DARK.menu_popup_border),
             ("menu_popup_hover", LIGHT.menu_popup_hover, DARK.menu_popup_hover),
         ];
-        assert_eq!(pairs.len() + same_ok.len(), 41, "字段清单要覆盖全部 41 项");
+        assert_eq!(pairs.len() + same_ok.len(), 42, "字段清单要覆盖全部 42 项");
         for (name, l, d) in pairs {
             assert_ne!(l, d, "字段 {name} 两套色板相同（深色模式会漏变）");
         }
@@ -641,6 +671,62 @@ mod tests {
         ] {
             assert_eq!(light_of(dark), c(light), "{name} 与官方公式算出的浅色不一致");
         }
+    }
+
+    /// **状态栏正文色回源**（审计项 H A-004）：深色 = 官方键 `#ADB8C9`，
+    /// 浅色 = `ThemeService.Avalonia.cs:47` 常量支 `#434D5A`。
+    ///
+    /// 钉的是「状态栏正文是**独立角色**」这条结论：若有人把它改回 `text`
+    /// （深色 `#E5E9F0`）或 `text_muted`（`#929CAB`），深色侧立刻不等 ⇒ 本用例变红。
+    ///
+    /// `want` 一律**从官方键现算**（复刻 `:43` 判蓝 + `:47` 两支），不复用板里的字面量
+    /// —— 否则"色板和断言一起抄错"仍然全绿，那等于只证了自洽。
+    #[test]
+    fn 状态栏正文取官方键与其浅色变换() {
+        // 官方源键：`App.axaml:55` `ThemeADB8C9` = `#ADB8C9`
+        // （消费点 `MainWindow.axaml:84` 的 `Status` TextBlock）。
+        let src = [0xAD_u8, 0xB8, 0xC9];
+        let got_dark = (
+            DARK.status_bar_text.r(),
+            DARK.status_bar_text.g(),
+            DARK.status_bar_text.b(),
+        );
+        assert_eq!(
+            got_dark,
+            (src[0], src[1], src[2]),
+            "深色状态栏正文必须是官方键 ThemeADB8C9 的 #ADB8C9（旧值借 text 的 #E5E9F0 ⇒ 亮一档）"
+        );
+
+        // 浅色：复刻 `ThemeService.Avalonia.cs:43` 判蓝 + `:47` 非蓝键的两支。
+        let lum = (f64::from(src[0]) * 0.2126
+            + f64::from(src[1]) * 0.7152
+            + f64::from(src[2]) * 0.0722)
+            / 255.0;
+        let blue = i32::from(src[2]) - i32::from(src[0]) > 35
+            && i32::from(src[2]) - i32::from(src[1]) > 12;
+        assert!(!blue, "ThemeADB8C9 不是蓝键（B−R=28 ≤ 35）⇒ 走 `:47` 非蓝分支");
+        assert!(lum >= 0.4, "#ADB8C9 的 lum 应 ≥ 0.4 才走常量支，实测 {lum}");
+        // `:47` 后半支是**常量** `Color.FromRgb(67, 77, 90)`，与源键无关。
+        let want_light = (67_u8, 77_u8, 90_u8);
+        let got_light = (
+            LIGHT.status_bar_text.r(),
+            LIGHT.status_bar_text.g(),
+            LIGHT.status_bar_text.b(),
+        );
+        assert_eq!(
+            got_light, want_light,
+            "浅色状态栏正文必须是 `:47` 常量支的 #434D5A"
+        );
+
+        // 与通用正文色的关系：浅色同值（官方常量支的结论）、深色不同（差一档）。
+        assert_eq!(
+            LIGHT.status_bar_text, LIGHT.text,
+            "浅色同值是 `:47` 常量支的结果，不是抄错角色"
+        );
+        assert_ne!(
+            DARK.status_bar_text, DARK.text,
+            "深色下状态栏正文必须比 text 暗一档"
+        );
     }
 
     /// 全局开关：默认浅色；`set_dark(true)` 后 [`ui`] 换板；恢复后逐字段回到浅色。
