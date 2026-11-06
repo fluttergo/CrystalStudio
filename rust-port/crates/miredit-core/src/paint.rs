@@ -297,6 +297,17 @@ pub fn paint(
                 // `Old12` 档没有库号字节 ⇒ 不写（`to_bytes` 不会凭空长出一个字节）。`edit.rs:1470-1473`
                 layer.set_lib_byte(&mut out, b.lib_byte);
             }
+            // ④ **中层动画（C# `MiddleFrames`/`MiddleTick`）不在这里清**，两个理由都有实证：
+            //
+            //    ① 本 crate 的 `Cell.ani_frame`/`ani_tick` 是**前景**动画，不是中层动画：
+            //       磁盘上是 14 B 的 off 8/9（`mir2-map/src/cell.rs:352-353`），C# 读进
+            //       `franimationframe`/`franimationtick`（`LegacyMapReader.cs:245-246`，
+            //       只在有前景时赋给 `Foreground`，`:259-260`）⇒ 清它等于把前景动画抹掉，
+            //       而上游 `MapViewport.cs:592`（另一副本 `:597`）的中层分支一个字节都不碰 `Foreground`。
+            //    ② `Mir3Wemade`/`Mir3Shanda`/`CrystalCs` 里真正的中层动画是**另外两个字节**
+            //       （`LegacyMapReader.cs:418`/`:486`/`:641` ⇒ `mir2-format::Cell.mid_ani_frame`/
+            //       `mid_ani_tick`），**编辑视图不承载**（`convert.rs` 的 `LOST_IN_VIEW` 第 6/7 条）
+            //       ⇒ 这里也无从清起。完整论证 + 语料统计见 `selection.rs` 模块文档 §二 第 4/5 条。
         }
         Tool::Eraser => {
             let cur = layer.img_of(&cell);
@@ -305,6 +316,12 @@ pub fn paint(
                 layer.set_img(&mut out, cur & !COLLISION_BIT);
             } else {
                 // 图号层：只清图号，**保留最高位**（否则橡皮变成"顺手把墙拆了"）。`edit.rs:1480-1483`
+                //
+                // ⚠ 中层动画同样**不在这里清**：上游 `MapViewport.cs:592` 的 erase 与画图走同一个
+                // `case MapLayer.Middle`（`MiddleImage = 0` 且 `MiddleFrames/Tick = 0`），但本 crate 的
+                // `ani_frame`/`ani_tick` 是**前景**动画字节（`LegacyMapReader.cs:245-246`/`:259-260`），
+                // 中层动画另在不承载的 `mid_ani_*` 里 —— 见 `Tool::Brush` 分支 ④ 与
+                // `selection.rs` 模块文档 §二 第 4/5 条。
                 layer.set_img(&mut out, cur & COLLISION_BIT);
             }
         }

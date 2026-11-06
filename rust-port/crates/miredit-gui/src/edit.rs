@@ -1284,20 +1284,25 @@ mod tests {
     }
 
     /// **吸管取值**：把该格 `bk_img`（含阻挡位）与 `btTiles` 原样取下。
+    ///
+    /// ⚠ 夹具放在**偶偶格** `(2,2)`：地表吸管按 2×2 对齐到偶偶格再读格
+    /// （上游 `CrystalStudio/MapViewport.cs:405` `if (Layer == MapLayer.Ground) { x &= ~1; y &= ~1; }`，
+    /// 本 crate `EditSession::pick_anchor`）。放奇格会被吸附到左上的偶格，
+    /// 吸到的是空图号 —— 那是另一条用例（吸附本身）要证明的事，不是本条的判定意图。
     #[test]
     fn 吸管取到图号与库号() {
         let mut map = 造图(3, 3, CellFormat::New14);
-        let idx = index_of(&map, 1, 2).unwrap();
+        let idx = index_of(&map, 2, 2).unwrap();
         map.cells[idx].bk_img = 0x8000 | 901;
         map.cells[idx].tiles = 4;
         let mut ed = EditSession::default();
-        let b = ed.pick_at(&map, 1, 2).expect("图内格应能取");
+        let b = ed.pick_at(&map, 2, 2).expect("图内格应能取");
         assert_eq!(b.family, Family::Ground, "缺省当前层是地表层 ⇒ 笔刷族=地面");
         assert_eq!(b.img, 0x8000 | 901);
         assert_eq!(b.sprite(), 901, "图号要去掉阻挡位");
         assert_eq!(b.lib_byte, 4);
         assert!(b.blocked(), "阻挡位必须一起取下来");
-        assert_eq!(b.from, Some((1, 2)));
+        assert_eq!(b.from, Some((2, 2)), "from 记锚点（偶偶格），就是取内容的这一格");
         assert_eq!(ed.brush(), Some(b));
         // 吸管不改地图、不进撤销栈
         assert_eq!(ed.undo_len(), 0);
@@ -1906,13 +1911,17 @@ mod tests {
     ///
     /// 审计 E1 第 4 条：`pick_at` 取的是地图里的**1 基**字节，显示成「图号」时
     /// **不能**再减 1（减了就与面板/状态栏的口径又差 1）。
+    ///
+    /// ⚠ 夹具与取材点都在**偶偶格** `(0,0)`：地表吸管按 2×2 对齐到偶偶格再读格
+    /// （`MapViewport.cs:405`）。`(1,1)` 会被吸附到 `(0,0)`，而本图 `(0,0)` 是空格
+    /// ⇒ 吸到图号 0，反显就成了 0 而不是 905（那是吸附用例的判定，不是本条的意图）。
     #[test]
     fn 吸管反显图号不再减一() {
         let mut map = 空图2x2();
-        let idx = index_of(&map, 1, 1).unwrap();
+        let idx = index_of(&map, 0, 0).unwrap();
         map.cells[idx].bk_img = 905;
         let mut ed = EditSession::default();
-        let b = ed.pick_at(&map, 1, 1).expect("图内格");
+        let b = ed.pick_at(&map, 0, 0).expect("图内格");
         assert_eq!(b.img, 905, "吸管必须原样取 1 基图号");
         assert_eq!(b.sprite(), 905, "反显图号 = 905（不是 904）");
         // 状态栏那一行的真实文案
@@ -2496,10 +2505,14 @@ mod tests {
 
     /// **吸管在阻挡层取到同一格的内容**：低位阻挡 ⇒ `bk_img`/`btTiles`（地面族），
     /// 高位阻挡 ⇒ `fr_img`/`btArea`（表层族）。取的是"格子内容"，不是"这一层能写什么"。
+    ///
+    /// ⚠ 三层都取**偶偶格** `(2,2)`：地表吸管按 2×2 对齐（`MapViewport.cs:405`），
+    /// 阻挡层不吸附。取奇格时两者读的不是同一格（`(1,1)` vs `(0,0)`）⇒ `l == g`
+    /// 恒不成立，那是「地表对齐」的差异，不是「取同一格内容」这条判定要证的事。
     #[test]
     fn 吸管在阻挡层取同一格内容() {
         let mut map = 造图(3, 3, CellFormat::New14);
-        let idx = index_of(&map, 1, 1).unwrap();
+        let idx = index_of(&map, 2, 2).unwrap();
         map.cells[idx].bk_img = 0x8000 | 111;
         map.cells[idx].tiles = 21;
         map.cells[idx].fr_img = 0x8000 | 333;
@@ -2507,16 +2520,16 @@ mod tests {
 
         let mut ground = EditSession::default();
         ground.set_layer(EditLayer::Ground);
-        let g = ground.pick_at(&map, 1, 1).expect("图内格");
+        let g = ground.pick_at(&map, 2, 2).expect("图内格");
 
         let mut low = EditSession::default();
         low.set_layer(EditLayer::LowCollision);
-        let l = low.pick_at(&map, 1, 1).expect("图内格");
+        let l = low.pick_at(&map, 2, 2).expect("图内格");
         assert_eq!(l, g, "低位阻挡吸到的笔刷必须与地表层一致");
 
         let mut high = EditSession::default();
         high.set_layer(EditLayer::HighCollision);
-        let h = high.pick_at(&map, 1, 1).expect("图内格");
+        let h = high.pick_at(&map, 2, 2).expect("图内格");
         assert_eq!(h.family, Family::Surface);
         assert_eq!(h.img, 0x8000 | 333);
         assert_eq!(h.lib_byte, 23);
@@ -2711,13 +2724,17 @@ mod tests {
         }
         assert_eq!(block, 16);
 
-        // 造一支"图号 1、库号 3"的地表笔刷：临时改一格吸走，再改回去
-        let i99 = index_of(&map, 9, 9).unwrap();
-        map.cells[i99].bk_img = 1;
+        // 造一支"图号 1、库号 3"的地表笔刷：临时改一格吸走，再改回去。
+        // ⚠ 临时值必须放在**偶偶格** `(8,8)`：地表吸管按 2×2 对齐（`MapViewport.cs:405`），
+        // 点 `(9,9)` 会吸附到 `(8,8)` 读格 —— 值放奇格的话吸到的是 `(8,8)` 原来的 9，
+        // 填充就成了"把 7 写成 9"，与"图号 1"的判定意图不符。
+        let i88 = index_of(&map, 8, 8).unwrap();
+        map.cells[i88].bk_img = 1;
         let mut ed = EditSession::default();
         ed.set_layer(EditLayer::Ground);
-        ed.pick_at(&map, 9, 9);
-        map.cells[i99].bk_img = 9;
+        ed.pick_at(&map, 8, 8);
+        assert_eq!(ed.brush().map(|b| b.img), Some(1), "笔刷取自锚点 (8,8) 的图号 1");
+        map.cells[i88].bk_img = 9;
         let before = map.to_bytes();
         let snapshot = Map::parse(&before).unwrap();
 
@@ -3364,8 +3381,11 @@ mod tests {
             bytes[HEADER_LEN + i * 12..HEADER_LEN + i * 12 + 2]
                 .copy_from_slice(&(0x8007u16).to_le_bytes());
         }
-        // (7,7) 作笔刷源：纯图号 1、不带 bit15（列优先下标 = 7*8+7 = 63）
-        bytes[HEADER_LEN + 63 * 12..HEADER_LEN + 63 * 12 + 2]
+        // 笔刷源放在**偶偶格** (6,6)：纯图号 1、不带 bit15（列优先下标 = 6*8+6 = 54）。
+        // ⚠ 不能放 (7,7)：地表吸管按 2×2 对齐（`MapViewport.cs:405`），脚本里的
+        // `Pickup(7,7)` 会吸附到 (6,6) 读格 —— 值放奇格时吸到的是 (6,6) 的 0x8007，
+        // 低 15 位 7 与整图相同 ⇒ 脚本一格都不改（旧版本正是这样退化成空操作的）。
+        bytes[HEADER_LEN + 54 * 12..HEADER_LEN + 54 * 12 + 2]
             .copy_from_slice(&1u16.to_le_bytes());
         std::fs::write(&p, &bytes).unwrap();
 
@@ -3385,7 +3405,9 @@ mod tests {
         let m = &doc.doc.as_ref().expect("临时地图应能打开").map;
         for x in 0..8u16 {
             for y in 0..8u16 {
-                let want = if (x, y) == (7, 7) { 0 } else { COLLISION_BIT };
+                // (6,6) 是笔刷源那格：它本来就没有 bit15，写图号后仍必须没有；
+                // 其余格都带 bit15，落笔/拖动/填充都不许动它。
+                let want = if (x, y) == (6, 6) { 0 } else { COLLISION_BIT };
                 assert_eq!(
                     m.cell(x, y).unwrap().bk_img & COLLISION_BIT,
                     want,

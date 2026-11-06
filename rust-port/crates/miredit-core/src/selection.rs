@@ -49,7 +49,7 @@
 //! 物体  if (可见[2] && (fr_img  & 0x7FFF) != 0) { fr_img  &= 0x8000; area     = 0; }   // RegionCopy.cs:61-64
 //! ```
 //!
-//! 三处细节，逐条给理由：
+//! 细节逐条给理由（第 1~3 条是原判据；第 4~6 条是 **2026-11-06 复核订正**新增）：
 //!
 //! 1. **判据掩 `0x7FFF` 而不是整 16 位**：C# 的判据是 `(s.Cell.BackImage & 0x1FFFFFFF) != 0`
 //!    （`RegionCopy.cs:52`），它把 `0x60000000` 的两个阻挡位掩掉了 ⇒
@@ -69,6 +69,48 @@
 //!    - `RegionCopy.cs:55` 清了地表的 `TileAnimation`/`TileOffset`/`TileFrames`，那是 **36 B 档**的扩展字节
 //!      （`LegacyMapReader.cs:300-303`），在本 crate 里落在**不透明的 22 字节尾区** `Cell::tail`
 //!      （`convert.rs` 的 `FIELD_MAP` 第 12 条）⇒ 按猜测清尾区会写坏未知字节，故**不清**。
+//! 4. ⚠ **订正（2026-11-06，I F1 复核）：视图 `ani_frame`/`ani_tick` 是「前景」动画，不是中层动画。**
+//!    第 3 条的**结论不变**（清中层时不动这两个字节），但它只对 14 B 档给了理由，且**行号已过期**；
+//!    另有一条「视图 `ani_frame`/`ani_tick` 就是中层动画字节、清中层时该清 0」的说法在本仓流传过 ——
+//!    **该说法错**，逐条证否（三源：上游原文 / 本 crate 字段表 / 真实语料）：
+//!    - **源头**：`LegacyMapReader.cs:418`/`:486`/`:641` 读的**确实是** `MiddleAnimationFrame`，但它们
+//!      分别在 `LoadMapType5`（`Mir3Wemade`）、`LoadMapType6`（`Mir3Shanda`）、`LoadMapType100`
+//!      （`CrystalCs`）三支里，且读的是**格内其它偏移**（`mir3_wemade.rs:260-261` 的 `c[1]`/`c[2]`、
+//!      `mir3_shanda.rs:149-150` 的 `c[10]`/`c[11]`）——**不是 14 B 档的 off 8/9**。
+//!    - **反面**：全文件给 `MiddleAnimation*` 赋值的只有 6 处（`:418`/`:422`、`:486`/`:491`、`:641`/`:642`）
+//!      ⇒ `LoadMapType0`/`1`/`2`/`3`/`4`/`7`（`Old12`/`Wemade2010`/`Shanda14`/`Shanda2012`/`AntiHack`/
+//!      `Heroes34`）里这两个字段**恒 0**，C# 清它们等于「清 0 到 0」。
+//!    - **本 crate 的归属**：视图 `ani_frame`/`ani_tick` ↔ `mir2-format::Cell.ani_frame/ani_tick`
+//!      （`convert.rs` 的 `FIELD_MAP` 第 6/7 条）= 磁盘 off 8/9（`mir2-map/src/cell.rs:309-311`、
+//!      `:352-353`）= C# 的 `franimationframe`/`franimationtick`（`LegacyMapReader.cs:245-246` 读、
+//!      `:259-260` 只在有前景时赋给 `Foreground`）⇒ **前景动画**；`stamp.rs:99-100` 是同一口径
+//!      （`.X` 的 `foreground.frames/tick` → `StampCellInput.ani_frame`，与本字段同名不同义）。
+//!      上游 `MapViewport.cs:592` 的中层分支**一个字节都不碰** `Foreground`，只清
+//!      `MiddleFrames`/`MiddleTick`。
+//!    - **语料佐证**（2026-11-06 实测 `E:\GodM2\GodotClient\maps` 的 53 张 14 B 图 / 2,219,118 格）：
+//!      `ani_*` 非 0 的 997 格里 **978 格（98.1%）同时有前景**；「前景为 0、`mid_img != 0`、
+//!      且 `ani_* != 0`」的只有 7 格（0.0003%）——这是随机杂字节量级，不是「中层动画」。
+//!    - **结论**：清中层时清 `ani_frame`/`ani_tick` = **抹掉前景动画**，与上游只清
+//!      `MiddleFrames`/`MiddleTick` 的行为相反，故**不清**。
+//!    - **行号订正**（文件增长漂移，本单实测两份上游副本）：`LegacyMapReader.cs:243-244` → `:245-246`、
+//!      `:257-258` → `:259-260`；`Document.cs:63` → `:71`；`mir2-map/src/cell.rs:32-33` → `:309-311`
+//!      （字段）／`:352-353`（解析）；本模块与 `paint.rs` 多处引的 `MapViewport.cs:546`（地表分支，
+//!      实为 `ClearSelection` 而不是 `BucketFill`）→ **`:592`**（598 行取证副本）／`:597`
+//!      （`_upstream` 的 603 行副本，审计单用的就是这套新编号）。
+//! 5. **已知缺口（未修，单列）**：`Mir3Wemade`/`Mir3Shanda`/`CrystalCs` 的中层动画在 C# 里**有真值**，
+//!    但落在 `mir2-format::Cell.mid_ani_frame`/`mid_ani_tick`，**编辑视图不承载**
+//!    （`convert.rs:261-262` 的 `LOST_IN_VIEW` 第 6/7 条）⇒ 清中层时**清不到它**。要清得先给视图加
+//!    这两个字段（`mir2-map` 的 `Cell` + `convert.rs` 的 `FIELD_MAP`），属**跨 crate 变更**。
+//!    对唯二 `editable` 的 `Shanda14`/`Old12` **没有可观测差异**（上游那边恒 0）。
+//! 6. **`ClearSelection` 的「无条件清」 vs `CutSource` 的「有内容才清」**（2026-11-06 补记）：
+//!    - 上游 `MapViewport.cs:592` 的中层分支是 `c.MiddleImage = 0; c.MiddleFrames = 0;
+//!      c.MiddleTick = 0;`，**不看** `MiddleImage != 0`，而且逐格 `History.Record`
+//!      ⇒ **空选区删一次也留下一步「什么都没变」的撤销**；
+//!    - `RegionCopy.cs:57` 则是 `if (middle && s.Cell.MiddleImage != 0)`（**有内容才清**）。
+//!    - 本 crate 两条路径共用 [`clear_plan`]，统一取 `CutSource` 的**条件**口径
+//!      （`after == before` 就跳过）⇒ 「删除空选区」在这里 `changes` 为空：不记撤销步、回执 0 格。
+//!      这是**有意偏离**（保「值没变不记步」的全局口径，`edit.rs:903-905`），不是漏改；
+//!      也没有为此新增公共 API（`vis` 一个参数已经区分了层，两种口径的差别只剩「空选区要不要记步」）。
 //!
 //! # 三、剪贴板
 //!
@@ -584,6 +626,10 @@ pub(crate) fn clear_plan(view: &Map, id: FormatId, sel: Selection, vis: [bool; 3
             }
         }
         // 中层：`RegionCopy.cs:57-60`（中层没有阻挡位 ⇒ 整字段置 0）
+        //
+        // ⚠ 动画两字节**不在这里清**（模块文档 §二 第 4/5 条）：视图的 `ani_frame`/`ani_tick` 是
+        // **前景**动画（清它会抹掉前景），真正的中层动画 `mid_ani_frame`/`mid_ani_tick` 又不在视图里
+        // （`convert.rs` 的 `LOST_IN_VIEW`）⇒ 这一层现在既不该清 `ani_*`、也清不到 `mid_ani_*`。
         if 清中层 && before.mid_img & SPRITE_MAX != 0 {
             after.mid_img = 0;
             if before.sm_tiles != 0 {

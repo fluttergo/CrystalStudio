@@ -23,22 +23,25 @@ fn 缺省状态() {
 }
 
 /// 吸管取到图号与库号（整 16 位含阻挡位）。来源：`edit.rs:2138-2155`。
+///
+/// ⚠ 取的是**偶偶格** `(2,2)`：地表层按 2×2 对齐（`MapViewport.cs:405`），
+/// 奇格会被吸附到偶格再读（吸附本身见 `地表吸管吸附到偶格`）。
 #[test]
 fn 吸管取到图号与库号() {
     let mut ed = 会话(3, 3, CellFormat::New14);
     {
         let map = &mut ed.document_mut().view_mut();
-        let i = crate::document::index_of(map, 1, 2).unwrap();
+        let i = crate::document::index_of(map, 2, 2).unwrap();
         map.cells[i].bk_img = 0x8000 | 901;
         map.cells[i].tiles = 4;
     }
-    let b = ed.pick_at(1, 2).expect("图内格应能取");
+    let b = ed.pick_at(2, 2).expect("图内格应能取");
     assert_eq!(b.family, Family::Ground, "缺省当前层是地表层 ⇒ 笔刷族=地面");
     assert_eq!(b.img, 0x8000 | 901);
     assert_eq!(b.sprite(), 901, "图号要去掉阻挡位");
     assert_eq!(b.lib_byte, 4);
     assert!(b.blocked(), "阻挡位必须一起取下来");
-    assert_eq!(b.from, Some((1, 2)));
+    assert_eq!(b.from, Some((2, 2)));
     assert_eq!(ed.brush(), Some(b));
     // 吸管不改地图、不进撤销栈、不动脏标记
     assert_eq!(ed.undo_len(), 0);
@@ -64,6 +67,123 @@ fn 十二字节档吸管不知道库号() {
     let b = ed.pick_at(0, 0).unwrap();
     assert_eq!(b.lib, None, "Old12 档真的不知道库号");
     assert!(b.img > 0);
+}
+
+/// **地表吸管吸附到偶偶格**（审计线 R8/E2）。
+///
+/// 上游原文 `CrystalStudio/MapViewport.cs:402-414` 的 `PickTile`：
+/// `:404` 越界/层门控 → **`:405` `if (Layer == MapLayer.Ground) { x &= ~1; y &= ~1; }`**
+/// → `:406` `Document.Get(x, y)` → `:408` 读 `(BackImage & 0x1FFFFFFF) - 1`。
+/// 地表格按 2×2 图块拼贴，可见图块只在偶偶格上，奇格通常是`bk_img == 0`。
+///
+/// 合成 2×2（`Old12`）：偶格 `(0,0).bk_img = 7`、奇格 `(1,0).bk_img = 0`。三条取笔刷路径
+/// 都必须吸到 **7**，且 `from` 记的是**锚点** `(0,0)`（不是点击格）。
+/// 旧行为（不吸附）会吸到 `img = 0` ⇒ 落笔把可见偶格写成 0（见下一条用例）。
+#[test]
+fn 地表吸管吸附到偶格() {
+    // 外部地图：给 `pick_at_from` 用
+    let mut map = 造图(2, 2, CellFormat::Old12);
+    let i00 = crate::document::index_of(&map, 0, 0).unwrap();
+    map.cells[i00].bk_img = 7;
+    let i10 = crate::document::index_of(&map, 1, 0).unwrap();
+    map.cells[i10].bk_img = 0;
+    assert_eq!(map.cell(1, 0).unwrap().bk_img, 0, "奇格确实是空的（前提）");
+
+    let mut ed = 会话(2, 2, CellFormat::Old12);
+    assert_eq!(ed.layer(), EditLayer::Ground, "缺省当前层是地表");
+
+    // ① 奇格点击 ⇒ 吸到偶格内容（`pick_at_from`）
+    let b = ed.pick_at_from(&map, 1, 0).expect("图内格应能取");
+    assert_eq!(b.img, 7, "奇格 (1,0) 是空图号，吸附后必须读偶格 (0,0) 的 7");
+    assert_eq!(b.from, Some((0, 0)), "from 记锚点，不是点击格");
+
+    // ② 会话自己的图：同一条判据（`pick_at` 与 `pick_at_from` 不许各说各话）
+    {
+        let view = ed.document_mut().view_mut();
+        let i00 = crate::document::index_of(view, 0, 0).unwrap();
+        view.cells[i00].bk_img = 7;
+        let i10 = crate::document::index_of(view, 1, 0).unwrap();
+        view.cells[i10].bk_img = 0;
+    }
+    let b2 = ed.pick_at(1, 0).expect("图内格应能取");
+    assert_eq!(b2.img, 7, "pick_at 与 pick_at_from 必须同一判据");
+    assert_eq!(b2.from, Some((0, 0)));
+
+    // ③ 点偶格：吸附幂等（对齐过的坐标再对齐不变）
+    let b3 = ed.pick_at_from(&map, 0, 0).expect("图内格应能取");
+    assert_eq!(b3.img, 7);
+    assert_eq!(b3.from, Some((0, 0)));
+}
+
+/// 对照：**中层不吸附**（上游 `:405` 的 `x &= ~1` 只在地表分支）。
+///
+/// 合成 2×2（`Old12`）把**奇格** `(1,0).mid_img = 9` ⇒ 吸到的就是 9，`from = (1,0)`；
+/// 若我们的中层也吸附，读到的会是 `(0,0)`（`mid_img = 0` ⇒ 笔刷图号 0）。
+#[test]
+fn 中层吸管不吸附() {
+    let mut map = 造图(2, 2, CellFormat::Old12);
+    let i10 = crate::document::index_of(&map, 1, 0).unwrap();
+    map.cells[i10].mid_img = 9;
+    let i00 = crate::document::index_of(&map, 0, 0).unwrap();
+    map.cells[i00].mid_img = 0;
+
+    let mut ed = 会话(2, 2, CellFormat::Old12);
+    ed.set_layer(EditLayer::Middle);
+    let b = ed.pick_at_from(&map, 1, 0).expect("图内格应能取");
+    assert_eq!(b.family, Family::Middle);
+    assert_eq!(b.img, 9, "中层逐格，不吃 2×2 吸附");
+    assert_eq!(b.from, Some((1, 0)), "中层 from 就是点击格");
+    assert_eq!(ed.pick_at(1, 0).map(|b| b.from), Some(Some((1, 0))));
+}
+
+/// 吸管锚点与填充起点**同一条判据**（防"两套网格"漂移）。
+///
+/// 取笔刷要吸附（`MapViewport.cs:405`），填充起点也要对齐（`:499`，本 crate 的
+/// [`crate::fill::align_start`]）；两处必须给出同一张网格，否则会出现
+/// "吸管吸偶格、填充从奇格起"的两套网格（`session.rs` 模块文档 §二 记的教训）。
+#[test]
+fn 吸管锚点与填充对齐同源() {
+    let mut ed = 会话(8, 8, CellFormat::New14);
+    for layer in EditLayer::ALL {
+        ed.set_layer(layer);
+        for x in 0..8u16 {
+            for y in 0..8u16 {
+                assert_eq!(
+                    ed.pick_anchor(x, y),
+                    crate::fill::align_start(layer, x, y),
+                    "层 {layer:?} 的 ({x},{y}) 两处对齐不一致"
+                );
+            }
+        }
+    }
+}
+
+/// **吸附后落笔不擦掉看得见的地表**（用户视角的那条症状）。
+///
+/// 旧行为：奇格吸到 `img = 0` 的空笔刷，随后在奇格落 3×3（尺寸 3）时覆盖到相邻偶格，
+/// 把**看得见的那格图号写成 0** ⇒ "吸一下地表就画不出来了 / 地表被擦掉"。
+/// 本用例钉住：吸附后笔刷图号是 7，落笔后偶格 `(0,0)` 仍是 7。
+#[test]
+fn 吸偶格后落笔不擦掉可见地表() {
+    let mut ed = 会话(4, 4, CellFormat::Old12);
+    {
+        let view = ed.document_mut().view_mut();
+        let i00 = crate::document::index_of(view, 0, 0).unwrap();
+        view.cells[i00].bk_img = 7;
+        let i10 = crate::document::index_of(view, 1, 0).unwrap();
+        view.cells[i10].bk_img = 0;
+    }
+    let b = ed.pick_at(1, 0).expect("图内格应能取");
+    assert_eq!(b.img, 7, "先决条件：吸附后笔刷图号非 0");
+    assert_eq!(ed.brush_size(), 3, "缺省尺寸 3（3×3 会盖到偶格）");
+    let n = ed.paint_stroke_once(1, 0);
+    assert!(n > 0, "落笔必须真的写到格（否则本用例什么都没证明）");
+    let view = ed.document().view();
+    assert_eq!(
+        view.cell(0, 0).unwrap().bk_img & 0x7FFF,
+        7,
+        "可见偶格的图号不能被写成 0（旧行为就是这样擦掉地表的）"
+    );
 }
 
 /// **改前必红**（任务书 §六.2）：把旧逻辑（整 16 位覆盖）与正确逻辑放在一起比。
@@ -236,15 +356,17 @@ fn 填充只填同号连通块() {
                 map.cells[i].bk_img = 7;
             }
         }
-        // 造一支"图号 1、库号 3"的地表笔刷：临时改一格吸走，稍后再改回去
-        let i99 = crate::document::index_of(map, 9, 9).unwrap();
-        map.cells[i99].bk_img = 1;
+        // 造一支"图号 1、库号 3"的地表笔刷：临时改一格吸走，稍后再改回去。
+        // ⚠ 必须改在**偶偶格**上：地表吸管按 2×2 对齐（`MapViewport.cs:405`），
+        // 取 `(9,9)` 会吸附到 `(8,8)` —— 改奇的 `(9,9)` 吸到的会是 `(8,8)` 的旧值。
+        let i88 = crate::document::index_of(map, 8, 8).unwrap();
+        map.cells[i88].bk_img = 1;
     }
-    ed.pick_at(9, 9).expect("图内格应能取");
+    ed.pick_at(8, 8).expect("图内格应能取");
     {
         let map = &mut ed.document_mut().view_mut();
-        let i99 = crate::document::index_of(map, 9, 9).unwrap();
-        map.cells[i99].bk_img = 9;
+        let i88 = crate::document::index_of(map, 8, 8).unwrap();
+        map.cells[i88].bk_img = 9;
     }
     let before = ed.map().to_bytes();
     // 地表 step=2 ⇒ 4×4 的块里只有 (0,0)/(0,2)/(2,0)/(2,2) 四个偶偶格
@@ -273,10 +395,13 @@ fn 填充撤销一步逐字节还原() {
             c.bk_img = 9;
             c.tiles = 3;
         }
-        let i99 = crate::document::index_of(map, 9, 9).unwrap();
-        map.cells[i99].bk_img = 1;
+        // 造一支与整张图不同的地表笔刷。⚠ 改在**偶偶格**上：地表吸管按 2×2 对齐
+        // （`MapViewport.cs:405`），点 `(9,9)` 会吸附到 `(8,8)`，所以特殊值要留在锚点上。
+        let i88 = crate::document::index_of(map, 8, 8).unwrap();
+        map.cells[i88].bk_img = 1;
     }
-    ed.pick_at(9, 9).expect("图内格应能取");
+    ed.pick_at(8, 8).expect("图内格应能取");
+    assert_eq!(ed.brush().map(|b| b.img), Some(1), "笔刷取自锚点 (8,8)");
     let orig = ed.map().to_bytes();
     let n = ed.fill(0, 0).cells();
     assert!(n > 0);

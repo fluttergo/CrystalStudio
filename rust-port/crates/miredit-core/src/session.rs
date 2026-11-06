@@ -31,6 +31,14 @@
 //! [`EditSession::sync_dirty`] 把它按 `pos != saved_pos || 笔画未结算` 重算一遍
 //! （判据原样来自 `edit.rs:719-729`）。**绝不另存一份**。
 //!
+//! # 三之二、吸管在地表层按 2×2 对齐（与上游一致）
+//!
+//! 上游 `CrystalStudio/MapViewport.cs:405`：`if (Layer == MapLayer.Ground) { x &= ~1; y &= ~1; }`
+//! —— `PickTile` 在读格（`:406`）之前先把地表点击吸附到偶偶格。地表格按 2×2 图块拼贴，
+//! 奇格通常 `bk_img == 0`，不吸附就会把空图号吸成笔刷（随后落笔把可见地表写成 0）。
+//! 本 crate 的 [`EditSession::pick_anchor`] 逐条复刻这一行，只作用于两条取笔刷入口；
+//! [`EditSession::pick_cell`]（读整格信息）与 `fill` 的对齐各自独立成条，互不串味。
+//!
 //! # 四、测试为什么在单独文件里
 //!
 //! 实现 + 测试写在同一个文件会超过 800 行（任务书 §三 的硬上限）⇒ 测试段拆到
@@ -1299,11 +1307,26 @@ impl EditSession {
     }
 
     // ── 吸管 ──
+    //
+    // 三条入口的分工（**别合并**）：
+    // - `pick_cell`：读整格三族的原始信息，**不吸附**（没有"再画回去"的语义）；
+    // - `pick_at` / `pick_at_from`：取成笔刷，地表按 2×2 对齐到偶偶格（`pick_anchor`）。
+    //
+    // ⚠ **层门控比上游宽，是既有的能力差异，不在本单收紧**：上游 `MapViewport.cs:404`
+    // 只允许 `Ground` / `Middle`（其余层 `PickTile` 直接 `return false`）；
+    // 本 crate 允许地表 / 中层 / 物件 / 低位阻挡 / 高位阻挡五层吸取
+    // （`brush_from_cell` 用 `layer.pick_family()` / `layer.img_of()`，五层都取得到内容）。
+    // 保留更宽能力的理由：阻挡层"吸同一格内容"已是既有用例
+    // （`吸管在阻挡层取同一格内容`、`阻挡层接受地图吸来的笔刷`），收紧会砍功能。
 
     /// 吸管读**整格三族**（三个图号字段原样）；越界 = `None`。来源：`edit.rs:1218-1227`。
     ///
     /// 只读不写：它不改地图、不进撤销栈。判据在 [`crate::pick_cell_of`]（单一实现），
     /// 本方法只是"用自己文档的地图"去调它。
+    ///
+    /// ⚠ **不吸附**（与两条取笔刷入口有意不同）：本方法返回的是"这一格上到底有什么"，
+    /// 是给人看的整格信息，没有"取成笔刷再画回去"的语义 ⇒ 地表也不需要按 2×2 对齐。
+    /// 需要吸附的是 [`Self::pick_at`] / [`Self::pick_at_from`]（见 [`Self::pick_anchor`]）。
     pub fn pick_cell(&self, x: u16, y: u16) -> Option<PickedCell> {
         crate::pick_cell_of(self.doc.view(), x, y)
     }
@@ -1314,10 +1337,15 @@ impl EditSession {
     /// 「按当前层取」的含义：当前层是中间层，取的就是 `mid_img` + `btsmTiles`，
     /// 笔刷族 = [`crate::Family::Middle`]；吸完立刻能往中间层画（族自然匹配）。
     /// 整格的另外两族**不会被塞进笔刷** —— 那正是"跨族乱写"的来源。
+    ///
+    /// 地表层先按 2×2 对齐到**偶偶格**再读（[`Self::pick_anchor`]）；笔刷的
+    /// [`Brush::from`] 记的是**锚点**而不是点击格 —— 吸到的内容与"从哪格吸的"必须指同一格，
+    /// 否则落笔时会拿奇格坐标当参照。
     pub fn pick_at(&mut self, x: u16, y: u16) -> Option<Brush> {
-        let c = *cell_at(self.doc.view(), x, y)?;
+        let (ax, ay) = self.pick_anchor(x, y);
+        let c = *cell_at(self.doc.view(), ax, ay)?;
         let fmt = self.doc.view().format;
-        Some(self.brush_from_cell(c, x, y, fmt))
+        Some(self.brush_from_cell(c, ax, ay, fmt))
     }
 
     /// 同上，但**从外部借来的地图**取内容（宿主把地图放在自己手里时用）。
@@ -1325,13 +1353,48 @@ impl EditSession {
     /// 为什么要它：GUI 的 `EditSession::pick_at(&mut self, map: &Map, …)` 收的是
     /// **不可变** `&Map`，没法把地图换进本会话（`mem::swap` 要 `&mut`）——
     /// 没有这条通路就只能把「按当前层取笔刷」的判据再抄一份到宿主里。
+    ///
+    /// 吸附语义与 [`Self::pick_at`] **逐字节相同**（同一个 [`Self::pick_anchor`]）。
     pub fn pick_at_from(&mut self, map: &Map, x: u16, y: u16) -> Option<Brush> {
-        let c = *cell_at(map, x, y)?;
+        let (ax, ay) = self.pick_anchor(x, y);
+        let c = *cell_at(map, ax, ay)?;
         let fmt = map.format;
-        Some(self.brush_from_cell(c, x, y, fmt))
+        Some(self.brush_from_cell(c, ax, ay, fmt))
+    }
+
+    /// 吸管读格的**锚点**：当前层是地表 ⇒ 对齐到 2×2 图块的偶偶格 `(x & !1, y & !1)`；
+    /// 其余层（中层 / 物件 / 低位阻挡 / 高位阻挡）**原样返回**。
+    ///
+    /// # 依据（逐字对应上游）
+    ///
+    /// `CrystalStudio/MapViewport.cs:402-414` 的 `PickTile`：
+    /// - `:404` 先过 `Document.Contains` 与 `Layer is not (Ground or Middle)`；
+    /// - **`:405` `if (Layer == MapLayer.Ground) { x &= ~1; y &= ~1; }`** ← 本条实现的判据；
+    /// - `:406` `var cell = Document.Get(x, y);`（对齐**之后**才读格）；
+    /// - `:408` 地表取 `(cell.BackImage & 0x1FFFFFFF) - 1`。
+    ///
+    /// 为什么必须吸附：地表格在编辑器里按 2×2 图块拼贴，一张可见图块只落在偶偶格上，
+    /// 奇格通常 `bk_img == 0`（或只有 bit15）。不吸附就会把 `img = 0` 吸成笔刷，
+    /// 随后落笔（笔刷尺寸 ≥ 3 的 N×N 覆盖到相邻偶格）把**看得见的那格地表图号写成 0**
+    /// —— 用户视角就是"吸一下地表就画不出来了 / 地表被擦掉了"。
+    ///
+    /// # 与填充那一侧是同一条判据
+    ///
+    /// [`crate::fill::align_start`]（`fill.rs:129-135`，来源 `MapViewport.cs:496-499`）按
+    /// `step_of(layer) == 2` 判定、用的也是 `x & !1`。两处必须给出**同一张网格**，
+    /// 否则会出现"吸管吸偶格、填充从奇格起"的两套网格（`session_tests.rs` 里有对拍用例）。
+    fn pick_anchor(&self, x: u16, y: u16) -> (u16, u16) {
+        if self.layer == EditLayer::Ground {
+            (x & !1, y & !1)
+        } else {
+            (x, y)
+        }
     }
 
     /// 「一格内容 + 当前层 → 笔刷」的**唯一实现**（`pick_at` / `pick_at_from` 共用）。
+    ///
+    /// `(x, y)` 是**锚点**（地表已对齐偶偶格，见 [`Self::pick_anchor`]），原样记进
+    /// [`Brush::from`]，不做任何再换算。
     fn brush_from_cell(&mut self, c: Cell, x: u16, y: u16, fmt: CellFormat) -> Brush {
         let layer = self.layer;
         let b = Brush {

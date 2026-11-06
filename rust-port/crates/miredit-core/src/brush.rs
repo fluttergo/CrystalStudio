@@ -208,6 +208,11 @@ pub struct Brush {
     ///
     /// 这一位是"阻挡层要不要拒绝"的判据：图库笔刷（`from == None`）在阻挡层被拒，
     /// 地图吸来的笔刷（`from == Some`）允许落笔（`edit.rs:1404-1412`、`:1619-1627`）。
+    ///
+    /// ⚠ 记的是**锚点**、不是鼠标点到的格：地表层按 2×2 对齐（`MapViewport.cs:405`
+    /// `if (Layer == MapLayer.Ground) { x &= ~1; y &= ~1; }`）⇒ 点奇格时这里存的是它左边/上边
+    /// 那个偶格（`EditSession::pick_anchor`）。读方**只能**用它判 `Some`/`None`，
+    /// 别拿它当"用户点在哪"（那是 UI 的事）。
     pub from: Option<(u16, u16)>,
 }
 
