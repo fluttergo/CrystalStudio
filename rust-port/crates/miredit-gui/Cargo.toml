@@ -1,0 +1,46 @@
+[package]
+name = "miredit-gui"
+version = "0.1.0"
+edition = "2021"
+description = "地图编辑器 GUI（egui，仿 CrystalStudio 运行期界面）"
+
+[dependencies]
+# egui / eframe 版本硬锁定（任务书 §六：必须锁定具体版本，不得浮动）
+# 0.33.3 = 本机 cargo 缓存中已存在的稳定版；浮动版本会导致 API 漂移。
+eframe = { version = "=0.33.3", default-features = false, features = [
+    "default_fonts",
+    "glow",
+    "wayland",
+    "x11",
+] }
+egui = "=0.33.3"
+
+# 中文字体解析：egui/epaint 内部本来就依赖它（epaint-0.33.3 → ab_glyph = "0.2.32"），
+# 这里只是把**同一个**版本声明成直接依赖来自己用它，**没有新增任何字体库**，
+# 构建图不变（`cargo tree -p miredit-gui | findstr ab_glyph` 只有一条）。
+ab_glyph = "=0.2.32"
+
+# `mir2-map`：**保留为硬依赖**（2026-11-05 九格式收口时复核过，不能降级/移除）。
+#
+# 为什么不能删：宿主层仍然**直接**用到它的类型与常量，不是"顺手引用"——
+#   * `MapDoc::map: Map`（`mapdoc.rs`）是宿主全程的**编辑视图**，渲染入口
+#     `miredit_render::render_region(&Map, ...)` 的签名就吃它；
+#   * `edit.rs` / `cellinfo.rs` / `selfcheck.rs` 用 `CellFormat`、`HEADER_LEN`；
+#   * `selection_ops.rs` / `stamp_place.rs` / `canvas_view.rs` 及 6 个测试模块用 `Map`。
+# ⇒ 九格式的"判别 + 出字节"已经交给 `miredit-core`（`Document::load` / `try_to_bytes`），
+#    但**编辑视图这一层仍是 `mir2_map::Map`**（`miredit-core` 的 `Document` 也是
+#    raw(`mir2_format::RawMap`) + view(`mir2_map::Map`) 双层，view 那一半就是它）。
+#    要把它降成 optional，得先把渲染层与 20 多个 `&mut Map` 入口一起换掉 —— 那是另一件事，
+#    不在本单范围（本单只改 `miredit-gui`，且不许动 `miredit-render`）。
+mir2-map = { path = "../mir2-map" }
+mir2-assets = { path = "../mir2-assets" }
+miredit-render = { path = "../miredit-render" }
+# 印章目录索引（`catalogue/palette.json` 的 9,159 条登记 + `Objects/` 的磁盘事实）
+# 与 `.X` 字节层解析。资源面板「分类」页签直接用它，**不在 GUI 里重写一份索引**。
+# 该 crate 已在 workspace `members` 与 `Cargo.lock` 里（`mir2-stamp`），
+# 这里只是给 `miredit-gui` 增加一条依赖边，**不新增任何锁文件版本**。
+mir2-stamp = { path = "../mir2-stamp" }
+# 编辑内核（图层 / 笔刷 / 落笔 / 填充 / 撤销 / 原子保存 / 可序列化命令）。
+# 2026-11-05 迁移收口：`edit.rs` 的编辑逻辑全部委托给这个 crate，
+# 本 crate 只留"宿主层"（窗口 / 画布 / 状态栏 / 文案 / 脚本驱动）。
+miredit-core = { path = "../miredit-core" }

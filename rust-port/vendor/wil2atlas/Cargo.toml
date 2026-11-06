@@ -1,0 +1,22 @@
+# wil2atlas（vendored 子集）—— 只含 WIL/WIX（WZL/WZX）图库解码器
+#
+# 本目录是从作者自研工具链 `wil2atlas` 复制进来的 **decoder-only** 子集：
+# 只保留 4 个解码模块 + 库入口，**不含** CLI（`main.rs`）、图集打包（`atlas_packer.rs`）、
+# 索引图导出（`indexed.rs`）与 meta 结构（`meta.rs`）。理由：`mir2-assets` 只用到解码。
+# 源文件逐字节未改（SHA256 见同目录 NOTICE），解码行为与本仓改动前完全一致。
+#
+# 为什么 vendored：公开 PR 不能依赖构建机上的绝对路径（原工具在 GodM2 工程 tools/ 下，
+# 整仓 7.4 GB 且含 target/atlas_out 产物，不能整仓复制）。
+[package]
+name = "wil2atlas"
+version = "0.2.0"
+edition = "2021"
+description = "WIL/WIX 与 WZL/WZX 图库解码器（vendored 子集，不含 CLI 与图集打包）"
+license = "MIT"
+
+[dependencies]
+# 依赖按四个模块的 `use` 实读裁到最小（原工具全集的 clap/rayon/serde/serde_json 只在
+# CLI、图集打包与 meta 序列化里用到，vendored 子集不需要）：
+anyhow = "1"      # 解码错误链（`bail!` / `Context` / `Result`）
+flate2 = "1"      # zlib 解压（PKGD 压缩帧与 WZL 载荷）
+image = { version = "0.25", default-features = false, features = ["png"] } # WIL 帧内嵌 PNG 解码

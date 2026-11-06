@@ -1,0 +1,37 @@
+# NOTICE —— wil2atlas vendored 子集：来源与完整性
+
+## 来源
+
+| 项 | 值 |
+|---|---|
+| 上游工具 | `wil2atlas`（作者自研的传奇 M2 WIL/WIX 图库离线转换工具，非 GodM2 编辑器） |
+| 上游位置 | 作者本地 GodM2 工程下的 `tools/wil2atlas`（整仓含 7.4 GB 构建产物，不整仓复制） |
+| 上游仓库快照 | 本地 GodM2 工程快照 @ 提交 `9113e61a38957c7ccfd414c9c070e8061e699c90`（2026-11-06；该工程为作者私有，本仓不引用其任何路径） |
+| 本子集用途 | 供 `crates/mir2-assets` 复用解码实现（`WilSource` 路径），不做图集打包 |
+| 许可证 | MIT（见同目录 `LICENSE`，版权归原作者 lxf505226） |
+
+## 逐文件 SHA256（复制时原样，未改一行）
+
+| 文件 | 上游最后改动提交 | SHA256 |
+|---|---|---|
+| `src/wil_decoder.rs` | `7ad0aa77`（2026-09-23） | `24ba303543ca208494cf3b6d994447f0251ff84a695da0e60fb3dab95fc9df55` |
+| `src/wzl_decoder.rs` | `e9ef412f`（2026-10-13） | `16ff5e97a998d37abb5c33d9bbb1edd89795f44a71afd2ff8fa4447f0ccd0fbc` |
+| `src/image_lib.rs` | `e9ef412f`（2026-10-13） | `03546ccd8de6ee087c4750447a257d72c870aa35f09ba5f17d7c7359ae4b4f90` |
+| `src/palette_client.rs` | `7ad0aa77`（2026-09-23） | `9b49f91d8c69a24f5b6848414ab06341e5577bb0f34112454ccd651a81f3ea2e` |
+
+## 相对上游的**唯一**改动
+
+1. 新增本 `Cargo.toml`：裁掉只服务 CLI / 图集打包 / meta 序列化的依赖
+   （`clap` / `rayon` / `serde` / `serde_json`），并去掉 `[[bin]]` 隐式目标；
+2. 重写 `src/lib.rs`：只 `pub mod` 四个解码模块，不再转出 `atlas_packer` / `indexed` / `meta`；
+3. 未复制 `src/main.rs`、`src/atlas_packer.rs`、`src/indexed.rs`、`src/meta.rs`，
+   也未复制 `tests/`、`examples/`、`target/`、`atlas_out/`、`verify_out/`、`Cargo.lock`。
+
+上述四个 `.rs` 模块**逐字节未改**：任何解码行为（帧布局、调色板口径、zlib/PNG 分支）
+与上游一致。文件内保留的历史取证路径（客户端 C++ 源码、勘察文档等）是 provenance，
+不是构建输入。
+
+## 版权
+
+解码器源码版权归原作者 `lxf505226`，按 MIT 授权。本仓库对子集的选取与 `Cargo.toml` /
+`lib.rs` / 本 NOTICE 的整理同样以 MIT 发布。

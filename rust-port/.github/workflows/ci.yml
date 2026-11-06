@@ -1,0 +1,72 @@
+# =============================================================================
+# 公开 CI —— 只跑「代码本身」，**不碰任何游戏素材**
+#
+# 判据就三条：
+#   1. `cargo test --workspace` 在**不设任何素材环境变量**的前提下 0 failed
+#      （素材相关用例自己打印 `[skip]` / `[跳过]` 后返回，见 CONTRIBUTING.md §四）；
+#   2. `cargo clippy --all-targets -- -D warnings` 0 warning；
+#   3. 以上两条在 clean clone 上就能跑通 —— 所以**不许**出现任何开发机绝对路径。
+#
+# 刻意**不做**的三件事：
+#   · 不跑 `cargo fmt`（本仓明确禁用自动格式化，见 CONTRIBUTING.md §三）；
+#   · 不下载 / 缓存游戏素材（素材不入库，也没有公开来源）；
+#   · 不跑 Docker（编排只做过静态复核，本仓无 Docker 实跑证据，见 docker/README.md）。
+#
+# 目标平台是 **windows-latest**，理由两条（不是随手选的）：
+#   ① `miredit-gui` 依赖 eframe/egui 与 Windows 窗口后端；ubuntu runner 默认没有
+#      X11/Wayland 的开发库，`cargo build` 会在系统依赖上失败；
+#   ② 队列里有多处路径语义用例（反斜杠分隔、盘符根、`\\?\` 前缀剥离），
+#      这些在 Windows 上才是真判据。
+# =============================================================================
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# 同一分支的旧跑批直接取消，省 runner 时间
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # 本仓硬规矩（增量编译会 panic encode_metadata）
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    name: test + clippy (no game assets)
+    runs-on: windows-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      # 缓存 cargo registry 与 target（key 绑 Cargo.lock，锁文件变才失效）
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
+      # ⚠ 这里**故意不设** MIREDIT_ASSET_ROOT / MIREDIT_UPSTREAM_ROOT /
+      # MIREDIT_CLIENT_ROOT / MIREDIT_LIB_ROOT 等任何素材变量：
+      # 缺资产模式必须全绿，这正是本 job 要守的那条线。
+      - name: cargo test --workspace
+        run: cargo test --workspace --no-fail-fast
+
+      - name: cargo clippy --all-targets
+        run: cargo clippy --all-targets -- -D warnings

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<!-- viewport-fit=cover 让刘海屏区域可被 env(safe-area-inset-*) 使用 -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f4f1ea">
+<meta name="description" content="Crystal Studio 地图编辑器（网页版）—— 原生 HTML/CSS/JS，无框架">
+<!-- 空 favicon：避免浏览器自动请求 /favicon.ico 在后端日志里刷 404 -->
+<link rel="icon" href="data:,">
+<title>Crystal Studio · 地图编辑器</title>
+<link rel="stylesheet" href="css/app.css">
+<!-- 笔刷尺寸控件的样式单独成文件：app.css 已 598 行，守住「单文件 ≤600 行」 -->
+<link rel="stylesheet" href="css/brush-size.css">
+<!-- 「开启门」复选框的样式（同上：不再往 app.css 里堆） -->
+<link rel="stylesheet" href="css/doors.css">
+<!-- 地图光照三选按钮的样式（同上：不再往 app.css 里堆） -->
+<link rel="stylesheet" href="css/lighting.css">
+<!-- 地图列表（GET /api/maps）的样式（同上） -->
+<link rel="stylesheet" href="css/maplist.css">
+</head>
+<body class="layout-pc" data-mode="offline" data-connected="false">
+
+<!-- ========== 图标精灵（内联 SVG，不引第三方图标库） ========== -->
+<svg class="sprite" aria-hidden="true" focusable="false" width="0" height="0">
+  <defs>
+    <symbol id="i-brush" viewBox="0 0 24 24">
+      <path d="M4 20c0-2 1.6-3.2 3.2-3.2 1.2 0 2 .7 2 1.7 0 1-.8 1.5-1.6 1.5H4z"/>
+      <path d="M9.6 15.4 18 7a2 2 0 0 0-2.8-2.8L6.8 12.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-fill" viewBox="0 0 24 24">
+      <path d="M11 3.5 4.6 9.9a2 2 0 0 0 0 2.8l5.4 5.4a2 2 0 0 0 2.8 0l5.4-5.4-8.2-8.2z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+      <path d="M19.4 15.6c1 1.3 1.6 2.2 1.6 3a1.6 1.6 0 1 1-3.2 0c0-.8.6-1.7 1.6-3z"/>
+    </symbol>
+    <symbol id="i-eraser" viewBox="0 0 24 24">
+      <path d="m8.4 19.4-4-4a2 2 0 0 1 0-2.8l7-7a2 2 0 0 1 2.8 0l4 4a2 2 0 0 1 0 2.8l-6 6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+      <path d="M9.6 19.4h8.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-pick" viewBox="0 0 24 24">
+      <path d="M15.2 4.6a3.2 3.2 0 0 1 4.5 4.5l-2.6 2.6-4.5-4.5 2.6-2.6z"/>
+      <path d="m13.2 8.6-8 8a2 2 0 0 0-.5 1l-.5 2.6 2.6-.5a2 2 0 0 0 1-.5l8-8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-select" viewBox="0 0 24 24">
+      <rect x="4.4" y="5.4" width="15.2" height="13.2" rx="1" fill="none" stroke="currentColor"
+            stroke-width="1.7" stroke-dasharray="3.2 2.6"/>
+      <path d="M8 12h3.4M9.7 10.3v3.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    </symbol>
+    <!-- 平移：四向箭头（手机单指平移的入口） -->
+    <symbol id="i-pan" viewBox="0 0 24 24">
+      <path d="M12 3.6v16.8M3.6 12h16.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+      <path d="m12 3.6 2.5 2.7M12 3.6 9.5 6.3M12 20.4l2.5-2.7M12 20.4 9.5 17.7M3.6 12l2.7-2.5M3.6 12 6.3 14.5M20.4 12l-2.7-2.5M20.4 12 17.7 14.5"
+            fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-stamp" viewBox="0 0 24 24">
+      <path d="M9 4.6h6l-1.2 5.2h2.4a2 2 0 0 1 2 2v1.6H5.8v-1.6a2 2 0 0 1 2-2h2.4L9 4.6z"
+            fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M4.6 16.4h14.8v3.2H4.6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24">
+      <path d="M2.6 12S6 6.4 12 6.4 21.4 12 21.4 12 18 17.6 12 17.6 2.6 12 2.6 12z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+      <circle cx="12" cy="12" r="2.6" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    </symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24">
+      <path d="M4 4l16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+      <path d="M9.4 7.2A9.6 9.6 0 0 1 12 6.4c6 0 9.4 5.6 9.4 5.6a17 17 0 0 1-3.2 3.7M6.2 8.5A16.6 16.6 0 0 0 2.6 12S6 17.6 12 17.6c1.2 0 2.2-.2 3.2-.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24">
+      <path d="M8 7H4v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M4.6 11a8 8 0 1 1 2.2 6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24">
+      <path d="M16 7h4v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M19.4 11a8 8 0 1 0-2.2 6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ========== 常驻告警条（黄条）==========
+     显示后端 /api/map 的 edit_warning **原文**（未解尾块 / 该格式不承诺编辑语义）。
+     · 常驻：不是 toast，用户不点 × 就一直挂着
+     · 额外标记：format_label（短名）+ editable=false 时追加「未解区语义未知」
+     ========== -->
+<div class="warnbar" id="warnBar" role="status" aria-live="polite" hidden>
+  <span class="warnbar__mark" aria-hidden="true">!</span>
+  <span class="warnbar__tag" id="warnTag" hidden></span>
+  <span class="warnbar__text" id="warnText"></span>
+  <button class="warnbar__close" id="warnClose" type="button" aria-label="收起告警">×</button>
+</div>
+
+<!-- ========== 模式提示条 / 错误条（印章待放置态、后端拒绝原文）==========
+     data-tone="hint"  ⇒ 金色（待放置态提示，Esc 取消）
+     data-tone="error" ⇒ 红色（**后端原文**：404 / 409 / 422 / 其它）
+     · 不用 toast：待放置态要一直挂着，错误要能看够时间、能被 DOM 断言
+     ========== -->
+<div class="modebar" id="modeBar" role="status" aria-live="polite" data-tone="hint" hidden>
+  <span class="modebar__mark" id="modeBarMark" aria-hidden="true">◎</span>
+  <span class="modebar__text" id="modeBarText"></span>
+  <button class="modebar__close" id="modeBarClose" type="button" aria-label="关闭提示条">×</button>
+</div>
+
+<!-- ========== 连接 / 错误横幅：如实提示，绝不画假地图 ========== -->
+<div class="banner" id="banner" role="status" aria-live="polite" hidden>
+  <span class="banner__dot" aria-hidden="true"></span>
+  <span class="banner__body">
+    <strong class="banner__title" id="bannerTitle"></strong>
+    <span class="banner__note" id="bannerNote"></span>
+  </span>
+  <button class="banner__close" id="bannerClose" type="button" aria-label="收起提示">×</button>
+</div>
+
+<!-- ========== 顶栏 ========== -->
+<header class="topbar">
+  <div class="brand">
+    <span class="brand__mark" aria-hidden="true"></span>
+    <span class="brand__name">Crystal Studio</span>
+    <span class="brand__sub">地图编辑器</span>
+  </div>
+  <div class="filetab">
+    <span class="filetab__name" id="fileTab">未打开地图</span>
+    <span class="filetab__dirty" id="fileDirty" hidden title="有未保存修改">●</span>
+  </div>
+  <div class="topbar__actions">
+    <button class="btn" id="btnOpen" type="button" title="打开地图（POST /api/map/open）">
+      <span class="btn__full">打开地图…</span><span class="btn__short">打开</span>
+    </button>
+    <button class="btn btn--icon" id="btnUndo" type="button" title="撤销 · Ctrl+Z" aria-label="撤销" disabled>
+      <svg class="btn__svg" aria-hidden="true"><use href="#i-undo"></use></svg>
+    </button>
+    <button class="btn btn--icon" id="btnRedo" type="button" title="重做 · Ctrl+Y" aria-label="重做" disabled>
+      <svg class="btn__svg" aria-hidden="true"><use href="#i-redo"></use></svg>
+    </button>
+    <button class="btn" id="btnSave" type="button" title="保存地图 · Ctrl+S">
+      <span class="btn__full">保存地图</span><span class="btn__short">保存</span>
+    </button>
+    <button class="btn btn--ghost only-mobile" id="btnSheet" type="button">面板</button>
+    <span class="conn" id="connBadge" data-state="off"><span class="conn__dot" aria-hidden="true"></span><span id="connText">未连接</span></span>
+  </div>
+</header>
+
+<!-- ========== 工作区（PC 三栏 / 手机单栏，靠 CSS 断点切换） ========== -->
+<main class="workspace">
+
+  <!-- 左栏：工具 + 图层（手机上变为底部抽屉） -->
+  <aside class="panel panel--left" id="panelLeft" aria-label="工具与图层">
+    <div class="drawer-handle only-mobile" id="drawerHandle" role="button" tabindex="0"
+         aria-label="上滑展开或下滑收起工具抽屉" aria-expanded="false">
+      <span class="drawer-handle__bar" aria-hidden="true"></span>
+      <span class="drawer-handle__text">工具 / 图层</span>
+    </div>
+
+    <section class="group">
+      <h2 class="group__title">工具</h2>
+      <div class="tools" id="toolGrid" role="radiogroup" aria-label="当前工具">
+        <button class="tool" type="button" role="radio" aria-checked="true" data-tool="brush" title="笔刷 · B（发送 Paint）">
+          <svg class="tool__icon" aria-hidden="true"><use href="#i-brush"></use></svg><span class="tool__label">笔刷</span>
+        </button>
+        <button class="tool" type="button" role="radio" aria-checked="false" data-tool="fill" title="填充 · F（发送 Fill）">
+          <svg class="tool__icon" aria-hidden="true"><use href="#i-fill"></use></svg><span class="tool__label">填充</span>
+        </button>
+        <button class="tool" type="button" role="radio" aria-checked="false" data-tool="pick" title="吸管 · I（发送 Pick）">
+          <svg class="tool__icon" aria-hidden="true"><use href="#i-pick"></use></svg><span class="tool__label">吸管</span>
+        </button>
+        <button class="tool" type="button" role="radio" aria-checked="false" data-tool="eraser"
+                title="橡皮擦 · E（先发 SetTool 切工具，落笔发 Erase）">
+          <svg class="tool__icon" aria-hidden="true"><use href="#i-eraser"></use></svg><span class="tool__label">橡皮擦</span>
+        </button>
+        <button class="tool" type="button" role="radio" aria-checked="false" data-tool="select"
+                title="选择 · S（拖动框选；只在前端切工具态，**不发 SetTool** —— 后端只收 brush/bucket/eraser/pickup）">
+          <svg class="tool__icon" aria-hidden="true"><use href="#i-select"></use></svg><span class="tool__label">选择</span>
+        </button>
+        <button class="tool" type="button" role="radio" aria-checked="false" data-tool="pan"
+                title="平移 · H（拖动挪视口，不改图；手机单指平移就靠它）">
+          <svg class="tool__icon" aria-hidden="true"><use href="#i-pan"></use></svg><span class="tool__label">平移</span>
+        </button>
+      </div>
+      <!-- 笔刷尺寸：与后端 `SetBrushSize` 同口径（3..=31 的奇数，共 15 档）。
+           值变化 ⇒ 一条 `{"SetBrushSize":{"size":N}}`；显示的数字**只认后端回执**
+           （它会夹进 3..31 的奇数，前端不自己夹，见 js/ui.js::syncBrushSize）。 -->
+      <div class="bsize" id="brushSizeBox">
+        <div class="bsize__head">
+          <label class="bsize__label" for="brushSizeRange">笔刷尺寸</label>
+          <output class="bsize__val" id="brushSizeVal" for="brushSizeRange">3×3</output>
+        </div>
+        <input class="bsize__range" type="range" id="brushSizeRange"
+               min="3" max="31" step="2" value="3" aria-describedby="brushSizeVal"
+               aria-label="笔刷尺寸：3 到 31 的奇数，落笔为 N×N 格">
+        <div class="bsize__presets" id="brushSizePresets" role="group" aria-label="笔刷尺寸预设">
+          <button class="bsize__preset" type="button" data-size="3" aria-pressed="true">3</button>
+          <button class="bsize__preset" type="button" data-size="5" aria-pressed="false">5</button>
+          <button class="bsize__preset" type="button" data-size="7" aria-pressed="false">7</button>
+          <button class="bsize__preset" type="button" data-size="9" aria-pressed="false">9</button>
+          <button class="bsize__preset" type="button" data-size="15" aria-pressed="false">15</button>
+          <button class="bsize__preset" type="button" data-size="31" aria-pressed="false">31</button>
+        </div>
+      </div>
+      <p class="group__foot" id="brushFoot">笔刷：—（用吸管取一格）</p>
+    </section>
+
+    <!-- 选区 / 剪贴板：手机上就是底部抽屉里的按钮（同一套 DOM，不另做一套） -->
+    <section class="group">
+      <h2 class="group__title">选区 / 剪贴板</h2>
+      <div class="selbtns" id="selBtns">
+        <button class="btn btn--sm" id="selCopy" type="button" title="复制选区 · Ctrl+C（整块都抓，含空格）">复制</button>
+        <button class="btn btn--sm" id="selCut" type="button" title="剪切选区 · Ctrl+X（复制 + 清空，一步撤销）">剪切</button>
+        <button class="btn btn--sm" id="selPaste" type="button" title="粘贴到当前指针所在格 · Ctrl+V">粘贴</button>
+        <button class="btn btn--sm" id="selDel" type="button" title="清空选区内容 · Delete（三族按层清）">删除</button>
+        <button class="btn btn--sm" id="selFill" type="button" title="用当前笔刷填满选区（后端：没有笔刷会拒绝）">填充</button>
+        <button class="btn btn--sm" id="selClear" type="button" title="取消选区 · Esc（剪贴板保留）">取消选区</button>
+      </div>
+      <p class="group__foot" id="selFoot">选区：— · 剪贴板：—</p>
+      <p class="group__foot" id="selAnchor">粘贴锚点：指针所在格（当前 —）</p>
+    </section>
+
+    <section class="group">
+      <h2 class="group__title">图层</h2>
+      <!-- 「开启门」：视图选项（不改地图数据），切换 ⇒ /api/tiles?doors=0|1 重新取图。
+           放**组头**：它和下面五个眼睛是同一类"看什么"的开关；放组尾时在 1440×900
+           下会被底部状态栏盖住（左栏内容超出可视区，见 README §9.6 的布局债）。 -->
+      <label class="doors" id="doorsRow" for="doorsToggle"
+             title="按「门全开」出图：门格的前景帧号加门偏移（后端 /api/tiles?doors=1）；不勾 = 闭门帧（与改动前逐字节相同）">
+        <input class="doors__box" type="checkbox" id="doorsToggle">
+        <span class="doors__name">开启门</span>
+        <span class="doors__hint">门全开帧</span>
+      </label>
+      <!-- 地图光照三选（互斥）：切换 ⇒ /api/tiles?lighting=day|dawn_dusk|night 重新取图。
+           三档真值来自 ME.LIGHTINGS；按钮高度 ≥44px，手机抽屉里也可点。 -->
+      <div class="lighting" id="lightingGroup" role="radiogroup" aria-label="地图光照">
+        <span class="lighting__label">地图光照</span>
+        <button class="lighting__btn" type="button" role="radio" aria-checked="true"
+                data-lighting="day" title="白天：不画遮罩（与改动前逐字节相同）">白天</button>
+        <button class="lighting__btn" type="button" role="radio" aria-checked="false"
+                data-lighting="dawn_dusk" title="黎明·黄昏：遮罩 alpha 205 + 逐格光罩">黎明·黄昏</button>
+        <button class="lighting__btn" type="button" role="radio" aria-checked="false"
+                data-lighting="night" title="夜晚：遮罩 alpha 255 + 逐格光罩">夜晚</button>
+      </div>
+      <ul class="layers" id="layerList">
+        <li class="layer" data-layer="ground" data-on="true">
+          <button class="layer__eye" type="button" aria-pressed="true" aria-label="切换地表图层可见性">
+            <svg class="layer__icon" aria-hidden="true"><use href="#i-eye"></use></svg>
+          </button>
+          <span class="layer__swatch" data-swatch="ground" aria-hidden="true"></span>
+          <span class="layer__name">地表图层</span>
+          <!-- ground_paint_supported=false（Type5 Mir3Wemade）时由 ui.js 显示 -->
+          <span class="layer__flag" id="layerGroundFlag" hidden
+                title="该格式的背景图号按 2×2 块编码，逐格写会被写回时丢弃">不可落笔</span>
+        </li>
+        <li class="layer" data-layer="middle" data-on="true">
+          <button class="layer__eye" type="button" aria-pressed="true" aria-label="切换中层图层可见性">
+            <svg class="layer__icon" aria-hidden="true"><use href="#i-eye"></use></svg>
+          </button>
+          <span class="layer__swatch" data-swatch="middle" aria-hidden="true"></span>
+          <span class="layer__name">中层图层</span>
+        </li>
+        <li class="layer" data-layer="object" data-on="true">
+          <button class="layer__eye" type="button" aria-pressed="true" aria-label="切换物体图层可见性">
+            <svg class="layer__icon" aria-hidden="true"><use href="#i-eye"></use></svg>
+          </button>
+          <span class="layer__swatch" data-swatch="object" aria-hidden="true"></span>
+          <span class="layer__name">物体图层</span>
+        </li>
+        <li class="layer" data-layer="low" data-on="false">
+          <button class="layer__eye" type="button" aria-pressed="false" aria-label="切换低位阻挡可见性">
+            <svg class="layer__icon" aria-hidden="true"><use href="#i-eye-off"></use></svg>
+          </button>
+          <span class="layer__swatch" data-swatch="low" aria-hidden="true"></span>
+          <span class="layer__name">低位阻挡</span>
+        </li>
+        <li class="layer" data-layer="high" data-on="false">
+          <button class="layer__eye" type="button" aria-pressed="false" aria-label="切换高位阻挡可见性">
+            <svg class="layer__icon" aria-hidden="true"><use href="#i-eye-off"></use></svg>
+          </button>
+          <span class="layer__swatch" data-swatch="high" aria-hidden="true"></span>
+          <span class="layer__name">高位阻挡</span>
+        </li>
+      </ul>
+      <p class="group__foot" id="layerFoot">当前编辑层：地表图层</p>
+      <p class="group__foot">左键 = 当前工具；中键 / Alt+左键 / 「平移」工具（单指拖动）= 平移；滚轮 / 捏合 = 缩放档。</p>
+    </section>
+  </aside>
+
+  <!-- 中栏：画布 -->
+  <section class="stage" id="stage">
+    <canvas id="mapCanvas" aria-label="地图画布"></canvas>
+    <div class="stage__empty" id="stageEmpty">
+      <p class="stage__empty-title">尚未打开地图</p>
+      <p class="stage__empty-note">点「打开地图…」从列表里选一张（列表来自 MIREDIT_MAP_ROOT）。</p>
+    </div>
+    <div class="zoombar" role="group" aria-label="缩放">
+      <button class="zoombar__btn" id="zoomOut" type="button" aria-label="缩小一档">−</button>
+      <span class="zoombar__val" id="zoomVal">100%</span>
+      <button class="zoombar__btn" id="zoomIn" type="button" aria-label="放大一档">+</button>
+      <button class="zoombar__fit" id="zoomFit" type="button">适应地图</button>
+    </div>
+  </section>
+
+  <!-- 右栏：资源库 + 印章 + 单元格检查器（手机上变为全屏浮层） -->
+  <aside class="panel panel--right" id="panelRight" aria-label="资源库、印章与单元格检查器">
+    <div class="sheet-head only-mobile">
+      <span class="sheet-head__title">资源库 / 印章 / 单元格检查器</span>
+      <button class="sheet-head__close" id="btnSheetClose" type="button" aria-label="关闭浮层">×</button>
+    </div>
+
+    <section class="group group--fill">
+      <h2 class="group__title">资源库</h2>
+      <div class="tabs" id="libKinds" role="tablist" aria-label="图库族">
+        <button class="tab is-active" type="button" role="tab" aria-selected="true" data-kind="ground">地表</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-kind="middle">中层</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-kind="object">物体</button>
+      </div>
+      <div class="listbox" id="libList">
+        <p class="listbox__hint">正在读取 <code>/api/palette</code> …</p>
+      </div>
+      <p class="group__foot" id="libFoot">—</p>
+    </section>
+
+    <section class="group group--fill">
+      <h2 class="group__title">印章</h2>
+      <div class="searchrow">
+        <input type="search" id="stampQ" placeholder="名称 / 编号关键词" autocomplete="off" spellcheck="false">
+        <button class="btn btn--sm" id="stampSearch" type="button">搜索</button>
+      </div>
+      <div class="listbox" id="stampList">
+        <p class="listbox__hint">正在读取 <code>/api/stamps</code> …</p>
+      </div>
+      <p class="group__foot" id="stampFoot">—</p>
+    </section>
+
+    <section class="group">
+      <h2 class="group__title">单元格检查器</h2>
+      <dl class="insp" id="inspector">
+        <dt>坐标</dt><dd id="insCell">—, —</dd>
+        <dt>瓦片块</dt><dd id="insChunk">—</dd>
+        <dt>像素色</dt><dd id="insPix">—</dd>
+        <dt>图号 / 阻挡</dt><dd class="insp__todo">待接入（后端无单元格查询端点）</dd>
+      </dl>
+      <p class="group__foot">像素色是从已加载瓦片上采样的真实值；图号需后端扩展单元格查询接口，当前不伪造。</p>
+    </section>
+  </aside>
+</main>
+
+<!-- ========== 状态栏 ========== -->
+<footer class="statusbar" id="statusbar">
+  <div class="statusbar__left">
+    <span class="st" id="stFile">未打开地图</span>
+    <span class="st-sep">·</span>
+    <span class="st" id="stSize">—×— 格</span>
+    <span class="st-sep" id="stFormatSep" hidden>·</span>
+    <span class="st" id="stFormat" hidden>—</span>
+    <span class="st-bar">|</span>
+    <span class="st" id="stTool">笔刷</span>
+    <span class="st-bar">|</span>
+    <!-- 笔刷尺寸（真值来自 SetBrushSize 回执，形如「笔刷 5×5」） -->
+    <span class="st" id="stBrushSize" title="后端会话的笔刷边长（3..31 的奇数）">笔刷 3×3</span>
+    <span class="st-bar">|</span>
+    <span class="st" id="stLayer">地表图层</span>
+    <span class="st-bar">|</span>
+    <span class="st" id="stZoom">100%</span>
+    <span class="st-bar">|</span>
+    <!-- 多倍率取证：当前请求的 scale 与上一块瓦片的 PNG 字节数（切档即可肉眼比体积） -->
+    <span class="st" id="stTile" title="瓦片实际倍率 / 实测光照档位 / 上一块 PNG 体积">瓦片 scale — · 光照 — · — B</span>
+    <span class="st-bar">|</span>
+    <span class="st" id="stCell">单元格 —, —</span>
+    <span class="st-bar">|</span>
+    <span class="st" id="stSel">选区 —</span>
+    <span class="st-bar">|</span>
+    <span class="st" id="stClip">剪贴板 —</span>
+    <span class="st-bar">|</span>
+    <span class="st" id="stChanged">改动 —</span>
+  </div>
+  <div class="statusbar__right">
+    <span class="st" id="stMode">未连接</span>
+  </div>
+</footer>
+
+<!-- ========== 打开地图对话框（列表为主，手打路径为退路） ========== -->
+<dialog class="dialog dialog--open" id="openDialog">
+  <form method="dialog" class="dialog__form" id="openForm">
+    <h2 class="dialog__title">打开地图</h2>
+    <p class="dialog__note" id="openNote"></p>
+
+    <!-- 列表：数据来自 GET /api/maps（只读元数据），搜索是纯客户端过滤 -->
+    <div class="maplist__head">
+      <input type="search" id="mapSearch" class="maplist__search" autocomplete="off"
+             spellcheck="false" placeholder="搜索文件名（本地过滤）"
+             aria-label="搜索地图文件名">
+      <button type="button" class="btn btn--ghost maplist__refresh" id="mapRefresh"
+              title="重新扫描 MIREDIT_MAP_ROOT（GET /api/maps）">刷新</button>
+    </div>
+    <p class="maplist__meta" id="mapListMeta">正在读取地图列表…</p>
+    <div class="maplist__list" id="mapList" role="listbox" aria-label="地图列表"></div>
+
+    <!-- 退路：手打路径（含最近打开过的路径提示） -->
+    <details class="maplist__fallback" id="openFallback">
+      <summary>手打路径（退路）</summary>
+      <label class="dialog__field">
+        <span>地图路径（相对 MIREDIT_MAP_ROOT）</span>
+        <input type="text" id="openPath" name="path" spellcheck="false" autocomplete="off"
+               list="recentPaths" placeholder="GodotClient/maps/0.map">
+        <datalist id="recentPaths"></datalist>
+      </label>
+      <button class="btn btn--ghost" id="openManual" value="ok" type="submit">按此路径打开</button>
+    </details>
+
+    <div class="dialog__actions">
+      <button class="btn btn--ghost" value="cancel" type="submit">关闭</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="runtime-config.js"></script>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/tiles.js"></script>
+<script src="js/canvas.js"></script>
+<script src="js/touch.js"></script>
+<script src="js/edit.js"></script>
+<script src="js/selection.js"></script>
+<script src="js/stampmode.js"></script>
+<script src="js/panels.js"></script>
+<script src="js/maplist.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+[package]
+name = "mir2-format"
+version = "0.1.0"
+edition = "2021"
+description = "传奇 M2 九种地图格式的模块化注册表（CrystalStudio LegacyMapReader 全量移植，读写字节级往返）"
+license = "MIT"
+
+[dependencies]
+# 故意留空：本 crate 只允许 std 依赖（不引 serde、不引任何第三方）。

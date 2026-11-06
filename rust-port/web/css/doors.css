@@ -1,0 +1,30 @@
+/* =============================================================================
+   doors.css —— 图层区「开启门」复选框（视图选项，不改地图数据）
+   · 勾上 ⇒ `/api/tiles?...&doors=1`（门格前景帧号加 `door_offset`，门全开帧）
+     不勾 ⇒ `doors=0`（闭门帧，与改动前**逐字节相同**）
+   · 为什么单独成文件：`css/app.css` 已 598 行，本仓硬规则「单文件 ≤600 行」
+     （同 `brush-size.css` 的由来）
+   · 移动端触控目标 ≥44px：**整行 `<label>` 48px + 复选框本身 44×44** ——
+     两个都量得到 ≥44px，不做"看起来能点"
+   · 位置：图层组**组头**（在 `#layerList` 之前）—— 它和五个眼睛同属"看什么"的开关；
+     放组尾时在 1440×900 下会被底部状态栏盖住（左栏内容超出可视区，见 web/README.md §9.6）
+   ============================================================================= */
+
+.doors {
+  display: flex; align-items: center; gap: 8px;
+  margin: 0 0 6px; padding: 4px 6px; min-height: 36px;
+  border: 1px solid var(--line); border-radius: 6px; background: #fff;
+  cursor: pointer; user-select: none;
+}
+.doors:hover { background: var(--panel-2); }
+.doors__box {
+  width: 16px; height: 16px; flex: 0 0 auto;
+  margin: 0; accent-color: var(--gold-dark); cursor: pointer;
+}
+.doors__name { font-size: 12.5px; }
+.doors__hint { margin-left: auto; font-size: 11px; color: var(--ink-3); }
+
+@media (max-width: 767.98px) {
+  .doors { min-height: 48px; padding: 2px 6px; }
+  .doors__box { width: 44px; height: 44px; }
+}

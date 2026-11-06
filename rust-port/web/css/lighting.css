@@ -1,0 +1,41 @@
+/* =============================================================================
+   lighting.css —— 图层区「地图光照」三选按钮（视图选项，不改地图数据）
+   · 三档互斥：白天 / 黎明·黄昏 / 夜晚 ⇒ `/api/tiles?lighting=day|dawn_dusk|night`
+   · 白天是缺省，产物与改动前逐字节相同；切其它档会重取瓦片（缓存键含 lighting）
+   · 为什么单独成文件：`css/app.css` 已接近 600 行，本仓硬规则「单文件 ≤600 行」
+   · 移动端 375×812：三按钮每个触控目标 ≥44px；状态栏只把 `stTile` 同一格文本加长，
+     `statusbar` 仍是 `flex-wrap` 的一整块，不新增独立行、不改高度
+   ============================================================================= */
+
+.lighting {
+  display: flex; align-items: center; gap: 4px;
+  margin: 0 0 6px; padding: 4px 6px; min-height: 36px;
+  border: 1px solid var(--line); border-radius: 6px; background: #fff;
+}
+.lighting__label {
+  flex: 0 0 auto; margin-right: 2px;
+  font-size: 11px; color: var(--ink-3); white-space: nowrap;
+}
+.lighting__btn {
+  flex: 1 1 0; min-width: 0; min-height: 28px;
+  padding: 2px 6px;
+  border: 1px solid var(--line-2); border-radius: 5px;
+  background: #fff; color: var(--ink-2);
+  font-size: 11.5px; white-space: nowrap;
+  transition: background .16s ease-out, border-color .16s ease-out;
+}
+.lighting__btn:hover { background: var(--gold-soft); border-color: var(--gold); }
+.lighting__btn[aria-pressed="true"],
+.lighting__btn[aria-checked="true"] {
+  background: var(--gold); border-color: var(--gold-dark); color: #fff; font-weight: 600;
+}
+.lighting__btn:focus-visible { outline: 2px solid var(--gold-dark); outline-offset: 2px; }
+
+@media (max-width: 767.98px) {
+  .lighting { min-height: 48px; padding: 2px 5px; }
+  .lighting__btn { min-height: 44px; font-size: 12px; padding: 2px 4px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lighting__btn { transition: none; }
+}

@@ -1,0 +1,3587 @@
+{
+  "__meta": {
+    "source_repo": "fluttergo/CrystalStudio",
+    "upstream_commit": "6f2dadde",
+    "upstream_date": "2026-11-04T09:49:10Z",
+    "source_path": "CrystalStudio/Localization/Strings.json",
+    "source_bytes": 109126,
+    "extracted_at": "2026-11-04T20:17:05+08:00",
+    "entries": 893,
+    "key_format": "key = 英文原文净化（去标点/空白）+ \"_\" + 8 位哈希；893 条英文互不重复，故 key 与英文一一对应",
+    "format": "key → { \"English\": 英文原文, \"Chinese\": 简体中文 }，与上游字段名、顺序完全一致",
+    "runtime_lookup": "LocalText.T(英文) 按 English 反查中文（LocalText.cs:14-15,50）；LocalText.Source(key) 取英文（:51）；axaml 用 {local:Loc KEY}（:84-88）",
+    "verbatim": "原样转存：未筛减、未改写译文、未改 key，仅新增本 __meta 字段"
+  },
+  "00cells_F1D92C48": {
+    "English": "{0:0} cells",
+    "Chinese": "{0:0} 格"
+  },
+  "0123cellsCrystalStudio_4CFBA9CF": {
+    "English": "{0}{1} • {2} × {3} cells — Crystal Studio",
+    "Chinese": "{0}{1} • {2} × {3} 格 — Crystal Studio"
+  },
+  "012Library34_6D281E7D": {
+    "English": "{0} {1} · {2} · Library {3}\n{4}",
+    "Chinese": "{0} {1} · {2} · 资源库 {3}\n{4}"
+  },
+  "012Seed3_926C4C98": {
+    "English": "{0} · {1}×{2} · Seed {3}\n",
+    "Chinese": "{0} · {1}×{2} · 种子 {3}\n"
+  },
+  "012cellsfromvisiblelayers_470036FF": {
+    "English": "{0} {1} × {2} cells from visible layers",
+    "Chinese": "已{0}可见图层的 {1} × {2} 格"
+  },
+  "012houses3marketcivicandgardenobjects4Seed5_1451788A": {
+    "English": "{0} · {1} · {2} houses · {3} market, civic and garden objects · {4} · Seed {5}",
+    "Chinese": "{0} · {1} · {2} 栋房屋 · {3} 个集市、公共设施和花园物体 · {4} · 种子 {5}"
+  },
+  "01N023_77D00696": {
+    "English": "{0}: {1:N0} {2} · {3}",
+    "Chinese": "{0}：{1:N0} {2} · {3}"
+  },
+  "01N02N03N0matches_8488A724": {
+    "English": "{0} · {1:N0}/{2:N0} · {3:N0} matches",
+    "Chinese": "{0} · {1:N0}/{2:N0} · {3:N0} 个匹配"
+  },
+  "01N0cellsClickthemaptoplace_DFDC78FC": {
+    "English": "{0} · {1:N0} cells · Click the map to place",
+    "Chinese": "{0} · {1:N0} 格 · 单击地图放置"
+  },
+  "01cellsSeed2_6D43DDE5": {
+    "English": " · {0}×{1} cells · Seed {2}",
+    "Chinese": " · {0}×{1} 格 · 种子 {2}"
+  },
+  "01cells_E4460CC0": {
+    "English": "{0} × {1} cells",
+    "Chinese": "{0} × {1} 格"
+  },
+  "01in2_173175C6": {
+    "English": "{0} {1} in {2}",
+    "Chinese": "{2} 中有 {0} 个{1}"
+  },
+  "01ready_F423F6F6": {
+    "English": "{0} {1} ready",
+    "Chinese": "{0} 个{1}已就绪"
+  },
+  "01stamps_E6B72BB0": {
+    "English": "{0}\n{1} stamps",
+    "Chinese": "{0}\n{1} 个物体"
+  },
+  "01topaint_36BC834D": {
+    "English": "{0} {1} to paint",
+    "Chinese": "绘制 {0} 个{1}"
+  },
+  "0ClicktocloneEscapetocancel_6065D19F": {
+    "English": "{0} · Click to clone · Escape to cancel",
+    "Chinese": "{0} · 单击克隆 · Escape 取消"
+  },
+  "0ClicktomoveDeletetoremoveEscapetocancel_35791AD2": {
+    "English": "{0} · Click to move · Delete to remove · Escape to cancel",
+    "Chinese": "{0} · 单击移动 · Delete 删除 · Escape 取消"
+  },
+  "0ClicktoplaceTownSettingstoshuffle_CC761999": {
+    "English": "{0} · Click to place · Town Settings to shuffle",
+    "Chinese": "{0} · 单击放置 · 城镇设置可随机生成"
+  },
+  "0Connectionsupdated_F52695A4": {
+    "English": "{0} · Connections updated",
+    "Chinese": "{0} · 相邻连接已更新"
+  },
+  "0Filenolongerexists_5281A015": {
+    "English": "{0}\nFile no longer exists.",
+    "Chinese": "{0}\n文件已不存在。"
+  },
+  "0Frames1Tick2Flag3_2AF6D2BC": {
+    "English": "{0}\nFrames {1} · Tick {2} · Flag {3}",
+    "Chinese": "{0}\n帧数 {1} · 间隔 {2} · 标志{3}"
+  },
+  "0Frames1Tick2_DFC23F91": {
+    "English": "{0}\nFrames {1} · Tick {2}",
+    "Chinese": "{0}\n帧数 {1} · 间隔 {2}"
+  },
+  "0Lib1_6B3DB663": {
+    "English": "{0} · Lib {1}",
+    "Chinese": "{0} · 资源库 {1}"
+  },
+  "0N0banksprites_1852806A": {
+    "English": " + {0:N0} bank sprites",
+    "Chinese": " + {0:N0} 张河岸图片"
+  },
+  "0N0groundtiles_508A8D39": {
+    "English": "{0:N0} ground tiles",
+    "Chinese": "{0:N0} 个地表图块"
+  },
+  "0N0more_DC9FDB81": {
+    "English": ", +{0:N0} more",
+    "Chinese": "，另有 {0:N0} 格"
+  },
+  "0N0nativebanksprites_3FB7FFC3": {
+    "English": " + {0:N0} native bank sprites",
+    "Chinese": " + {0:N0} 张原生河岸图片"
+  },
+  "0Sets_5DB992C2": {
+    "English": "0 Sets",
+    "Chinese": "0 组"
+  },
+  "0Type_53F1882C": {
+    "English": "{0} Type",
+    "Chinese": "{0}类型"
+  },
+  "0collisionPainttoapplyerasetoremove_81A59B7E": {
+    "English": "{0} collision · Paint to apply, erase to remove",
+    "Chinese": "{0}位阻挡 · 绘制可添加，擦除可移除"
+  },
+  "0corridorsiderooms_A40F0E07": {
+    "English": " · {0} corridor side rooms",
+    "Chinese": " · {0} 个走廊侧室"
+  },
+  "0librariesindexed_AD931BEF": {
+    "English": "{0} libraries indexed",
+    "Chinese": "已索引 {0} 个资源库"
+  },
+  "0pinnedtoFavourites_8610D6C9": {
+    "English": "{0} pinned to Favourites",
+    "Chinese": "已将 {0} 加入收藏"
+  },
+  "0placed_E8DD0B51": {
+    "English": "{0} placed",
+    "Chinese": "已放置 {0}"
+  },
+  "0unavailablepiecesskipped_15DDA82B": {
+    "English": " · {0} unavailable pieces skipped",
+    "Chinese": " · 已跳过 {0} 个不可用组件"
+  },
+  "0unpinned_AACD369A": {
+    "English": "{0} unpinned",
+    "Chinese": "已取消收藏 {0}"
+  },
+  "ActiveAsset_BF34816C": {
+    "English": "Active Asset",
+    "Chinese": "当前资源"
+  },
+  "ActiveassetpinnedtoFavourites_2FEC9782": {
+    "English": "Active asset pinned to Favourites",
+    "Chinese": "当前资源已加入收藏"
+  },
+  "Activeassetunpinned_696229E2": {
+    "English": "Active asset unpinned",
+    "Chinese": "当前资源已取消收藏"
+  },
+  "ActualSize100_2CE765D4": {
+    "English": "_Actual Size (100%)",
+    "Chinese": "实际大小（100%）(_A)"
+  },
+  "AddAllTreesofThisType_CA3C379A": {
+    "English": "Add All Trees of This Type",
+    "Chinese": "添加当前类型的全部树木"
+  },
+  "AddAll_984E7877": {
+    "English": "Add All ",
+    "Chinese": "添加全部"
+  },
+  "AddSelected_C78A147B": {
+    "English": "Add Selected →",
+    "Chinese": "添加选中项 →"
+  },
+  "AddType_E2757A4E": {
+    "English": "Add Type →",
+    "Chinese": "添加整类 →"
+  },
+  "All_6B2FD69C": {
+    "English": "All ",
+    "Chinese": "全部"
+  },
+  "Allbushes_E959B066": {
+    "English": "All bushes",
+    "Chinese": "全部灌木"
+  },
+  "Allfiles_86695690": {
+    "English": "All files",
+    "Chinese": "所有文件"
+  },
+  "Allrocks_9D8A1EC2": {
+    "English": "All rocks",
+    "Chinese": "全部岩石"
+  },
+  "Alltrees_7E8FD1DE": {
+    "English": "All trees",
+    "Chinese": "全部树木"
+  },
+  "Amountofdoors_7B539A2E": {
+    "English": "Amount of doors · ",
+    "Chinese": "入口数量 ·"
+  },
+  "Amountofdoors_DC5C3D82": {
+    "English": "Amount of doors",
+    "Chinese": "入口数量"
+  },
+  "AncientZuma_9453F55B": {
+    "English": "AncientZuma",
+    "Chinese": "远古祖玛"
+  },
+  "Appearance_3907FA7F": {
+    "English": "Appearance",
+    "Chinese": "外观"
+  },
+  "Applied0collisionto1N0cells_F51A3BB2": {
+    "English": "Applied {0} collision to {1:N0} cells",
+    "Chinese": "已为 {1:N0} 格应用{0}位阻挡"
+  },
+  "ApplyDungeon_147E9FFC": {
+    "English": "Apply Dungeon",
+    "Chinese": "应用地牢"
+  },
+  "ApplyProperties_D9012CD8": {
+    "English": "Apply Properties",
+    "Chinese": "应用属性"
+  },
+  "ApplyTerrain_4E9707E3": {
+    "English": "Apply Terrain",
+    "Chinese": "应用地形"
+  },
+  "Apply_31E392D1": {
+    "English": "Apply",
+    "Chinese": "应用"
+  },
+  "ApplytoSelectedCells_780C2D44": {
+    "English": "Apply to Selected Cells",
+    "Chinese": "应用至选中单元格"
+  },
+  "Area0123cellsSeed4Applycreatesoneundostepexistingobjectsandcollis_029510C1": {
+    "English": " · Area {0},{1} — {2}×{3} cells · Seed {4}. Apply creates one undo step; existing objects and collisions are preserved.",
+    "Chinese": " · 区域 {0},{1} — {2}×{3} 格 · 种子 {4}。应用后可一次撤销；保留现有物体和阻挡。"
+  },
+  "Asseterror0_5D4F772B": {
+    "English": "Asset error: {0}",
+    "Chinese": "资源错误：{0}"
+  },
+  "Assetsyouselectorpaintwithappearherewiththemostrecentfirst_BFE5DF8E": {
+    "English": "Assets you select or paint with appear here,\nwith the most recent first.",
+    "Chinese": "选择或绘制过的资源会显示在此处，\n最近使用的排在前面。"
+  },
+  "AssetunavailableLoaditsoriginallibraryfolderinSettings_CDB47EFD": {
+    "English": "Asset unavailable · Load its original library folder in Settings",
+    "Chinese": "资源不可用 · 请在设置中选择对应的原始资源目录"
+  },
+  "BaseTerrain_BA62BD90": {
+    "English": "Base Terrain",
+    "Chinese": "基础地形"
+  },
+  "BeachChance_2F7DB4BE": {
+    "English": "Beach Chance",
+    "Chinese": "海滩概率"
+  },
+  "Beach_69FF7B88": {
+    "English": "Beach · ",
+    "Chinese": "海滩 ·"
+  },
+  "Beach_C1624A26": {
+    "English": "Beach",
+    "Chinese": "海滩"
+  },
+  "Before_D3E98CE0": {
+    "English": " / Before ",
+    "Chinese": " / 位于之前："
+  },
+  "BichonProvince_46141885": {
+    "English": "BichonProvince",
+    "Chinese": "比奇省"
+  },
+  "Bichonwoodland_00A2DFF9": {
+    "English": "Bichon woodland",
+    "Chinese": "比奇林地"
+  },
+  "Boat_90406B7D": {
+    "English": "Boat",
+    "Chinese": "船只"
+  },
+  "Bottom_479AD21A": {
+    "English": "Bottom",
+    "Chinese": "底部"
+  },
+  "BridgeCrossing_C66FECDC": {
+    "English": "Bridge Crossing",
+    "Chinese": "河流通行桥梁"
+  },
+  "Bridge_3892E103": {
+    "English": "Bridge",
+    "Chinese": "桥梁"
+  },
+  "BrowseIndividualTiles_D08C122F": {
+    "English": "Browse Individual Tiles",
+    "Chinese": "浏览单张图块"
+  },
+  "BrowseTrees_EE5D65C6": {
+    "English": "Browse Trees",
+    "Chinese": "浏览树木"
+  },
+  "Browse_17152DD6": {
+    "English": "Browse ",
+    "Chinese": "浏览"
+  },
+  "Browse_93C6B664": {
+    "English": "Browse…",
+    "Chinese": "浏览…"
+  },
+  "BrushBPaintCompleteTerrainPatterns_8C87DC7B": {
+    "English": "Brush · B\nPaint Complete Terrain Patterns",
+    "Chinese": "笔刷 · B\n绘制完整地形组合"
+  },
+  "BrushPencilSpecialBrush_924485DC": {
+    "English": "Brush / Pencil / Special Brush",
+    "Chinese": "笔刷 / 铅笔 / 特殊笔刷"
+  },
+  "BrushSize_2F4196F1": {
+    "English": " Brush Size",
+    "Chinese": "笔刷大小"
+  },
+  "BrushSize_FB23F428": {
+    "English": "Brush Size",
+    "Chinese": "笔刷大小"
+  },
+  "Brush_8624CA0F": {
+    "English": "Brush",
+    "Chinese": "笔刷"
+  },
+  "Brush_E2719220": {
+    "English": " Brush",
+    "Chinese": "笔刷"
+  },
+  "BugCave_A7149255": {
+    "English": "Bug Cave",
+    "Chinese": "蜈蚣洞"
+  },
+  "BuildingAmount_0A825F9E": {
+    "English": "Building Amount",
+    "Chinese": "建筑数量"
+  },
+  "BuildingAmount_E982A0A4": {
+    "English": "Building Amount · ",
+    "Chinese": "建筑数量 ·"
+  },
+  "BuildingGap_F833502B": {
+    "English": "Building Gap",
+    "Chinese": "建筑间距"
+  },
+  "Building_87C5912F": {
+    "English": "Building",
+    "Chinese": "建筑"
+  },
+  "BushBrush_ACAC52DA": {
+    "English": "Bush Brush",
+    "Chinese": "灌木笔刷"
+  },
+  "Bush_5A62C150": {
+    "English": "Bush",
+    "Chinese": "灌木"
+  },
+  "Bushes_F01828D0": {
+    "English": "Bushes",
+    "Chinese": "灌木"
+  },
+  "CancelCloneEscape_70569D7F": {
+    "English": "Cancel Clone · Escape",
+    "Chinese": "取消克隆 · Escape"
+  },
+  "CancelPickupClone_26E225CC": {
+    "English": "Cancel Pickup / Clone",
+    "Chinese": "取消移动 / 克隆"
+  },
+  "CancelPickupEscape_A69A622D": {
+    "English": "Cancel Pickup · Escape",
+    "Chinese": "取消移动 · Escape"
+  },
+  "CancelScan_5085D45A": {
+    "English": "Cancel Scan",
+    "Chinese": "取消扫描"
+  },
+  "Cancel_19766ED6": {
+    "English": "Cancel",
+    "Chinese": "取消"
+  },
+  "Cancelling_91B104DB": {
+    "English": "Cancelling…",
+    "Chinese": "正在取消…"
+  },
+  "Canyonbadlands_0C29DE79": {
+    "English": "Canyon badlands",
+    "Chinese": "峡谷荒地"
+  },
+  "CategoriesUnavailable_387A2FDD": {
+    "English": "Categories Unavailable",
+    "Chinese": "分类不可用"
+  },
+  "Categories_B8B1D894": {
+    "English": "Categories",
+    "Chinese": "分类"
+  },
+  "Category_292C06F0": {
+    "English": "Category",
+    "Chinese": "分类"
+  },
+  "Categorystamps_03EC65FA": {
+    "English": "Category stamps",
+    "Chinese": "分类内物体"
+  },
+  "Cave0connectedcavernpockets_E9A5CDDF": {
+    "English": "Cave · {0} connected cavern pockets",
+    "Chinese": "洞穴 · {0} 个连通区域"
+  },
+  "Cave_9530BFE0": {
+    "English": "Cave",
+    "Chinese": "洞穴"
+  },
+  "Cell01_7AF91644": {
+    "English": "Cell {0}, {1}",
+    "Chinese": "单元格 {0}, {1}"
+  },
+  "Cell0N01N023_D9A26C60": {
+    "English": "Cell {0:N0}, {1:N0} · {2} {3}",
+    "Chinese": "单元格 {0:N0}, {1:N0} · {2} 个{3}"
+  },
+  "Cell0N01N0_FDDBC500": {
+    "English": "Cell {0:N0}, {1:N0}",
+    "Chinese": "单元格 {0:N0}, {1:N0}"
+  },
+  "CellGrid_1DB84E6F": {
+    "English": "Cell _Grid",
+    "Chinese": "单元格网格(_G)"
+  },
+  "CellHighlights_E3B54000": {
+    "English": "Cell Highlights",
+    "Chinese": "单元格高亮"
+  },
+  "CellInspector_3FFA821E": {
+    "English": "Cell Inspector",
+    "Chinese": "单元格检查器"
+  },
+  "CellProperties_C6777E7F": {
+    "English": "Cell Properties",
+    "Chinese": "单元格属性"
+  },
+  "CellProperties_FBDC35E6": {
+    "English": "Cell Properties…",
+    "Chinese": "单元格属性…"
+  },
+  "Cells_D8B264EC": {
+    "English": " Cells",
+    "Chinese": "格"
+  },
+  "CentreDetail_E3824490": {
+    "English": "Centre Detail",
+    "Chinese": "中心细节"
+  },
+  "CentredBrushFootprintAndtoResize_55DDE2E3": {
+    "English": "Centred Brush Footprint · [ And ] to Resize",
+    "Chinese": "以中心定位笔刷范围 · 使用 [ 和 ] 调整大小"
+  },
+  "ChanceperGeneratedMap_482493D3": {
+    "English": "Chance per Generated Map",
+    "Chinese": "每张生成地图的概率"
+  },
+  "ChancetoEncloseaGardenNeighbourhoodorWholeSettlementwithMatchingG_53F4A504": {
+    "English": "Chance to Enclose a Garden, Neighbourhood or Whole Settlement with Matching Gateways. Zero Disables Enclosures.",
+    "Chinese": "使用匹配的入口围合花园、街区或整个聚落。设为 0 可禁用围合区域。"
+  },
+  "CheckedPreviewAllDoorsOpenUncheckedPreviewAllDoorsClosed_FAACB12A": {
+    "English": "Checked: Preview All Doors Open. Unchecked: Preview All Doors Closed.",
+    "Chinese": "选中：预览所有门开启；未选中：预览所有门关闭。"
+  },
+  "CheckingLibraries_36A8B3FB": {
+    "English": "Checking Libraries…",
+    "Chinese": "正在检查资源库…"
+  },
+  "Checkingterrainartwork_7F3130A5": {
+    "English": "Checking terrain artwork…",
+    "Chinese": "正在检查地形资源…"
+  },
+  "Choose0in1settingsfirst_F3BC8B75": {
+    "English": "Choose {0} in {1} settings first",
+    "Chinese": "请先在{1}设置中选择{0}"
+  },
+  "ChooseFolder_E272A99C": {
+    "English": "Choose Folder…",
+    "Chinese": "选择目录…"
+  },
+  "ChooseType_4D59105B": {
+    "English": "Choose Type",
+    "Chinese": "选择类型"
+  },
+  "ChooseXObjectstoIdentify_1FE79B95": {
+    "English": "Choose .X Objects to Identify",
+    "Chinese": "选择要识别的 .X 物体"
+  },
+  "ChooseYourLibrariesOnce_3DD34E85": {
+    "English": "Choose Your Libraries Once",
+    "Chinese": "首次配置资源库"
+  },
+  "ChooseaTerrainPattern_9FDBA167": {
+    "English": "Choose a Terrain Pattern",
+    "Chinese": "选择地形组合"
+  },
+  "ChooseaTown_50D418E4": {
+    "English": "Choose a Town",
+    "Chinese": "选择城镇"
+  },
+  "Chooseabaseterrain_78F9A9ED": {
+    "English": "Choose a base terrain.",
+    "Chinese": "请选择基础地形。"
+  },
+  "Chooseanobjectstamp_7F2133B4": {
+    "English": "Choose an object stamp",
+    "Chinese": "选择物体模板"
+  },
+  "Chooseaplacedstamptoclone_9C0D5C45": {
+    "English": "Choose a placed stamp to clone",
+    "Chinese": "选择要克隆的已放置物体"
+  },
+  "Chooseaplacedstamptomove_46E6DAD0": {
+    "English": "Choose a placed stamp to move",
+    "Chinese": "选择要移动的已放置物体"
+  },
+  "ChooseawalltypeinWallsettingsW_59EC7F58": {
+    "English": "Choose a wall type in Wall settings (W)",
+    "Chinese": "请先在墙体设置（H）中选择墙体类型"
+  },
+  "ChoosetheFolderContainingYourXFiles_618CB370": {
+    "English": "Choose the Folder Containing Your .X Files",
+    "Chinese": "选择存放 .X 文件的目录"
+  },
+  "Choosetype_C0EB0F8E": {
+    "English": "Choose type",
+    "Chinese": "选择类型"
+  },
+  "ChooseyourCrystallibraryfolderinSettingsbeforeexportingmapartwork_AB160BE9": {
+    "English": "Choose your Crystal library folder in Settings before exporting map artwork.",
+    "Chinese": "导出地图图像前，请先在设置中选择 Crystal 资源目录。"
+  },
+  "ChooseyourCrystallibraryfolderonceItwillloadautomaticallynexttime_266906D0": {
+    "English": "Choose your Crystal library folder once.\nIt will load automatically next time.",
+    "Chinese": "选择 Crystal 资源目录后，\n下次启动会自动加载。"
+  },
+  "ClearMyTreeList_ACCB1077": {
+    "English": "Clear My Tree List",
+    "Chinese": "清空我的树木列表"
+  },
+  "ClearMy_DCF3F328": {
+    "English": "Clear My ",
+    "Chinese": "清空我的"
+  },
+  "ClearSearch_81C2C4F3": {
+    "English": "Clear Search",
+    "Chinese": "清除搜索"
+  },
+  "Clear_83B12C22": {
+    "English": "Clear",
+    "Chinese": "清空"
+  },
+  "Click_95BA4ED9": {
+    "English": "Click",
+    "Chinese": "单击"
+  },
+  "ClickaclearareaonthemaptoplacethecompletetownCtrlZundoesit_9C8AFAAB": {
+    "English": ". Click a clear area on the map to place the complete town. Ctrl+Z undoes it.",
+    "Chinese": "。在地图空白区域单击即可放置完整城镇，Ctrl+Z 撤销。"
+  },
+  "ClickaclearareatoplacethecompletetownTownsettingschangesthetypesi_837835EF": {
+    "English": "Click a clear area to place the complete town.\nTown settings changes the type, size and seed.",
+    "Chinese": "单击空白区域即可放置完整城镇。\n城镇设置可调整类型、大小和种子。"
+  },
+  "Clickaplacedstamptocloneit_70DBC592": {
+    "English": "Click a placed stamp to clone it",
+    "Chinese": "单击已放置的物体以克隆"
+  },
+  "Clickaplacedstamptopickitup_C18A0258": {
+    "English": "Click a placed stamp to pick it up",
+    "Chinese": "单击已放置的物体以移动"
+  },
+  "Clickthestaronaterraintileorstamptokeepithere_C854F2EC": {
+    "English": "Click the star on a terrain tile or stamp\nto keep it here.",
+    "Chinese": "单击地形图块或物体上的星标，\n即可在此处收藏。"
+  },
+  "ClicktocentrethemapdragtheviewportrectangletopanMousewheelzooms_1B42A882": {
+    "English": "Click to centre the map; drag the viewport rectangle to pan. Mouse wheel zooms.",
+    "Chinese": "单击定位地图中心；拖动视口矩形可平移；鼠标滚轮缩放。"
+  },
+  "ClicktopasteregionEscapetocancel_8F15A2FD": {
+    "English": "Click to paste region · Escape to cancel",
+    "Chinese": "单击粘贴区域 · Escape 取消"
+  },
+  "CliffBorderChance_0266F4BE": {
+    "English": "Cliff Border Chance",
+    "Chinese": "悬崖边界概率"
+  },
+  "CliffBorder_C96CCF14": {
+    "English": "Cliff Border · ",
+    "Chinese": "悬崖边界 ·"
+  },
+  "Cliff_0C438BB6": {
+    "English": "Cliff",
+    "Chinese": "悬崖"
+  },
+  "CliffsCanSpanOneTwoThreeorAllFourSidesJoiningAroundCornersBeaches_0E08F56C": {
+    "English": "Cliffs Can Span One, Two, Three or All Four Sides, Joining Around Corners. Beaches and River Mouths Can Create Openings.",
+    "Chinese": "悬崖可沿一至四条边分布，并在角落处连通。海滩和河口可形成开口。"
+  },
+  "CloneKClickaRememberedStampThenClicktoPlaceaCopyEscapeCancels_9C25BBC9": {
+    "English": "Clone · K\nClick a Remembered Stamp, Then Click to Place a Copy\nEscape Cancels",
+    "Chinese": "克隆 · K\n单击已记录的物体，再单击放置副本\nEscape 取消"
+  },
+  "Clone_5779F32F": {
+    "English": "Clone",
+    "Chinese": "克隆"
+  },
+  "CloseMap_4F807203": {
+    "English": "Close Map",
+    "Chinese": "关闭地图"
+  },
+  "Close_7D9EB7AC": {
+    "English": "Close",
+    "Chinese": "关闭"
+  },
+  "Collision_F68A6490": {
+    "English": "Collision",
+    "Chinese": "阻挡"
+  },
+  "CompatibleGroundandPathTileswithMatchingBlendedEdges_E1E5ADA4": {
+    "English": "Compatible Ground and Path Tiles with Matching Blended Edges",
+    "Chinese": "边缘过渡匹配的地面与道路图块"
+  },
+  "ConnectedRoutes_973CBCC5": {
+    "English": "Connected Routes",
+    "Chinese": "连通路线"
+  },
+  "ConnectedwallUseWallWtoextenditorShifttoremovesections_9BE7BE1B": {
+    "English": "Connected wall · Use Wall (W) to extend it or Shift to remove sections",
+    "Chinese": "连续墙体 · 使用墙体工具（H）延伸，或按住 Shift 移除墙段"
+  },
+  "Copied_8D525E5F": {
+    "English": "Copied",
+    "Chinese": "复制"
+  },
+  "CopyVisibleLayersPasteRegion_953B6AD8": {
+    "English": "Copy Visible Layers / Paste Region",
+    "Chinese": "复制可见图层 / 粘贴区域"
+  },
+  "CopyVisibleLayers_98121CE4": {
+    "English": "Copy Visible Layers",
+    "Chinese": "复制可见图层"
+  },
+  "CopyaselectedregionfirstCtrlC_2242C87C": {
+    "English": "Copy a selected region first (Ctrl+C)",
+    "Chinese": "请先复制选区（Ctrl+C）"
+  },
+  "CorridorWidth_6B297440": {
+    "English": "Corridor Width",
+    "Chinese": "走廊宽度"
+  },
+  "CorridorsOnly0connectedjunctions_24B4601A": {
+    "English": "Corridors Only · {0} connected junctions",
+    "Chinese": "仅走廊 · {0} 个连通节点"
+  },
+  "CouldNotReadRecentMaps0_40603381": {
+    "English": "Could Not Read Recent Maps: {0}",
+    "Chinese": "无法读取最近地图：{0}"
+  },
+  "CouldNotSaveRecentMaps0_9289B9E5": {
+    "English": "Could Not Save Recent Maps: {0}",
+    "Chinese": "无法保存最近地图：{0}"
+  },
+  "Couldnotgenerateprovince_7F1228D0": {
+    "English": "Could not generate province: ",
+    "Chinese": "无法生成省域："
+  },
+  "Couldnotloadwallcatalogue_7860401F": {
+    "English": "Could not load wall catalogue: ",
+    "Chinese": "无法加载墙体目录："
+  },
+  "Couldnotreadsavedassets0_2E18B2A7": {
+    "English": "Could not read saved assets: {0}",
+    "Chinese": "无法读取已保存资源：{0}"
+  },
+  "Couldnotsavefavouritesandrecentassets0_7BC765E0": {
+    "English": "Could not save favourites and recent assets: {0}",
+    "Chinese": "无法保存收藏和最近使用资源：{0}"
+  },
+  "Couldnotsavelanguagepreference0_2C9A5D3F": {
+    "English": "Could not save language preference: {0}",
+    "Chinese": "无法保存语言偏好：{0}"
+  },
+  "Crackeddirtondirt_F33027E9": {
+    "English": "Cracked dirt on dirt",
+    "Chinese": "泥地上的龟裂土路"
+  },
+  "CreateMap_567736CC": {
+    "English": "Create Map",
+    "Chinese": "创建地图"
+  },
+  "CreateaNewCrystalMap_5FC15B77": {
+    "English": "Create a New Crystal Map",
+    "Chinese": "创建 Crystal 地图"
+  },
+  "CrystalDataMapFolder_32092D18": {
+    "English": "Crystal Data / Map Folder",
+    "Chinese": "Crystal Data / Map 目录"
+  },
+  "CrystalStudioMapEditor_AEA57DE1": {
+    "English": "Crystal Studio — Map Editor",
+    "Chinese": "Crystal Studio — 地图编辑器"
+  },
+  "CrystalStudioSettings_F08E7D5F": {
+    "English": "Crystal Studio Settings",
+    "Chinese": "Crystal Studio 设置"
+  },
+  "CrystalStudio_577BFFEF": {
+    "English": " — Crystal Studio",
+    "Chinese": " — Crystal Studio"
+  },
+  "CrystalStudio_F96955A7": {
+    "English": "Crystal Studio",
+    "Chinese": "Crystal Studio"
+  },
+  "Crystalmapmap_155C4B32": {
+    "English": "Crystal map (*.map)",
+    "Chinese": "Crystal 地图 (*.map)"
+  },
+  "CrystalobjectX_41B01D06": {
+    "English": "Crystal object (*.X)",
+    "Chinese": "Crystal 物体 (*.X)"
+  },
+  "CtrlClicktoSelectSeveral_0E09D12F": {
+    "English": ". Ctrl-Click to Select Several.",
+    "Chinese": "。按住 Ctrl 单击可多选。"
+  },
+  "Currentcategoryallmatchingstamps_187A3305": {
+    "English": "Current category / all matching stamps",
+    "Chinese": "当前分类 / 全部匹配物体"
+  },
+  "CutVisibleLayers_41AADD21": {
+    "English": "Cut Visible Layers",
+    "Chinese": "剪切可见图层"
+  },
+  "Cut_1F45F025": {
+    "English": "Cut",
+    "Chinese": "剪切"
+  },
+  "DarkMode_15AAE2DB": {
+    "English": "_Dark Mode",
+    "Chinese": "深色模式(_D)"
+  },
+  "DawnDusk_FDEA5B80": {
+    "English": "_Dawn/Dusk",
+    "Chinese": "黎明 / 黄昏(_D)"
+  },
+  "Day_0CB25AFB": {
+    "English": "_Day",
+    "Chinese": "白天(_D)"
+  },
+  "Debris_C08DBA18": {
+    "English": "Debris",
+    "Chinese": "残骸"
+  },
+  "DecorationAmount_2A06CCD6": {
+    "English": "Decoration Amount",
+    "Chinese": "装饰数量"
+  },
+  "Decoration_7B39A9FD": {
+    "English": "Decoration",
+    "Chinese": "装饰"
+  },
+  "Decorations_5A02B053": {
+    "English": "Decorations",
+    "Chinese": "装饰"
+  },
+  "DeletePickedStampPickup_7BDA9B8C": {
+    "English": "Delete Picked Stamp (Pickup)",
+    "Chinese": "删除选中的物体（移动工具）"
+  },
+  "Delete_E2D0A549": {
+    "English": "Delete",
+    "Chinese": "删除"
+  },
+  "DeletethePickedStampDelete_19EB0086": {
+    "English": "Delete the Picked Stamp · Delete",
+    "Chinese": "删除选中的物体 · Delete"
+  },
+  "Density_70D97ADC": {
+    "English": " Density",
+    "Chinese": "密度"
+  },
+  "Density_77A283D6": {
+    "English": "Density",
+    "Chinese": "密度"
+  },
+  "Desert_0C8FFC17": {
+    "English": "Desert",
+    "Chinese": "沙漠"
+  },
+  "DetailView_9FF91837": {
+    "English": "Detail View",
+    "Chinese": "细节视图"
+  },
+  "DirectionStatus_83B00233": {
+    "English": "Direction Status",
+    "Chinese": "朝向状态"
+  },
+  "Direction_9C8A9579": {
+    "English": "Direction",
+    "Chinese": "朝向"
+  },
+  "Dirt_A97ACEF7": {
+    "English": "Dirt",
+    "Chinese": "泥土"
+  },
+  "Dirtonroughgrassnative_D16DFE88": {
+    "English": "Dirt on rough grass (native)",
+    "Chinese": "粗草地上的土路（原生）"
+  },
+  "Dock_31216B9C": {
+    "English": "Dock ",
+    "Chinese": "停靠"
+  },
+  "Dockhere_DD8AE989": {
+    "English": "Dock here",
+    "Chinese": "停靠至此处"
+  },
+  "Done_11A6767D": {
+    "English": "Done",
+    "Chinese": "完成"
+  },
+  "DoorCells_E715F346": {
+    "English": "Door Cells",
+    "Chinese": "门单元格"
+  },
+  "DoorIndex0255_14E8D30F": {
+    "English": "Door Index (0–255)",
+    "Chinese": "门编号（0–255）"
+  },
+  "DoorOffset0255_4D6F74AC": {
+    "English": "Door Offset (0–255)",
+    "Chinese": "门偏移（0–255）"
+  },
+  "DoubleClicktoAddaTreeCtrlClicktoSelectSeveral_8B725A55": {
+    "English": "Double-Click to Add a Tree. Ctrl-Click to Select Several.",
+    "Chinese": "双击添加树木；按住 Ctrl 单击可多选。"
+  },
+  "DoubleClicktoAdda_3B95B721": {
+    "English": "Double-Click to Add a ",
+    "Chinese": "双击添加"
+  },
+  "DragtoResizetheAssetPanel_9B7E548A": {
+    "English": "Drag to Resize the Asset Panel",
+    "Chinese": "拖动调整资源面板大小"
+  },
+  "DragtoaWorkspaceEdgetoDockorOutsidetoFloatRightClickforPanelPosit_333C4FC9": {
+    "English": "Drag to a Workspace Edge to Dock, or Outside to Float. Right-Click for Panel Positions.",
+    "Chinese": "拖动至工作区边缘可停靠，拖至外部可浮动；右键可选择面板位置。"
+  },
+  "Dragtodockorfloatrightclickforpanelpositions_3197BA5C": {
+    "English": "Drag to dock or float; right-click for panel positions.",
+    "Chinese": "拖动可停靠或浮动，右键可选择面板位置。"
+  },
+  "DrawconnectedwallsectionsShiftorRemovedeletesandreconnects_D13ADEB6": {
+    "English": "Draw connected wall sections · Shift or Remove deletes and reconnects",
+    "Chinese": "连续绘制墙段 · 按住 Shift 或使用移除可删除并调整相邻墙段"
+  },
+  "Drawtheroominteriorwallssurroundtheopenfloor_EA4C3EB2": {
+    "English": "Draw the room interior; walls surround the open floor.",
+    "Chinese": "绘制房间内部，墙体会沿空闲地面四周生成。"
+  },
+  "Drawthesolidwallareawallssurrounditsedges_1FB20C81": {
+    "English": "Draw the solid wall area; walls surround its edges.",
+    "Chinese": "绘制实心墙体区域，墙体会沿其边缘生成。"
+  },
+  "DungeonPreview_61E4CAD2": {
+    "English": "Dungeon Preview",
+    "Chinese": "地牢预览"
+  },
+  "DungeonSeed_047F4F3C": {
+    "English": "Dungeon Seed",
+    "Chinese": "地牢种子"
+  },
+  "DungeonStyle_142FF938": {
+    "English": "Dungeon Style",
+    "Chinese": "地牢风格"
+  },
+  "DungeonType_34009401": {
+    "English": "Dungeon Type",
+    "Chinese": "地牢类型"
+  },
+  "Dungeon_73054BD6": {
+    "English": "Dungeon",
+    "Chinese": "地牢"
+  },
+  "E_A9F51566": {
+    "English": "E",
+    "Chinese": "东"
+  },
+  "Edit_2B1AF61A": {
+    "English": "_Edit",
+    "Chinese": "编辑(_E)"
+  },
+  "EditingLayer_9E4362EF": {
+    "English": "Editing Layer",
+    "Chinese": "编辑图层"
+  },
+  "Effect_2252D5CF": {
+    "English": "Effect",
+    "Chinese": "特效"
+  },
+  "Enablecliffstoplaceentrances_250E0C3D": {
+    "English": "Enable cliffs to place entrances.",
+    "Chinese": "启用悬崖后才能放置入口。"
+  },
+  "English_BA118BF7": {
+    "English": "English",
+    "Chinese": "English"
+  },
+  "Enterastampname_19D06A0E": {
+    "English": "Enter a stamp name.",
+    "Chinese": "请输入物体名称。"
+  },
+  "Enterawholenumberseed_2F748E52": {
+    "English": "Enter a whole-number seed.",
+    "Chinese": "请输入整数种子。"
+  },
+  "Enterdimensionsbetween16and4096_D92996B4": {
+    "English": "Enter dimensions between 16 and 4096.",
+    "Chinese": "请输入 16 至 4096 之间的尺寸。"
+  },
+  "Entrances01_A7ED890D": {
+    "English": " · Entrances {0}/{1}",
+    "Chinese": " · 入口 {0}/{1}"
+  },
+  "Environment_9E471951": {
+    "English": "Environment",
+    "Chinese": "环境"
+  },
+  "Environments_07437CD6": {
+    "English": "Environments",
+    "Chinese": "环境"
+  },
+  "EraseSelection_F879029B": {
+    "English": "Erase Selection",
+    "Chinese": "擦除选区"
+  },
+  "EraserEErasetheActiveLayer_0B3E5C0A": {
+    "English": "Eraser · E\nErase the Active Layer",
+    "Chinese": "橡皮擦 · E\n擦除当前图层"
+  },
+  "EraserSelect_92BC64FB": {
+    "English": "Eraser / Select",
+    "Chinese": "橡皮擦 / 选择"
+  },
+  "Eraser_686EEE3C": {
+    "English": "Eraser",
+    "Chinese": "橡皮擦"
+  },
+  "Existingcollisionsred_CCB299E6": {
+    "English": "Existing collisions (red)",
+    "Chinese": "已有阻挡（红色）"
+  },
+  "Exit_FF8B758C": {
+    "English": "E_xit",
+    "Chinese": "退出(_X)"
+  },
+  "ExportMinimap_6D54773A": {
+    "English": "Export Minimap",
+    "Chinese": "导出小地图"
+  },
+  "ExportMinimap_C5960A2C": {
+    "English": "Export _Minimap…",
+    "Chinese": "导出小地图(_M)…"
+  },
+  "ExportSelection_EEC5E2D3": {
+    "English": "_Export Selection…",
+    "Chinese": "导出选区(_E)…"
+  },
+  "Exported012pixels_BA9E03E8": {
+    "English": "Exported {0} • {1} × {2} pixels",
+    "Chinese": "已导出 {0} • {1} × {2} 像素"
+  },
+  "Exported0objectcells_1DECC056": {
+    "English": "Exported {0} object cells",
+    "Chinese": "已导出 {0} 个物体单元格"
+  },
+  "Exportfailed_E94D3EE0": {
+    "English": "Export failed",
+    "Chinese": "导出失败"
+  },
+  "Exportingminimap_1ABA7F26": {
+    "English": "Exporting minimap…",
+    "Chinese": "正在导出小地图…"
+  },
+  "Facing_105E868A": {
+    "English": "Facing",
+    "Chinese": "朝向"
+  },
+  "Favourites_D97D51D3": {
+    "English": "Favourites",
+    "Chinese": "收藏"
+  },
+  "Fence_96C0727E": {
+    "English": "Fence",
+    "Chinese": "栅栏"
+  },
+  "Fewerentrancesfitwithsafespacing_416E56AB": {
+    "English": ". Fewer entrances fit with safe spacing.",
+    "Chinese": "。安全间距限制了可放置的入口数量。"
+  },
+  "File_3B6577DD": {
+    "English": "_File",
+    "Chinese": "文件(_F)"
+  },
+  "FillFFillConnectedMatchingTilesSmtilesorApplyLowHighCollisions_CED026EB": {
+    "English": "Fill · F\nFill Connected Matching Tiles / Smtiles or Apply Low/High Collisions",
+    "Chinese": "填充 · F\n填充连通且匹配的地表 / 中层图块，或应用高低位阻挡"
+  },
+  "FillSelection_986D5A86": {
+    "English": "_Fill Selection",
+    "Chinese": "填充选区(_F)"
+  },
+  "FillTilesSmtilesCollisions_ACC0465A": {
+    "English": "Fill Tiles / Smtiles / Collisions",
+    "Chinese": "填充地表 / 中层 / 阻挡"
+  },
+  "Fill_033955D4": {
+    "English": "Fill",
+    "Chinese": "填充"
+  },
+  "Filled0N0tiles_4D8E7FA0": {
+    "English": "Filled {0:N0} tiles",
+    "Chinese": "已填充 {0:N0} 个图块"
+  },
+  "Fillworksongroundtilesmiddletilessmtilesandlowhighcollisions_D668431C": {
+    "English": "Fill works on ground tiles, middle tiles (smtiles), and low/high collisions",
+    "Chinese": "填充适用于地表图层、中层图层和高低位阻挡"
+  },
+  "FilterAssetsbyNumericID_57DD3C1F": {
+    "English": "Filter Assets by Numeric ID",
+    "Chinese": "按资源编号筛选"
+  },
+  "FindingObjectStamps_4F80DD8D": {
+    "English": "Finding Object Stamps…",
+    "Chinese": "正在查找物体模板…"
+  },
+  "FindingStamps_4301248C": {
+    "English": "Finding Stamps…",
+    "Chinese": "正在查找物体…"
+  },
+  "FitMap_50B1C6FC": {
+    "English": "_Fit Map",
+    "Chinese": "适应地图(_F)"
+  },
+  "FitMap_CDF75BEB": {
+    "English": "Fit Map",
+    "Chinese": "适应地图"
+  },
+  "FitTownstoDryClearingsandConnectTheirStreetsCrowdedMapsMayFitFewe_F095EDB3": {
+    "English": "Fit Towns to Dry Clearings and Connect Their Streets. Crowded Maps May Fit Fewer Towns.",
+    "Chinese": "在干燥空地中布置城镇并连通街道；拥挤的地图可容纳的城镇较少。"
+  },
+  "FloatEditorWindow_161AEE0D": {
+    "English": "Float EditorWindow",
+    "Chinese": "浮动窗口"
+  },
+  "Foreground_AD4E2418": {
+    "English": "Foreground",
+    "Chinese": "前景"
+  },
+  "ForkedVillageLanes_D12E40B5": {
+    "English": "Forked Village Lanes",
+    "Chinese": "分叉村落小路"
+  },
+  "FoxCave_24B0C128": {
+    "English": "Fox Cave",
+    "Chinese": "狐狸洞穴"
+  },
+  "Furniture_C50440E0": {
+    "English": "Furniture",
+    "Chinese": "家具"
+  },
+  "Gate_FA77A525": {
+    "English": "Gate",
+    "Chinese": "大门"
+  },
+  "GenerateDungeon_BE5D20EE": {
+    "English": "Generate _Dungeon…",
+    "Chinese": "生成地牢(_D)…"
+  },
+  "GenerateDungeon_E3AFA653": {
+    "English": "Generate Dungeon",
+    "Chinese": "生成地牢"
+  },
+  "GenerateProvince_9C639A45": {
+    "English": "Generate _Province…",
+    "Chinese": "生成省域(_P)…"
+  },
+  "GenerateTerrain_CEAD3634": {
+    "English": "Generate Terrain",
+    "Chinese": "生成地形"
+  },
+  "GenerateTerrain_DDD75B1E": {
+    "English": "_Generate Terrain…",
+    "Chinese": "生成地形(_G)…"
+  },
+  "GenerateTown_3A2F6C86": {
+    "English": "Generate _Town…",
+    "Chinese": "生成城镇(_T)…"
+  },
+  "GenerateTown_5B3BA5F5": {
+    "English": "Generate Town",
+    "Chinese": "生成城镇"
+  },
+  "GenerateaTown_4D03CDFB": {
+    "English": "Generate a Town",
+    "Chinese": "生成城镇"
+  },
+  "Generated0N0groundtiles_E49B9002": {
+    "English": "Generated {0:N0} ground tiles",
+    "Chinese": "已生成 {0:N0} 个地表图块"
+  },
+  "Generated0Seed1CtrlZtoundo_50E7D9FC": {
+    "English": "Generated {0} · Seed {1} · Ctrl+Z to undo",
+    "Chinese": "已生成 {0} · 种子 {1} · Ctrl+Z 撤销"
+  },
+  "Generated0dungeon1Seed2CtrlZtoundo_17235A7A": {
+    "English": "Generated {0} dungeon · {1} · Seed {2} · Ctrl+Z to undo",
+    "Chinese": "已生成 {0} 地牢 · {1} · 种子 {2} · Ctrl+Z 撤销"
+  },
+  "GeneratedDungeonPreview_EE2C0CDA": {
+    "English": "Generated Dungeon Preview",
+    "Chinese": "生成的地牢预览"
+  },
+  "GeneratedTerrainPreview_58F8296A": {
+    "English": "Generated Terrain Preview",
+    "Chinese": "生成的地形预览"
+  },
+  "GeneratedTownPreview_87FBD88D": {
+    "English": "Generated Town Preview",
+    "Chinese": "生成的城镇预览"
+  },
+  "Generatingdungeonpreview_B92E009E": {
+    "English": "Generating dungeon preview…",
+    "Chinese": "正在生成地牢预览…"
+  },
+  "Generatingpreview_843C063E": {
+    "English": "Generating preview…",
+    "Chinese": "正在生成预览…"
+  },
+  "Grass_84573C57": {
+    "English": "Grass",
+    "Chinese": "草地"
+  },
+  "GridBothCollisionOverlays_C871081B": {
+    "English": "Grid / Both Collision Overlays",
+    "Chinese": "网格 / 高低位阻挡叠加"
+  },
+  "GroundTiles22Cells_B4899A70": {
+    "English": "Ground Tiles · 2×2 Cells",
+    "Chinese": "地表图层 · 2×2 格"
+  },
+  "GroundTilesVisibility_89376EB4": {
+    "English": "Ground Tiles Visibility",
+    "Chinese": "地表图层可见性"
+  },
+  "GroundTiles_3931E191": {
+    "English": "Ground Tiles",
+    "Chinese": "地表图层"
+  },
+  "Ground_151BF493": {
+    "English": "Ground",
+    "Chinese": "地表"
+  },
+  "GroundandPaths_DB378EA3": {
+    "English": "Ground and Paths",
+    "Chinese": "地表与道路"
+  },
+  "Groupstampsbycategory_570BE57C": {
+    "English": "Group stamps by category",
+    "Chinese": "选择物体分组方式"
+  },
+  "HeightinCells164096_6EFC7AE1": {
+    "English": "Height in Cells (16–4096)",
+    "Chinese": "高度（16–4096 格）"
+  },
+  "Help_00BC9B98": {
+    "English": "_Help",
+    "Chinese": "帮助(_H)"
+  },
+  "HideSection_F9B101C5": {
+    "English": "Hide Section",
+    "Chinese": "隐藏面板"
+  },
+  "HighCollision_2045DDF0": {
+    "English": "HighCollision",
+    "Chinese": "高位阻挡"
+  },
+  "HighCollisionsBluePainttoApplyEraseorDeleteSelectiontoRemove_5BEA2F66": {
+    "English": "High Collisions · Blue · Paint to Apply, Erase or Delete Selection to Remove",
+    "Chinese": "高位阻挡 · 蓝色 · 绘制可添加，擦除或删除选区可移除"
+  },
+  "HighCollisionsVisibility_001CF233": {
+    "English": "High Collisions Visibility",
+    "Chinese": "高位阻挡可见性"
+  },
+  "HighCollisions_830FB039": {
+    "English": "High Collisions",
+    "Chinese": "高位阻挡"
+  },
+  "HighStreetVillage_CF87A74C": {
+    "English": "High Street Village",
+    "Chinese": "主街村落"
+  },
+  "High_C4EBC6D4": {
+    "English": "High",
+    "Chinese": "高"
+  },
+  "HighlightDoorCellsinCyanWhentheDoorIndexorOffsetIsNonzero_1E69DEDA": {
+    "English": "Highlight Door Cells in Cyan When the Door Index or Offset Is Nonzero.",
+    "Chinese": "门编号或偏移非零时，以青色高亮门单元格。"
+  },
+  "HighlightLightCellsinAmberIncludingEffectValues_B0B3195E": {
+    "English": "Highlight Light Cells in Amber, Including Effect Values.",
+    "Chinese": "以琥珀色高亮灯光单元格，包含特效值。"
+  },
+  "Hoveroveracelltoinspectit_579F8EF2": {
+    "English": "Hover over a cell to inspect it",
+    "Chinese": "悬停在单元格上查看属性"
+  },
+  "Ice_2A1A6355": {
+    "English": "Ice",
+    "Chinese": "冰雪"
+  },
+  "Identified0N0objects1N02N0foregroundspritesmatchedSavemaptokeepme_B6B93068": {
+    "English": "Identified {0:N0} objects · {1:N0}/{2:N0} foreground sprites matched · Save map to keep metadata",
+    "Chinese": "已识别 {0:N0} 个物体 · 匹配 {1:N0}/{2:N0} 张前景图片 · 保存地图以保留元数据"
+  },
+  "IdentifyExistingObjects_9BBF59B9": {
+    "English": "Identify Existing Objects",
+    "Chinese": "识别现有物体"
+  },
+  "IdentifyObjects_56750FC0": {
+    "English": "Identify Objects",
+    "Chinese": "识别物体"
+  },
+  "IdentifyObjects_E08CB638": {
+    "English": "_Identify Objects…",
+    "Chinese": "识别物体(_I)…"
+  },
+  "Image0Offset1Frames2_9164E693": {
+    "English": "Image {0} · Offset {1} · Frames {2}",
+    "Chinese": "图号 {0} · 偏移 {1} · 帧数 {2}"
+  },
+  "ImportStamp_164EFF44": {
+    "English": "_Import Stamp…",
+    "Chinese": "导入物体(_I)…"
+  },
+  "ImportXStamp_3E02DAAE": {
+    "English": "Import .X Stamp",
+    "Chinese": "导入 .X 物体"
+  },
+  "IncludeTownGroundandStreets_486A648B": {
+    "English": "Include Town Ground and Streets",
+    "Chinese": "包含城镇地面和街道"
+  },
+  "IncludeTreesandGardens_41510CB6": {
+    "English": "Include Trees and Gardens",
+    "Chinese": "包含树木和花园"
+  },
+  "InnerWall_37CD677F": {
+    "English": "Inner Wall",
+    "Chinese": "内墙"
+  },
+  "Inner_FA338A5E": {
+    "English": "Inner",
+    "Chinese": "内侧"
+  },
+  "InputStateShortcuts_8CCBF7E5": {
+    "English": "InputState Shortcuts",
+    "Chinese": "键盘快捷键"
+  },
+  "InsectCave_F96D99ED": {
+    "English": "Insect Cave",
+    "Chinese": "虫洞"
+  },
+  "InteriorVegetation_B15DE6A3": {
+    "English": "Interior Vegetation",
+    "Chinese": "内部植被"
+  },
+  "Interior_25B5C8ED": {
+    "English": "Interior",
+    "Chinese": "室内"
+  },
+  "IrregularPatches_ACAD2854": {
+    "English": "Irregular Patches",
+    "Chinese": "不规则地块"
+  },
+  "Island_730F5017": {
+    "English": "Island",
+    "Chinese": "岛屿"
+  },
+  "Islandartworkisunavailable_9B598DCD": {
+    "English": "Island artwork is unavailable",
+    "Chinese": "岛屿资源不可用"
+  },
+  "KeepaWalkableCrossingintheGeneratedRiver_A0D300C0": {
+    "English": "Keep a Walkable Crossing in the Generated River.",
+    "Chinese": "在生成的河流中保留可通行的桥梁。"
+  },
+  "KeyboardShortcuts_873E9855": {
+    "English": "Keyboard _Shortcuts…",
+    "Chinese": "键盘快捷键(_S)…"
+  },
+  "LandscapeStyle_95397827": {
+    "English": "Landscape Style",
+    "Chinese": "景观风格"
+  },
+  "Language_A4FE6526": {
+    "English": "Language",
+    "Chinese": "语言"
+  },
+  "Large144144_4BCBC3A5": {
+    "English": "Large · 144 × 144",
+    "Chinese": "大 · 144 × 144"
+  },
+  "Layers_0BCD66E6": {
+    "English": "Layers",
+    "Chinese": "图层"
+  },
+  "Layoutlimitedto0tofitthismapandnativewalls_F3B7BCD0": {
+    "English": ". Layout limited to {0} to fit this map and native walls.",
+    "Chinese": "。受地图和原生墙体限制，布局调整为 {0}。"
+  },
+  "LeftRight_82D02567": {
+    "English": "Left / Right",
+    "Chinese": "左 / 右方向键"
+  },
+  "Left_58EB9032": {
+    "English": "Left",
+    "Chinese": "左侧"
+  },
+  "Lib0Image1Sprite2_391F713E": {
+    "English": "Lib {0} · Image {1} / Sprite {2}",
+    "Chinese": "资源库 {0} · 图号 {1} / 图片 {2}"
+  },
+  "Librariesnotconfigured_074396C3": {
+    "English": "Libraries not configured",
+    "Chinese": "未配置资源库"
+  },
+  "Librariesnotloaded_58768669": {
+    "English": "Libraries not loaded",
+    "Chinese": "未加载资源库"
+  },
+  "Library01_EA915139": {
+    "English": "Library {0}: {1}",
+    "Chinese": "资源库 {0}：{1}"
+  },
+  "Library0Sprite1_FE1FC7BB": {
+    "English": "Library {0} / Sprite {1}",
+    "Chinese": "资源库 {0} / 图片 {1}"
+  },
+  "Library0Terrainset1_71DB483C": {
+    "English": "Library {0} / Terrain set {1}",
+    "Chinese": "资源库 {0} / 地形组合 {1}"
+  },
+  "Library0unavailable_916EE342": {
+    "English": "Library {0}: unavailable",
+    "Chinese": "资源库 {0}：不可用"
+  },
+  "LibraryLocation_36211571": {
+    "English": "Library Location",
+    "Chinese": "资源目录"
+  },
+  "Library_DC20B3D5": {
+    "English": "Library",
+    "Chinese": "资源库"
+  },
+  "Librarysetupdeferred_AB74EBDC": {
+    "English": "Library setup deferred",
+    "Chinese": "资源配置已推迟"
+  },
+  "Light0255_8DC97102": {
+    "English": "Light (0–255)",
+    "Chinese": "灯光（0–255）"
+  },
+  "Light0Door1Offset2_10D93B2B": {
+    "English": "Light {0} · Door {1} · Offset {2}",
+    "Chinese": "灯光 {0} · 门 {1} · 偏移 {2}"
+  },
+  "LightCells_086E58AD": {
+    "English": "Light Cells",
+    "Chinese": "灯光单元格"
+  },
+  "LightValueDoorIndexandDoorOffset_C7AC11B1": {
+    "English": "Light Value, Door Index and Door Offset",
+    "Chinese": "灯光值、门编号和门偏移"
+  },
+  "LinkedHamlets_FDB265F5": {
+    "English": "Linked Hamlets",
+    "Chinese": "连通村落"
+  },
+  "ListName_045DF8CE": {
+    "English": " List Name",
+    "Chinese": "列表名称"
+  },
+  "List_8D3625A2": {
+    "English": " List",
+    "Chinese": "列表"
+  },
+  "LoadCrystallibrariesinSettingsbeforeusingspecialbrushes_94A76C62": {
+    "English": "Load Crystal libraries in Settings before using special brushes.",
+    "Chinese": "使用特殊笔刷前，请先在设置中加载 Crystal 资源库。"
+  },
+  "LoadList_470E457A": {
+    "English": "Load List…",
+    "Chinese": "加载列表…"
+  },
+  "Loaded012_4B1EFD7A": {
+    "English": "Loaded {0} · {1} {2}",
+    "Chinese": "已加载 {0} · {1} {2}"
+  },
+  "LoadgamelibrariesinSettingsbeforegeneratingadungeon_813685EE": {
+    "English": "Load game libraries in Settings before generating a dungeon.",
+    "Chinese": "生成地牢前，请先在设置中加载游戏资源库。"
+  },
+  "LoadgamelibrariesinSettingsbeforegeneratingaprovince_E7BDA12E": {
+    "English": "Load game libraries in Settings before generating a province.",
+    "Chinese": "生成省域前，请先在设置中加载游戏资源库。"
+  },
+  "LoadgamelibrariesinSettingsbeforegeneratingatown_FBF1EF6A": {
+    "English": "Load game libraries in Settings before generating a town.",
+    "Chinese": "生成城镇前，请先在设置中加载游戏资源库。"
+  },
+  "LoadgamelibrariesinSettingsbeforegeneratingterrain_8D9859A8": {
+    "English": "Load game libraries in Settings before generating terrain.",
+    "Chinese": "生成地形前，请先在设置中加载游戏资源库。"
+  },
+  "LoadingCategories_699A73C5": {
+    "English": "Loading Categories…",
+    "Chinese": "正在加载分类…"
+  },
+  "LoadingDungeonArtwork_612948E0": {
+    "English": "Loading Dungeon Artwork…",
+    "Chinese": "正在加载地牢资源…"
+  },
+  "LoadingOutdoorArtwork_A16E8ED6": {
+    "English": "Loading Outdoor Artwork…",
+    "Chinese": "正在加载室外资源…"
+  },
+  "LoadingPreview_0627D6F8": {
+    "English": "Loading Preview…",
+    "Chinese": "正在加载预览…"
+  },
+  "LoadingTrees_E2DC3572": {
+    "English": "Loading Trees…",
+    "Chinese": "正在加载树木…"
+  },
+  "Loadinglist_BB2AB89C": {
+    "English": "Loading list…",
+    "Chinese": "正在加载列表…"
+  },
+  "LoadingsavedCrystallibraries_17EBDB9F": {
+    "English": "Loading saved Crystal libraries…",
+    "Chinese": "正在加载已保存的 Crystal 资源库…"
+  },
+  "Loadingsectionpreview_A7419743": {
+    "English": "Loading section preview…",
+    "Chinese": "正在加载墙段预览…"
+  },
+  "Loadingstamp_BA36CAE0": {
+    "English": "Loading stamp…",
+    "Chinese": "正在加载物体…"
+  },
+  "Loadingtheoriginal5mapcoastartwork_8D2030F9": {
+    "English": "Loading the original 5.map coast artwork…",
+    "Chinese": "正在加载原始 5.map 海岸资源…"
+  },
+  "LockPanelLayout_457B6D69": {
+    "English": "Lock Panel Layout",
+    "Chinese": "锁定面板布局"
+  },
+  "Low0High1_80B368A4": {
+    "English": "Low {0} · High {1}",
+    "Chinese": "低位{0} · 高位{1}"
+  },
+  "LowCollision_A34F1C81": {
+    "English": "LowCollision",
+    "Chinese": "低位阻挡"
+  },
+  "LowCollisionsPinkPainttoApplyEraseorDeleteSelectiontoRemove_D1779139": {
+    "English": "Low Collisions · Pink · Paint to Apply, Erase or Delete Selection to Remove",
+    "Chinese": "低位阻挡 · 粉色 · 绘制可添加，擦除或删除选区可移除"
+  },
+  "LowCollisionsVisibility_E9D27257": {
+    "English": "Low Collisions Visibility",
+    "Chinese": "低位阻挡可见性"
+  },
+  "LowCollisions_CC739D3F": {
+    "English": "Low Collisions",
+    "Chinese": "低位阻挡"
+  },
+  "Low_F793DE20": {
+    "English": "Low",
+    "Chinese": "低"
+  },
+  "LowandHighCollisionFlags_50DF64AA": {
+    "English": "Low and High Collision Flags",
+    "Chinese": "低位与高位阻挡标志"
+  },
+  "MapLighting_C3B7695B": {
+    "English": "Map _Lighting",
+    "Chinese": "地图光照(_L)"
+  },
+  "Maploaded0N0rememberedstamps_8795FA39": {
+    "English": "Map loaded · {0:N0} remembered stamps",
+    "Chinese": "地图已加载 · {0:N0} 个已记录物体"
+  },
+  "MarketSquare_B518A66E": {
+    "English": "Market Square",
+    "Chinese": "集市广场"
+  },
+  "Medium9696_53FDB509": {
+    "English": "Medium · 96 × 96",
+    "Chinese": "中 · 96 × 96"
+  },
+  "Metadata_9EDDF573": {
+    "English": "Metadata",
+    "Chinese": "元数据"
+  },
+  "MiddleTiles11Cells_2171C937": {
+    "English": "Middle Tiles · 1×1 Cells",
+    "Chinese": "中层图层 · 1×1 格"
+  },
+  "MiddleTilesVisibility_9DE9E860": {
+    "English": "Middle Tiles Visibility",
+    "Chinese": "中层图层可见性"
+  },
+  "MiddleTiles_E80971A2": {
+    "English": "Middle Tiles",
+    "Chinese": "中层图层"
+  },
+  "Middle_D93006EC": {
+    "English": "Middle",
+    "Chinese": "中层"
+  },
+  "Mines_DD4ADD0C": {
+    "English": "Mines",
+    "Chinese": "矿洞"
+  },
+  "Minimap_4BAD6CFF": {
+    "English": "Minimap",
+    "Chinese": "小地图"
+  },
+  "MinimumGap_AEFBA021": {
+    "English": "Minimum Gap · ",
+    "Chinese": "最小间距 ·"
+  },
+  "Mirmapmap_5A5A1E78": {
+    "English": "Mir map (*.map)",
+    "Chinese": "传奇地图 (*.map)"
+  },
+  "Moderate_5C42AFC7": {
+    "English": "Moderate",
+    "Chinese": "适中"
+  },
+  "MongchonProvince_E891D824": {
+    "English": "MongchonProvince",
+    "Chinese": "盟重省"
+  },
+  "Mongchondesert_C6130793": {
+    "English": "Mongchon desert",
+    "Chinese": "盟重沙漠"
+  },
+  "MouseWheel_ADC6FD3E": {
+    "English": "Mouse Wheel",
+    "Chinese": "鼠标滚轮"
+  },
+  "MoveClonePickedStamp_CAEAE82B": {
+    "English": "Move / Clone Picked Stamp",
+    "Chinese": "移动 / 克隆选中物体"
+  },
+  "Mud_7C335DA4": {
+    "English": "Mud",
+    "Chinese": "泥地"
+  },
+  "Mudonfinegrass_23FC1BD7": {
+    "English": "Mud on fine grass",
+    "Chinese": "细草地上的泥路"
+  },
+  "My0List_F2303298": {
+    "English": "My {0} List",
+    "Chinese": "我的{0}列表"
+  },
+  "MyCuratedTrees_DD043E56": {
+    "English": "My Curated Trees",
+    "Chinese": "我的树木精选"
+  },
+  "MyCurated_9FA30B58": {
+    "English": "My Curated ",
+    "Chinese": "我的精选"
+  },
+  "MyTreeList_DF977162": {
+    "English": "My Tree List",
+    "Chinese": "我的树木列表"
+  },
+  "My_EBF2D770": {
+    "English": "My ",
+    "Chinese": "我的"
+  },
+  "Mytrees_95E7DBAD": {
+    "English": "My trees",
+    "Chinese": "我的树木"
+  },
+  "NE_D539CD97": {
+    "English": "NE",
+    "Chinese": "东北"
+  },
+  "NW_C1FCF83E": {
+    "English": "NW",
+    "Chinese": "西北"
+  },
+  "N_8CE86A6A": {
+    "English": "N",
+    "Chinese": "北"
+  },
+  "Name_DCD1D522": {
+    "English": "Name",
+    "Chinese": "名称"
+  },
+  "Narrow_BA227109": {
+    "English": "Narrow",
+    "Chinese": "窄"
+  },
+  "Needsreview_07297FA9": {
+    "English": "Needs review",
+    "Chinese": "需要复核"
+  },
+  "NewMap_8D5B167F": {
+    "English": "_New Map…",
+    "Chinese": "新建地图(_N)…"
+  },
+  "NewMap_B94C9DAA": {
+    "English": "New Map",
+    "Chinese": "新建地图"
+  },
+  "NewOpenMap_8538D3A1": {
+    "English": "New / Open Map",
+    "Chinese": "新建 / 打开地图"
+  },
+  "NewStamp_19F4EC8E": {
+    "English": "New _Stamp",
+    "Chinese": "新建物体(_S)"
+  },
+  "Newmapcreated_9738190D": {
+    "English": "New map created",
+    "Chinese": "已创建新地图"
+  },
+  "NewstampPaintcellsorpressCtrlVandclicktopastecopiedmapdataCtrlSto_A9051292": {
+    "English": "New stamp · Paint cells or press Ctrl+V and click to paste copied map data · Ctrl+S to save",
+    "Chinese": "新建物体 · 绘制单元格，或按 Ctrl+V 后单击粘贴复制的地图内容 · Ctrl+S 保存"
+  },
+  "NextPage_6EAD5DFD": {
+    "English": "Next Page",
+    "Chinese": "下一页"
+  },
+  "Night_F7AFD490": {
+    "English": "_Night",
+    "Chinese": "夜晚(_N)"
+  },
+  "No0availableLoada1list_00F452A9": {
+    "English": "No {0} available. Load a {1} list.",
+    "Chinese": "没有可用的{0}，请加载{1}列表。"
+  },
+  "No0matchthisfilter_50C30628": {
+    "English": "No {0} match this filter.",
+    "Chinese": "没有与筛选条件匹配的{0}。"
+  },
+  "NoAssetNeeded_EEA0C728": {
+    "English": "No Asset Needed",
+    "Chinese": "无需资源"
+  },
+  "NoForegroundImages_269B48CB": {
+    "English": "No Foreground Images",
+    "Chinese": "没有前景图片"
+  },
+  "NoLibraryLoaded_88589CB9": {
+    "English": "No Library Loaded",
+    "Chinese": "未加载资源库"
+  },
+  "NoMatchingAssets_AC1058F5": {
+    "English": "No Matching Assets",
+    "Chinese": "没有匹配的资源"
+  },
+  "NoMatchingStamps_0A129F82": {
+    "English": "No Matching Stamps",
+    "Chinese": "没有匹配的物体"
+  },
+  "NoPatternsinThisLibrary_4A2016D3": {
+    "English": "No Patterns in This Library",
+    "Chinese": "此资源库没有地形组合"
+  },
+  "NoRecentAssetsYet_84B629CD": {
+    "English": "No Recent Assets Yet",
+    "Chinese": "暂无最近使用资源"
+  },
+  "NoRecentMaps_156CD974": {
+    "English": "No Recent Maps",
+    "Chinese": "暂无最近地图"
+  },
+  "NoReviewedBridgewithGradualRiverTurnsFitsThisArea_9893AF4A": {
+    "English": "No Reviewed Bridge with Gradual River Turns Fits This Area.",
+    "Chinese": "当前区域没有适用的已审核桥梁与平缓河道组件。"
+  },
+  "NoSavedAssets_78CC42D1": {
+    "English": "No Saved Assets",
+    "Chinese": "暂无收藏资源"
+  },
+  "NoStampsFound_D6329B84": {
+    "English": "No Stamps Found",
+    "Chinese": "未找到物体"
+  },
+  "NoStamps_5E5060E5": {
+    "English": "No Stamps",
+    "Chinese": "没有物体"
+  },
+  "No_1EA442A1": {
+    "English": "No",
+    "Chinese": "否"
+  },
+  "None_DC937B59": {
+    "English": "None",
+    "Chinese": "无"
+  },
+  "Nonewcompletematches0N0fileschecked1N0unreadablefiles_629C3B7E": {
+    "English": "No new complete matches · {0:N0} files checked · {1:N0} unreadable files",
+    "Chinese": "没有新增的完整匹配 · 已检查 {0:N0} 个文件 · {1:N0} 个文件无法读取"
+  },
+  "NoobjectcataloguefoundLoadasavedbrushlisttogetstarted_A315EBAA": {
+    "English": "No object catalogue found. Load a saved brush list to get started.",
+    "Chinese": "未找到物体目录，请先加载已保存的笔刷列表。"
+  },
+  "NorememberedstamphereImportedmapobjectsneedtobeplacedasstampsfirs_E70D986F": {
+    "English": "No remembered stamp here · Imported map objects need to be placed as stamps first",
+    "Chinese": "此处没有已记录的物体 · 导入地图的物体需要先作为模板放置"
+  },
+  "Notapplicable_5237C96A": {
+    "English": "Not applicable",
+    "Chinese": "不适用"
+  },
+  "Nowalltypesareavailable_F5541D69": {
+    "English": "No wall types are available.",
+    "Chinese": "没有可用的墙体类型。"
+  },
+  "OK_565339BC": {
+    "English": "OK",
+    "Chinese": "确定"
+  },
+  "Object0_BB69DB64": {
+    "English": "Object {0}",
+    "Chinese": "物体 {0}"
+  },
+  "ObjectStamps_D27CF611": {
+    "English": "Object Stamps",
+    "Chinese": "物体模板"
+  },
+  "ObjectType_149F598E": {
+    "English": "Object Type",
+    "Chinese": "物体类型"
+  },
+  "ObjectidentificationcancelledMapunchanged_F2EFA1E5": {
+    "English": "Object identification cancelled · Map unchanged",
+    "Chinese": "物体识别已取消 · 地图未修改"
+  },
+  "ObjectsFolderNotFound_65B24949": {
+    "English": "Objects Folder Not Found",
+    "Chinese": "未找到 Objects 目录"
+  },
+  "ObjectsForegroundSprites_3D15DC07": {
+    "English": "Objects · Foreground Sprites",
+    "Chinese": "物体图层 · 前景图片"
+  },
+  "ObjectsVisibility_CD817312": {
+    "English": "Objects Visibility",
+    "Chinese": "物体图层可见性"
+  },
+  "Objects_DE5236EE": {
+    "English": "Objects",
+    "Chinese": "物体"
+  },
+  "Occupiedobjectsred_6D43B6FE": {
+    "English": "Occupied objects (red)",
+    "Chinese": "已有物体（红色）"
+  },
+  "OmaCave_35E3AC37": {
+    "English": "Oma Cave",
+    "Chinese": "沃玛洞穴"
+  },
+  "Oneormorevaluesareoutsidethesupportedrange_9FF5C036": {
+    "English": "One or more values are outside the supported range.",
+    "Chinese": "至少一个数值超出支持范围。"
+  },
+  "OpenDoors_B2088C97": {
+    "English": "_Open Doors",
+    "Chinese": "开启门(_O)"
+  },
+  "OpenMap_2171584A": {
+    "English": "_Open Map…",
+    "Chinese": "打开地图(_O)…"
+  },
+  "OpenRecent_A86BC9C7": {
+    "English": "Open _Recent",
+    "Chinese": "最近打开(_R)"
+  },
+  "Opensettlement_4FEF4B81": {
+    "English": "Open settlement",
+    "Chinese": "开放聚落"
+  },
+  "Operationfailed_4E1AF7C7": {
+    "English": "Operation failed",
+    "Chinese": "操作失败"
+  },
+  "Other_263141C8": {
+    "English": "Other ",
+    "Chinese": "其他"
+  },
+  "OutdoorProvince_EB80CC30": {
+    "English": "Outdoor Province",
+    "Chinese": "室外省域"
+  },
+  "Outdoor_9AAC1455": {
+    "English": "Outdoor",
+    "Chinese": "室外"
+  },
+  "OuterWall_B78F6414": {
+    "English": "Outer Wall",
+    "Chinese": "外墙"
+  },
+  "Outer_5E426F92": {
+    "English": "Outer",
+    "Chinese": "外侧"
+  },
+  "Outsidemap_C2D1A65F": {
+    "English": "Outside map",
+    "Chinese": "地图范围之外"
+  },
+  "Outsidemapboundariesamber_E8EDFE40": {
+    "English": "Outside map boundaries (amber)",
+    "Chinese": "超出地图范围（琥珀色）"
+  },
+  "OverrideWindowswithDarkColoursUnchecktoFollowWindows_E7154920": {
+    "English": "Override Windows with Dark Colours. Uncheck to Follow Windows.",
+    "Chinese": "强制使用深色；取消选中后跟随 Windows 主题。"
+  },
+  "Overview0_D0629DA2": {
+    "English": "Overview: {0}",
+    "Chinese": "缩略视图：{0}"
+  },
+  "PNGimagepng_E752A84C": {
+    "English": "PNG image (*.png)",
+    "Chinese": "PNG 图像 (*.png)"
+  },
+  "Page0of1_DA914A2A": {
+    "English": "Page {0} of {1}",
+    "Chinese": "第 {0} 页，共 {1} 页"
+  },
+  "PaintWith_F56BE6C8": {
+    "English": "Paint With",
+    "Chinese": "绘制选项"
+  },
+  "PainttoapplyFillFfloodsconnectedclearcellsUseEraserorselectionDel_4D03000F": {
+    "English": "Paint to apply. Fill (F) floods connected clear cells.\nUse Eraser or selection Delete to remove.",
+    "Chinese": "绘制可添加阻挡，填充（F）可填充连通的空白单元格。\n使用橡皮擦或删除选区可移除。"
+  },
+  "Palette_85794EFF": {
+    "English": "Palette",
+    "Chinese": "资源面板"
+  },
+  "PanCanvas_142D6F77": {
+    "English": "Pan Canvas",
+    "Chinese": "平移画布"
+  },
+  "PanelLayoutIsLockedUnlockItintheViewMenu_CCD35DE6": {
+    "English": "Panel Layout Is Locked. Unlock It in the View Menu.",
+    "Chinese": "面板布局已锁定，请在视图菜单中解锁。"
+  },
+  "PasteRegion_D4070ABF": {
+    "English": "Paste Region…",
+    "Chinese": "粘贴区域…"
+  },
+  "PatchAmount_D2A175CE": {
+    "English": "Patch Amount",
+    "Chinese": "地块数量"
+  },
+  "PatchAmount_FF4AB804": {
+    "English": "Patch Amount · ",
+    "Chinese": "地块数量 ·"
+  },
+  "PatchScale_023973EE": {
+    "English": "Patch Scale",
+    "Chinese": "地块规模"
+  },
+  "PatchScaleinGroundTiles_E70AB6CE": {
+    "English": "Patch Scale in Ground Tiles",
+    "Chinese": "地块规模（地表图块数）"
+  },
+  "PatchTerrain_9AE9F901": {
+    "English": "Patch Terrain",
+    "Chinese": "地块地形"
+  },
+  "PathTerrain_C00CBBC9": {
+    "English": "Path Terrain",
+    "Chinese": "道路地形"
+  },
+  "PathWidth_1478B526": {
+    "English": "Path Width",
+    "Chinese": "道路宽度"
+  },
+  "PathWidth_73E050AF": {
+    "English": "Path Width · ",
+    "Chinese": "道路宽度 ·"
+  },
+  "PathWidthinGroundTiles_F75A3F4A": {
+    "English": "Path Width in Ground Tiles",
+    "Chinese": "道路宽度（地表图块数）"
+  },
+  "PencilPPlaceOneExactTile_2B2099C5": {
+    "English": "Pencil · P\nPlace One Exact Tile",
+    "Chinese": "铅笔 · P\n放置单张指定图块"
+  },
+  "Pencil_BE3435A5": {
+    "English": "Pencil",
+    "Chinese": "铅笔"
+  },
+  "PickupVClickaRememberedStampThenClicktoMoveDeleteRemovesItEscapeC_544538C6": {
+    "English": "Pickup · V\nClick a Remembered Stamp, Then Click to Move\nDelete Removes It · Escape Cancels",
+    "Chinese": "移动 · V\n单击已记录的物体，再单击移动至新位置\nDelete 删除 · Escape 取消"
+  },
+  "Pickup_B685076A": {
+    "English": "Pickup",
+    "Chinese": "移动"
+  },
+  "PinYourFavouriteAssets_9BCCC073": {
+    "English": "Pin Your Favourite Assets",
+    "Chinese": "收藏常用资源"
+  },
+  "PintoFavourites_86131BD3": {
+    "English": "☆ Pin to Favourites",
+    "Chinese": "☆ 加入收藏"
+  },
+  "PintoFavourites_FA83A7D4": {
+    "English": "Pin to Favourites",
+    "Chinese": "加入收藏"
+  },
+  "PlacedStamp_6E43A78F": {
+    "English": "Placed Stamp",
+    "Chinese": "已放置物体"
+  },
+  "PlacementblockedStampdatacannotbeplaced_CA08BD7A": {
+    "English": "Placement blocked · Stamp data cannot be placed",
+    "Chinese": "无法放置 · 物体数据不允许放置"
+  },
+  "PlacementblockedStampdataorinstancelimitpreventsplacement_11F8CDE8": {
+    "English": "Placement blocked · Stamp data or instance limit prevents placement",
+    "Chinese": "无法放置 · 物体数据或实例数量限制"
+  },
+  "Placementblocked_F982E7C2": {
+    "English": "Placement blocked · ",
+    "Chinese": "无法放置 ·"
+  },
+  "Placesspacedstairentrancesonclearfloorspace0none_233D1E08": {
+    "English": "Places spaced stair entrances on clear floor space. 0 = none.",
+    "Chinese": "在空闲地面中按间距放置楼梯入口，0 表示不放置。"
+  },
+  "PlaceyourXfilesintheObjectsfolderattheeditorrootorimportastamp_3F8ED39B": {
+    "English": "Place your .X files in the Objects folder at the editor root, or import a stamp.",
+    "Chinese": "将 .X 文件放入编辑器根目录的 Objects 文件夹，或导入物体。"
+  },
+  "PlannedCrossroads_38B7E94F": {
+    "English": "Planned Crossroads",
+    "Chinese": "规则十字路口"
+  },
+  "Plant_0BD287F6": {
+    "English": "Plant",
+    "Chinese": "植物"
+  },
+  "PrajnaIsland_47A5C5E8": {
+    "English": "PrajnaIsland",
+    "Chinese": "般若岛"
+  },
+  "PrajnaStoneCave_11E87AE4": {
+    "English": "Prajna Stone Cave",
+    "Chinese": "般若石洞"
+  },
+  "PrajnaStoneCave_51F90715": {
+    "English": "PrajnaStoneCave",
+    "Chinese": "般若石洞"
+  },
+  "PrajnaTemple_19B33CB7": {
+    "English": "PrajnaTemple",
+    "Chinese": "般若寺庙"
+  },
+  "PrajnaTemple_3C688BA5": {
+    "English": "Prajna Temple",
+    "Chinese": "般若寺庙"
+  },
+  "Prepare0F1msBatches1N0Spritecache2N0_6BE1E16E": {
+    "English": "Prepare {0:F1} ms · Batches {1:N0} · Sprite cache {2:N0}",
+    "Chinese": "准备 {0:F1} 毫秒 · 批次 {1:N0} · 图片缓存 {2:N0}"
+  },
+  "PreparingTownArtwork_2DF7ECDD": {
+    "English": "Preparing Town Artwork…",
+    "Chinese": "正在准备城镇资源…"
+  },
+  "Preparingtownpreview_D4CCE7D9": {
+    "English": "Preparing town preview…",
+    "Chinese": "正在准备城镇预览…"
+  },
+  "PreviewCrystalTimeofDayMapLightsUseValues19onForegroundCells_D197226D": {
+    "English": "Preview Crystal Time of Day. Map Lights Use Values 1–9 on Foreground Cells.",
+    "Chinese": "预览 Crystal 昼夜光照；地图灯光使用前景单元格上的 1–9 值。"
+  },
+  "PreviewUnavailable_7F5A4B50": {
+    "English": "Preview Unavailable",
+    "Chinese": "预览不可用"
+  },
+  "Preview_74B76FF1": {
+    "English": " Preview",
+    "Chinese": "预览"
+  },
+  "Previewunavailable_B99FA6C0": {
+    "English": "Preview unavailable",
+    "Chinese": "预览不可用"
+  },
+  "Previewupdatesautomatically_9358B260": {
+    "English": "Preview updates automatically.",
+    "Chinese": "预览会自动更新。"
+  },
+  "PreviousNextPaletteItem_FB575ED2": {
+    "English": "Previous / Next Palette Item",
+    "Chinese": "上一个 / 下一个资源项"
+  },
+  "PreviousPage_A163AAA2": {
+    "English": "Previous Page",
+    "Chinese": "上一页"
+  },
+  "ProvinceGenerator_F8D5F7AB": {
+    "English": "Province Generator",
+    "Chinese": "省域生成器"
+  },
+  "ProvinceLandscapeStyle_84104B72": {
+    "English": "Province Landscape Style",
+    "Chinese": "省域景观风格"
+  },
+  "ProvincePreview_355E121E": {
+    "English": "Province Preview",
+    "Chinese": "省域预览"
+  },
+  "ProvinceSeed_00DB2769": {
+    "English": "Province Seed",
+    "Chinese": "省域种子"
+  },
+  "Province_ABFCECFA": {
+    "English": "Province",
+    "Chinese": "省域"
+  },
+  "Provinceartworkunavailable_C9803BE7": {
+    "English": "Province artwork unavailable",
+    "Chinese": "省域资源不可用"
+  },
+  "Quicksizeswidthheight_18A9F402": {
+    "English": "Quick sizes (width × height)",
+    "Chinese": "快捷尺寸（宽 × 高）"
+  },
+  "RandomTreesfromThisType_18DCD298": {
+    "English": "Random Trees from This Type",
+    "Chinese": "从当前类型中随机选择树木"
+  },
+  "Random_C4B48D94": {
+    "English": "Random ",
+    "Chinese": "随机"
+  },
+  "RandomizeAllGenerationSettingsUsingCompatibleTerrain_FCCC5394": {
+    "English": "Randomize All Generation Settings Using Compatible Terrain",
+    "Chinese": "使用兼容地形随机设置全部生成参数"
+  },
+  "RandomizeAllTownSettingsandtheSeed_DE8C0850": {
+    "English": "Randomize All Town Settings and the Seed",
+    "Chinese": "随机设置全部城镇参数和种子"
+  },
+  "RandomizeOnlytheSeed_B0D48D6E": {
+    "English": "Randomize Only the Seed",
+    "Chinese": "仅随机种子"
+  },
+  "Randomize_1F7483C8": {
+    "English": "Randomize",
+    "Chinese": "随机化"
+  },
+  "RandomizetheLandscapeStyleFeatureChancesVegetationTownCountandSee_147DEBAF": {
+    "English": "Randomize the Landscape Style, Feature Chances, Vegetation, Town Count and Seed",
+    "Chinese": "随机设置景观风格、要素概率、植被、城镇数量和种子"
+  },
+  "Readingmap_8B075BEB": {
+    "English": "Reading map…",
+    "Chinese": "正在读取地图…"
+  },
+  "Ready_5FA7AAC5": {
+    "English": "Ready",
+    "Chinese": "就绪"
+  },
+  "RecentlyUsed_D61031AC": {
+    "English": "Recently Used",
+    "Chinese": "最近使用"
+  },
+  "RedMoonRoom_EB0D8BA4": {
+    "English": "RedMoonRoom",
+    "Chinese": "赤月巢穴"
+  },
+  "RedMoonValley_BABCF394": {
+    "English": "Red Moon Valley",
+    "Chinese": "赤月峡谷"
+  },
+  "Redo_47994261": {
+    "English": "_Redo",
+    "Chinese": "重做(_R)"
+  },
+  "RegionGroups_5FD9F8BA": {
+    "English": "Region Groups",
+    "Chinese": "地区组"
+  },
+  "Region_D3A008EF": {
+    "English": "Region",
+    "Chinese": "地区"
+  },
+  "Regionextendsoutsidethemap_BF994C01": {
+    "English": "Region extends outside the map",
+    "Chinese": "区域超出地图范围"
+  },
+  "RegionpastedCtrlVtopasteagain_E4348DF4": {
+    "English": "Region pasted · Ctrl+V to paste again",
+    "Chinese": "区域已粘贴 · Ctrl+V 再次粘贴"
+  },
+  "Regions_610C65D8": {
+    "English": "Regions",
+    "Chinese": "地区"
+  },
+  "ReloadCategories_4466F32F": {
+    "English": "Reload Categories",
+    "Chinese": "重新加载分类"
+  },
+  "RemoveSelectedTrees_96A1A247": {
+    "English": "Remove Selected Trees",
+    "Chinese": "移除选中的树木"
+  },
+  "RemoveSelected_47A380A4": {
+    "English": "Remove Selected ",
+    "Chinese": "移除选中的"
+  },
+  "Remove_C3812FC4": {
+    "English": "Remove",
+    "Chinese": "移除"
+  },
+  "RemoveaWallSectionandReconnectItsNeighboursShiftAlsoRemoves_4A04E028": {
+    "English": "Remove a Wall Section and Reconnect Its Neighbours. Shift Also Removes.",
+    "Chinese": "移除墙段并调整相邻墙段；按住 Shift 也可移除。"
+  },
+  "ReplaceMapwithProvince_12F3C8B2": {
+    "English": "Replace Map with Province",
+    "Chinese": "使用省域替换地图"
+  },
+  "ResetPanelLayout_B670D664": {
+    "English": "Reset Panel Layout",
+    "Chinese": "重置面板布局"
+  },
+  "ResetTo100_9D85BBC4": {
+    "English": "Reset To 100%",
+    "Chinese": "重置为 100%"
+  },
+  "ReviewStatus_23A9A1E5": {
+    "English": "Review Status",
+    "Chinese": "审核状态"
+  },
+  "Right_883361D5": {
+    "English": "Right",
+    "Chinese": "右侧"
+  },
+  "RiverChance_2F2A954A": {
+    "English": "River Chance",
+    "Chinese": "河流概率"
+  },
+  "River_07F18967": {
+    "English": "River",
+    "Chinese": "河流"
+  },
+  "River_C9BB8AF8": {
+    "English": "River · ",
+    "Chinese": "河流 ·"
+  },
+  "RiversandCoasts_E1058126": {
+    "English": "Rivers and Coasts",
+    "Chinese": "河流与海岸"
+  },
+  "RockBrush_3465C010": {
+    "English": "Rock Brush",
+    "Chinese": "岩石笔刷"
+  },
+  "Rock_F302F0EA": {
+    "English": "Rock",
+    "Chinese": "岩石"
+  },
+  "Rocks_7535DB26": {
+    "English": "Rocks",
+    "Chinese": "岩石"
+  },
+  "RoomCount_1C861272": {
+    "English": "Room Count",
+    "Chinese": "房间数量"
+  },
+  "RoomSize_05364AD8": {
+    "English": "Room Size",
+    "Chinese": "房间大小"
+  },
+  "SE_F031B70A": {
+    "English": "SE",
+    "Chinese": "东南"
+  },
+  "SW_072F005F": {
+    "English": "SW",
+    "Chinese": "西南"
+  },
+  "S_8DE0B3C4": {
+    "English": "S",
+    "Chinese": "南"
+  },
+  "Sand_82855C11": {
+    "English": "Sand",
+    "Chinese": "沙地"
+  },
+  "Sandoncoarsesand_E438F6AA": {
+    "English": "Sand on coarse sand",
+    "Chinese": "粗沙地上的沙路"
+  },
+  "Sandoncoarsesandnative_82867644": {
+    "English": "Sand on coarse sand (native)",
+    "Chinese": "粗沙地上的沙路（原生）"
+  },
+  "SaveAs_04C37C25": {
+    "English": "Save _As…",
+    "Chinese": "另存为(_A)…"
+  },
+  "SaveChanges_35322B5B": {
+    "English": "Save Changes",
+    "Chinese": "保存更改"
+  },
+  "SaveList_FFD60838": {
+    "English": "Save List…",
+    "Chinese": "保存列表…"
+  },
+  "SaveMap_EA7FEAEA": {
+    "English": "Save Map",
+    "Chinese": "保存地图"
+  },
+  "SaveMap_FFF39C02": {
+    "English": "_Save Map",
+    "Chinese": "保存地图(_S)"
+  },
+  "SaveStamp_470E950E": {
+    "English": "_Save Stamp",
+    "Chinese": "保存物体(_S)"
+  },
+  "SaveandStart_1A13A290": {
+    "English": "Save and Start",
+    "Chinese": "保存并开始"
+  },
+  "Saved012_22630C60": {
+    "English": "Saved {0} · {1} {2}",
+    "Chinese": "已保存 {0} · {1} {2}"
+  },
+  "Saved0_4F0424E4": {
+    "English": "Saved {0}",
+    "Chinese": "已保存 {0}"
+  },
+  "Saved0andcatalogue_C69EDDE5": {
+    "English": "Saved {0} and catalogue",
+    "Chinese": "已保存 {0} 和分类索引"
+  },
+  "SavedLibraryFolderUnavailableOpenSettingstoChangeIt_E809C425": {
+    "English": "Saved Library Folder Unavailable — Open Settings to Change It",
+    "Chinese": "已保存的资源目录不可用 — 请在设置中更改"
+  },
+  "Savefailed_53AD6F99": {
+    "English": "Save failed",
+    "Chinese": "保存失败"
+  },
+  "Savestampfailed_B52A1F0E": {
+    "English": "Save stamp failed",
+    "Chinese": "物体保存失败"
+  },
+  "Saveyourchangesbeforecontinuing_51CB8DA7": {
+    "English": "Save your changes before continuing?",
+    "Chinese": "继续之前保存更改吗？"
+  },
+  "Savinglist_79DFCBF9": {
+    "English": "Saving list…",
+    "Chinese": "正在保存列表…"
+  },
+  "Scale_6D70FD25": {
+    "English": "Scale · ",
+    "Chinese": "规模 ·"
+  },
+  "Search0_D80E5CCC": {
+    "English": "Search {0}…",
+    "Chinese": "搜索{0}…"
+  },
+  "SearchNamesLayersLibrariesorIDs_880B3EDE": {
+    "English": "Search Names, Layers, Libraries or IDs",
+    "Chinese": "按名称、图层、资源库或编号搜索"
+  },
+  "SearchNamesTypesRegionsandTags_E420DDD5": {
+    "English": "Search Names, Types, Regions and Tags",
+    "Chinese": "按名称、类型、地区和标签搜索"
+  },
+  "SearchPatternorSpriteID_D92EE399": {
+    "English": "Search Pattern or Sprite ID…",
+    "Chinese": "搜索组合或图片编号…"
+  },
+  "SearchSavedAssets_1AB3F371": {
+    "English": "Search Saved Assets…",
+    "Chinese": "搜索收藏资源…"
+  },
+  "SearchStampsandCategories_A2AEEB6A": {
+    "English": "Search Stamps and Categories…",
+    "Chinese": "搜索物体和分类…"
+  },
+  "SearchStampsbyName_2D95796D": {
+    "English": "Search Stamps by Name",
+    "Chinese": "按名称搜索物体"
+  },
+  "SearchStampsbyName_5331C80F": {
+    "English": "Search Stamps by Name…",
+    "Chinese": "按名称搜索物体…"
+  },
+  "SearchTrees_78BE6E2D": {
+    "English": "Search Trees",
+    "Chinese": "搜索树木"
+  },
+  "Search_49C266BA": {
+    "English": "Search",
+    "Chinese": "搜索"
+  },
+  "Search_FC9F7623": {
+    "English": "Search ",
+    "Chinese": "搜索"
+  },
+  "Seed0CtrlZtoundo_93429095": {
+    "English": " · Seed {0} · Ctrl+Z to undo",
+    "Chinese": " · 种子 {0} · Ctrl+Z 撤销"
+  },
+  "Seed_367EF06B": {
+    "English": "Seed",
+    "Chinese": "种子"
+  },
+  "SelectCrystalDataorMapFolder_A2048ED1": {
+    "English": "Select Crystal Data or Map Folder",
+    "Chinese": "选择 Crystal Data 或 Map 目录"
+  },
+  "SelectMDragtoSelectaRegion_38D59A68": {
+    "English": "Select · M\nDrag to Select a Region",
+    "Chinese": "选择 · M\n拖动以选择区域"
+  },
+  "Select_2A78025D": {
+    "English": "Select",
+    "Chinese": "选择"
+  },
+  "SelectaCrystalLibrary_6B66124D": {
+    "English": "Select a Crystal Library",
+    "Chinese": "选择 Crystal 资源库"
+  },
+  "SelectaRowtoChoosetheEditingLayerUseItsEyetoToggleVisibility_95A96758": {
+    "English": "Select a Row to Choose the Editing Layer. Use Its Eye to Toggle Visibility.",
+    "Chinese": "选择行可切换编辑图层，单击眼睛图标可切换可见性。"
+  },
+  "SelectaTree_5EACB1E7": {
+    "English": "Select a Tree",
+    "Chinese": "选择树木"
+  },
+  "Selecta_A65C4A82": {
+    "English": "Select a ",
+    "Chinese": "选择"
+  },
+  "SelectanareaMchooseaspritethenfill_A99111B2": {
+    "English": "Select an area (M), choose a sprite, then fill",
+    "Chinese": "先选择区域（M）和图片，再执行填充"
+  },
+  "SelectaregionwithMfirst_F45B8DA4": {
+    "English": "Select a region with M first",
+    "Chinese": "请先使用 M 选择区域"
+  },
+  "Selectaspritetoplace_EC5082B1": {
+    "English": "Select a sprite to place",
+    "Chinese": "选择要放置的图片"
+  },
+  "Selectaterrainsettobrush_224AB93F": {
+    "English": "Select a terrain set to brush",
+    "Chinese": "选择要绘制的地形组合"
+  },
+  "SelectedTreePreview_4476C3C0": {
+    "English": "Selected Tree Preview",
+    "Chinese": "选中树木预览"
+  },
+  "SelectedTrees_F9103A8C": {
+    "English": "Selected Trees",
+    "Chinese": "选中的树木"
+  },
+  "Selected_DA550194": {
+    "English": "Selected ",
+    "Chinese": "已选"
+  },
+  "SelectionProperties_6927C08A": {
+    "English": "Selection Properties…",
+    "Chinese": "选区属性…"
+  },
+  "SerpentValley_E419A836": {
+    "English": "SerpentValley",
+    "Chinese": "毒蛇山谷"
+  },
+  "Set01_134DF4C1": {
+    "English": "Set {0}{1}",
+    "Chinese": "组合 {0}{1}"
+  },
+  "SetLibraryFolder_1E671E37": {
+    "English": "Set Library Folder",
+    "Chinese": "设置资源目录"
+  },
+  "SetUpLater_16E4DB50": {
+    "English": "Set Up Later",
+    "Chinese": "稍后配置"
+  },
+  "Settings_9A14C9A0": {
+    "English": "_Settings…",
+    "Chinese": "设置(_S)…"
+  },
+  "ShiftorRemovedeletessectionsandreconnectsneighbours_0C13B631": {
+    "English": "\nShift or Remove deletes sections and reconnects neighbours.",
+    "Chinese": "\n按住 Shift 或使用移除可删除墙段，并调整相邻墙段。"
+  },
+  "ShowHideGroundTiles_D5824854": {
+    "English": "Show / Hide Ground Tiles",
+    "Chinese": "显示 / 隐藏地表图层"
+  },
+  "ShowHideHighCollisions_6B56BF5D": {
+    "English": "Show / Hide High Collisions",
+    "Chinese": "显示 / 隐藏高位阻挡"
+  },
+  "ShowHideLowCollisions_6CE33D66": {
+    "English": "Show / Hide Low Collisions",
+    "Chinese": "显示 / 隐藏低位阻挡"
+  },
+  "ShowHideMiddleTiles_D2EED407": {
+    "English": "Show / Hide Middle Tiles",
+    "Chinese": "显示 / 隐藏中层图层"
+  },
+  "ShowHideObjects_C3487308": {
+    "English": "Show / Hide Objects",
+    "Chinese": "显示 / 隐藏物体图层"
+  },
+  "Showatleastonelayertocopy_42A18899": {
+    "English": "Show at least one layer to copy",
+    "Chinese": "至少显示一个图层后才能复制"
+  },
+  "Shuffle_317CB3A7": {
+    "English": "Shuffle",
+    "Chinese": "重新随机"
+  },
+  "SingleSectionPreview_453BAB45": {
+    "English": "Single Section Preview",
+    "Chinese": "单段预览"
+  },
+  "Small6464_12D80795": {
+    "English": "Small · 64 × 64",
+    "Chinese": "小 · 64 × 64"
+  },
+  "Snow_4F946DA9": {
+    "English": "Snow",
+    "Chinese": "雪地"
+  },
+  "Spacing_1BE2E966": {
+    "English": " Spacing",
+    "Chinese": "间距"
+  },
+  "Spacing_62A822A5": {
+    "English": "Spacing",
+    "Chinese": "间距"
+  },
+  "Sparse_92E5C493": {
+    "English": "Sparse",
+    "Chinese": "稀疏"
+  },
+  "SpecialBrush01variants2densityClickordragtoplace_E437C60A": {
+    "English": "Special Brush · {0} · {1} variant(s) · {2}% density · Click or drag to place",
+    "Chinese": "特殊笔刷 · {0} · {1} 个变体 · 密度 {2}% · 单击或拖动放置"
+  },
+  "SpecialBrush01variants2density_7745EEE0": {
+    "English": "Special Brush · {0} · {1} variant(s) · {2}% density",
+    "Chinese": "特殊笔刷 · {0} · {1} 个变体 · 密度 {2}%"
+  },
+  "SpecialBrushTChooseaSpecialBrushTypeandConfigureItsSettings_5177D748": {
+    "English": "Special Brush · T\nChoose a Special Brush Type and Configure Its Settings",
+    "Chinese": "特殊笔刷 · T\n选择特殊笔刷类型并配置参数"
+  },
+  "SpecialBrushType_80BEE679": {
+    "English": "Special Brush Type",
+    "Chinese": "特殊笔刷类型"
+  },
+  "SpecialBrush_D413BD9E": {
+    "English": "Special Brush",
+    "Chinese": "特殊笔刷"
+  },
+  "SpecialSettings_BBAEFA55": {
+    "English": "Special Settings…",
+    "Chinese": "特殊设置…"
+  },
+  "Sprite_610CC331": {
+    "English": "Sprite",
+    "Chinese": "图片"
+  },
+  "Stairs_AA8F3790": {
+    "English": "Stairs",
+    "Chinese": "楼梯"
+  },
+  "Stamp01cells_FC408222": {
+    "English": "Stamp: {0} • {1} cells",
+    "Chinese": "物体：{0} • {1} 格"
+  },
+  "StampCategories_A409F954": {
+    "English": "Stamp Categories…",
+    "Chinese": "物体分类…"
+  },
+  "StampCategories_F1CD8495": {
+    "English": "Stamp Categories",
+    "Chinese": "物体分类"
+  },
+  "StampFolder_05A55190": {
+    "English": "Stamp Folder",
+    "Chinese": "物体目录"
+  },
+  "StampOPlaceanImportedXObject_0788A6D9": {
+    "English": "Stamp · O\nPlace an Imported .X Object",
+    "Chinese": "物体模板 · O\n放置导入的 .X 物体"
+  },
+  "StampPickupClone_874E4A2D": {
+    "English": "Stamp / Pickup / Clone",
+    "Chinese": "物体 / 移动 / 克隆"
+  },
+  "Stamp_2910B6D7": {
+    "English": "Stamp",
+    "Chinese": "物体模板"
+  },
+  "Stampboundsexceedtheeditorlimit_F68A6CF3": {
+    "English": "Stamp bounds exceed the editor limit.",
+    "Chinese": "物体范围超出编辑器限制。"
+  },
+  "Stampcanbeplaced_0FD8104E": {
+    "English": "Stamp can be placed",
+    "Chinese": "可以放置物体"
+  },
+  "Stampcategories_564919CA": {
+    "English": "Stamp categories",
+    "Chinese": "物体分类"
+  },
+  "Stampcloned_86C2B72D": {
+    "English": "Stamp cloned",
+    "Chinese": "物体已克隆"
+  },
+  "Stampdeleted_102F6619": {
+    "English": "Stamp deleted",
+    "Chinese": "物体已删除"
+  },
+  "Stampmoved_D6DF1D9D": {
+    "English": "Stamp moved",
+    "Chinese": "物体已移动"
+  },
+  "StoneTemple_FACBBC3B": {
+    "English": "Stone Temple",
+    "Chinese": "石墓"
+  },
+  "Stonydirtondirt_A0CE056B": {
+    "English": "Stony dirt on dirt",
+    "Chinese": "泥地上的碎石土路"
+  },
+  "StreetLayout_1CF64F55": {
+    "English": "Street Layout",
+    "Chinese": "街道布局"
+  },
+  "Style_7E744141": {
+    "English": "Style",
+    "Chinese": "风格"
+  },
+  "Subtype_A26E25C3": {
+    "English": "Subtype",
+    "Chinese": "子类型"
+  },
+  "SwitchtoPenciltobrowseindividualtiles_BC426E66": {
+    "English": "Switch to Pencil to browse individual tiles.",
+    "Chinese": "切换至铅笔工具可浏览单张图块。"
+  },
+  "Tags_1331275B": {
+    "English": "Tags",
+    "Chinese": "标签"
+  },
+  "Temple0connectedrooms_8F62CC46": {
+    "English": "Temple · {0} connected rooms",
+    "Chinese": "寺庙 · {0} 个连通房间"
+  },
+  "Temple_67848024": {
+    "English": "Temple",
+    "Chinese": "寺庙"
+  },
+  "TerrainCategory_00E2D2A9": {
+    "English": "Terrain Category",
+    "Chinese": "地形分类"
+  },
+  "TerrainPatterns_352FA4E9": {
+    "English": "Terrain Patterns",
+    "Chinese": "地形组合"
+  },
+  "TerrainPreview_5190551A": {
+    "English": "Terrain Preview",
+    "Chinese": "地形预览"
+  },
+  "TerrainSeed_66B2DBC6": {
+    "English": "Terrain Seed",
+    "Chinese": "地形种子"
+  },
+  "Terrain_5DD6E039": {
+    "English": "Terrain",
+    "Chinese": "地形"
+  },
+  "Terrainartworkcouldnotbeloaded_D26C7119": {
+    "English": "Terrain artwork could not be loaded.",
+    "Chinese": "无法加载地形资源。"
+  },
+  "Terrainset_FBB2C81A": {
+    "English": "Terrain set",
+    "Chinese": "地形组合"
+  },
+  "ThatobjectfilenamealreadyexistsinthecatalogueChooseadifferentname_6156C749": {
+    "English": "That object filename already exists in the catalogue. Choose a different name.",
+    "Chinese": "分类目录中已存在该物体文件名，请选择其他名称。"
+  },
+  "Thecolourpreferencecouldnotbesaved_C43A8315": {
+    "English": "The colour preference could not be saved: ",
+    "Chinese": "无法保存颜色偏好："
+  },
+  "Thecopiedregionexceedsthestampeditorlimit_46A229BD": {
+    "English": "The copied region exceeds the stamp editor limit.",
+    "Chinese": "复制区域超出物体编辑器限制。"
+  },
+  "Thecurrentlibrariesdonotcontainmatchingcatalogueterrainartwork_1107752F": {
+    "English": "The current libraries do not contain matching catalogue terrain artwork.",
+    "Chinese": "当前资源库中没有与目录匹配的地形资源。"
+  },
+  "ThenewcatalogueIDalreadyexists_D77A3784": {
+    "English": "The new catalogue ID already exists.",
+    "Chinese": "新的分类记录编号已存在。"
+  },
+  "Thestampcategorycataloguewasnotfound_88F1B573": {
+    "English": "The stamp category catalogue was not found.",
+    "Chinese": "未找到物体分类目录。"
+  },
+  "Thisstylehasnomatchingcliffentranceobjects_A060FE8F": {
+    "English": "This style has no matching cliff entrance objects.",
+    "Chinese": "此风格没有匹配的悬崖入口物体。"
+  },
+  "Thisstylehasnomatchingwallentranceobjects_429B16B6": {
+    "English": "This style has no matching wall entrance objects.",
+    "Chinese": "此风格没有匹配的墙体入口物体。"
+  },
+  "TileAnimation_46006268": {
+    "English": "Tile Animation",
+    "Chinese": "地表动画"
+  },
+  "TileAnimationationimageoffsetandframecount_5B5DB288": {
+    "English": "Tile Animationation image, offset and frame count",
+    "Chinese": "地表动画图号、偏移和帧数"
+  },
+  "TileObjectLibrary_BD97E054": {
+    "English": "Tile & Object Library",
+    "Chinese": "图块与物体资源库"
+  },
+  "Tiles_AB71A9B0": {
+    "English": " Tiles",
+    "Chinese": "图块"
+  },
+  "ToolOptions_9F7BE263": {
+    "English": "Tool Options",
+    "Chinese": "工具选项"
+  },
+  "Tools_EA93D6A2": {
+    "English": "Tools",
+    "Chinese": "工具"
+  },
+  "Tools_FEDDD6F8": {
+    "English": "_Tools",
+    "Chinese": "工具(_T)"
+  },
+  "Top_D5CDFCF7": {
+    "English": "Top",
+    "Chinese": "顶部"
+  },
+  "TotalacrossgeneratedcliffsRandomentrancesstayapartMapswithoutsuit_AF12AC64": {
+    "English": "Total across generated cliffs. Random entrances stay apart. Maps without suitable cliffs may fit fewer.",
+    "Chinese": "生成悬崖的入口总数；随机入口之间保留间距。缺少适用悬崖的地图可容纳的入口较少。"
+  },
+  "TotalperdungeonRandomentrancesstayapartandclearofcornersSmallmaps_87B45C1C": {
+    "English": "Total per dungeon. Random entrances stay apart and clear of corners. Small maps may fit fewer.",
+    "Chinese": "每个地牢的入口总数；随机入口之间保留间距，并避开角落。小地图可容纳的入口较少。"
+  },
+  "TownBlocks_880CD4E1": {
+    "English": "Town Blocks",
+    "Chinese": "城镇地块"
+  },
+  "TownCount_5495A825": {
+    "English": "Town Count",
+    "Chinese": "城镇数量"
+  },
+  "TownCount_9041BBE0": {
+    "English": "Town Count · ",
+    "Chinese": "城镇数量 ·"
+  },
+  "TownPreview_9A6FA8CB": {
+    "English": "Town Preview",
+    "Chinese": "城镇预览"
+  },
+  "TownSeed_68D0A77E": {
+    "English": "Town Seed",
+    "Chinese": "城镇种子"
+  },
+  "TownSettings_0221B0AA": {
+    "English": "Town Settings…",
+    "Chinese": "城镇设置…"
+  },
+  "TownSettings_59933C7E": {
+    "English": "Town Settings",
+    "Chinese": "城镇设置"
+  },
+  "TownSizeMapCells_661A6D17": {
+    "English": "Town Size (Map Cells)",
+    "Chinese": "城镇大小（地图格数）"
+  },
+  "TownSize_F19E1D29": {
+    "English": "Town Size",
+    "Chinese": "城镇大小"
+  },
+  "TownStamp_F53F3F84": {
+    "English": "Town Stamp",
+    "Chinese": "城镇物体"
+  },
+  "TownType_204D4060": {
+    "English": "Town Type",
+    "Chinese": "城镇类型"
+  },
+  "Town_390F2513": {
+    "English": "Town",
+    "Chinese": "城镇"
+  },
+  "TowngroundneedsmatchingterrainartworkLoadmatchinglibrariesorunche_E04F5FE0": {
+    "English": "Town ground needs matching terrain artwork. Load matching libraries or uncheck Include town ground and streets.",
+    "Chinese": "城镇地面需要匹配的地形资源，请加载匹配资源库，或取消“包含城镇地面和街道”。"
+  },
+  "TownplacedCtrlZtoundo_A27ED0B6": {
+    "English": "Town placed · Ctrl+Z to undo",
+    "Chinese": "城镇已放置 · Ctrl+Z 撤销"
+  },
+  "TownplacementblockedStampinstancelimitreached_B2826742": {
+    "English": "Town placement blocked · Stamp instance limit reached",
+    "Chinese": "无法放置城镇 · 已达到物体实例数量上限"
+  },
+  "TownpreviewunavailableAdjustthesettingsorlibraries_9F7B67B3": {
+    "English": "Town preview unavailable. Adjust the settings or libraries.",
+    "Chinese": "城镇预览不可用，请调整参数或资源库。"
+  },
+  "Track_051F01F0": {
+    "English": "Track",
+    "Chinese": "轨道"
+  },
+  "TreeBrushSize_B34DE6B5": {
+    "English": "Tree Brush Size",
+    "Chinese": "树木笔刷大小"
+  },
+  "TreeBrush_6612E83E": {
+    "English": "Tree Brush",
+    "Chinese": "树木笔刷"
+  },
+  "TreeDensity_766BEDF6": {
+    "English": "Tree Density",
+    "Chinese": "树木密度"
+  },
+  "TreeListName_7E7B9C3F": {
+    "English": "Tree List Name",
+    "Chinese": "树木列表名称"
+  },
+  "TreeSpacing_151636E1": {
+    "English": "Tree Spacing",
+    "Chinese": "树木间距"
+  },
+  "TreeType_23B1CC6A": {
+    "English": "Tree Type",
+    "Chinese": "树木类型"
+  },
+  "TreeVariants_E5705B8F": {
+    "English": "Tree Variants",
+    "Chinese": "树木变体"
+  },
+  "Tree_B85F5FAB": {
+    "English": "Tree",
+    "Chinese": "树木"
+  },
+  "Trees_109D6F45": {
+    "English": "Trees",
+    "Chinese": "树木"
+  },
+  "TreestoPaint_F9D6709F": {
+    "English": "Trees to Paint",
+    "Chinese": "绘制的树木"
+  },
+  "TryadifferentpatternorspriteID_32B1EA41": {
+    "English": "Try a different pattern or sprite ID.",
+    "Chinese": "请尝试其他组合或图片编号。"
+  },
+  "TryanothernamelayerorID_48CE5541": {
+    "English": "Try another name, layer or ID.",
+    "Chinese": "请尝试其他名称、图层或编号。"
+  },
+  "TryanothernameorimportaXstamp_8D67AED3": {
+    "English": "Try another name or import a .X stamp.",
+    "Chinese": "请尝试其他名称，或导入 .X 物体。"
+  },
+  "Tryanotherstampnameorcategory_EA270ADA": {
+    "English": "Try another stamp name or category.",
+    "Chinese": "请尝试其他物体名称或分类。"
+  },
+  "Type_77B5671D": {
+    "English": " Type",
+    "Chinese": "类型"
+  },
+  "Type_BAADDF70": {
+    "English": "Type",
+    "Chinese": "类型"
+  },
+  "Unabletoidentifyobjects0_85A1B3A9": {
+    "English": "Unable to identify objects: {0}",
+    "Chinese": "无法识别物体：{0}"
+  },
+  "Unabletoopenstamp_BEF81B24": {
+    "English": "Unable to open stamp",
+    "Chinese": "无法打开物体"
+  },
+  "UnabletoreadObjectsfolder0_6B46F6A8": {
+    "English": "Unable to read Objects folder: {0}",
+    "Chinese": "无法读取 Objects 目录：{0}"
+  },
+  "Unabletoreadcategories_4E57EE35": {
+    "English": "Unable to read categories",
+    "Chinese": "无法读取分类"
+  },
+  "Unassignedregion_F63D3024": {
+    "English": "Unassigned region",
+    "Chinese": "未分配地区"
+  },
+  "Unavailableinthecurrentlibraryfolder_E602D2BE": {
+    "English": "Unavailable in the current library folder",
+    "Chinese": "当前资源目录中不可用"
+  },
+  "UndoRedo_49C1588E": {
+    "English": "Undo / Redo",
+    "Chinese": "撤销 / 重做"
+  },
+  "Undo_0846D4AA": {
+    "English": "_Undo",
+    "Chinese": "撤销(_U)"
+  },
+  "UnfinishedwallcancelledCompletedwallskept_5413DD36": {
+    "English": "Unfinished wall cancelled · Completed walls kept",
+    "Chinese": "未完成的墙体已取消 · 保留已完成墙体"
+  },
+  "Unknownenvironment_EA7EDBD5": {
+    "English": "Unknown environment",
+    "Chinese": "未知环境"
+  },
+  "Unknownfacing_7F9800FD": {
+    "English": "Unknown facing",
+    "Chinese": "未知朝向"
+  },
+  "Unknowntype_6A29772E": {
+    "English": "Unknown type",
+    "Chinese": "未知类型"
+  },
+  "Unpin_47A05121": {
+    "English": "★ Unpin",
+    "Chinese": "★ 取消收藏"
+  },
+  "UnpinfromFavourites_9837DFB1": {
+    "English": "Unpin from Favourites",
+    "Chinese": "取消收藏"
+  },
+  "Unsavedmap_554489B5": {
+    "English": "Unsaved map",
+    "Chinese": "地图尚未保存"
+  },
+  "Unsavedstamp_C1399FFA": {
+    "English": "Unsaved stamp",
+    "Chinese": "物体尚未保存"
+  },
+  "Untitled0_099D2A5B": {
+    "English": "Untitled {0}",
+    "Chinese": "未命名 {0}"
+  },
+  "Untitled_F59AB8D1": {
+    "English": "Untitled",
+    "Chinese": "未命名"
+  },
+  "Untitledstamp0_E2B140BF": {
+    "English": "Untitled stamp {0}",
+    "Chinese": "未命名物体 {0}"
+  },
+  "Updatingpreview_67E600E7": {
+    "English": "Updating preview…",
+    "Chinese": "正在更新预览…"
+  },
+  "Updatingprovince_45F422A1": {
+    "English": "Updating province…",
+    "Chinese": "正在更新省域…"
+  },
+  "UseBrush_378C76AA": {
+    "English": "Use Brush",
+    "Chinese": "使用笔刷"
+  },
+  "UseSelectMtomarktheobjectareafirst_445EDDB0": {
+    "English": "Use Select (M) to mark the object area first",
+    "Chinese": "请先使用选择工具（M）标记物体区域"
+  },
+  "UseTown_5216C997": {
+    "English": "Use Town",
+    "Chinese": "使用城镇"
+  },
+  "UseTreeBrush_993C06D2": {
+    "English": "Use Tree Brush",
+    "Chinese": "使用树木笔刷"
+  },
+  "Use_BB33DBDB": {
+    "English": "Use ",
+    "Chinese": "使用"
+  },
+  "Variants_198C40A2": {
+    "English": " Variants",
+    "Chinese": "变体"
+  },
+  "VeryLarge192192_ED9A26BC": {
+    "English": "Very Large · 192 × 192",
+    "Chinese": "特大 · 192 × 192"
+  },
+  "View_194376EE": {
+    "English": "_View",
+    "Chinese": "视图(_V)"
+  },
+  "VillageGreen_1260062E": {
+    "English": "Village Green",
+    "Chinese": "村落绿地"
+  },
+  "Volcanic_2D441FD4": {
+    "English": "Volcanic",
+    "Chinese": "火山"
+  },
+  "WASDSpaceDragMiddleDrag_3F438E39": {
+    "English": "WASD / Space + Drag / Middle Drag",
+    "Chinese": "WASD / 空格 + 拖动 / 鼠标中键拖动"
+  },
+  "W_FCB5F40D": {
+    "English": "W",
+    "Chinese": "西"
+  },
+  "Wall0Clickordragtoconnectsections_F54F7308": {
+    "English": "Wall · {0} · Click or drag to connect sections",
+    "Chinese": "墙体 · {0} · 单击或拖动以连续绘制墙段"
+  },
+  "Wall0DragtoconnectShifttoremove_78729316": {
+    "English": "Wall · {0} · Drag to connect · Shift to remove",
+    "Chinese": "墙体 · {0} · 拖动可连续绘制 · Shift 移除"
+  },
+  "WallBrush_EF26CFDD": {
+    "English": "Wall Brush",
+    "Chinese": "墙体笔刷"
+  },
+  "WallCatalogueUnavailable_FF9E048C": {
+    "English": "Wall Catalogue Unavailable",
+    "Chinese": "墙体目录不可用"
+  },
+  "WallFenceChance_5F74B316": {
+    "English": "Wall / Fence Chance · ",
+    "Chinese": "墙体 / 栅栏概率 ·"
+  },
+  "WallHChooseaWallTypeInnerorOuterandPreviewaSectionShiftRemovesSec_DB75274F": {
+    "English": "Wall · H\nChoose a Wall Type, Inner or Outer, and Preview a Section\nShift Removes Sections",
+    "Chinese": "墙体 · H\n选择墙体类型、内侧或外侧，并预览墙段\n按住 Shift 可移除墙段"
+  },
+  "WallRemoveWallSections_47839C8F": {
+    "English": "Wall / Remove Wall Sections",
+    "Chinese": "墙体 / 移除墙段"
+  },
+  "WallSectionPreview_793D7023": {
+    "English": "Wall Section Preview",
+    "Chinese": "墙段预览"
+  },
+  "WallSettingsH_CBF55B96": {
+    "English": "Wall Settings · H",
+    "Chinese": "墙体设置 · H"
+  },
+  "WallSettings_08B85D01": {
+    "English": "Wall Settings…",
+    "Chinese": "墙体设置…"
+  },
+  "WallType_A1A14920": {
+    "English": "Wall Type",
+    "Chinese": "墙体类型"
+  },
+  "Wall_F76EA921": {
+    "English": "Wall",
+    "Chinese": "墙体"
+  },
+  "WallandFenceChance_F69D2FC7": {
+    "English": "Wall and Fence Chance",
+    "Chinese": "墙体与栅栏概率"
+  },
+  "WallsectionremovedConnectionsupdated_2B3A9F84": {
+    "English": "Wall section removed · Connections updated",
+    "Chinese": "墙段已移除 · 相邻连接已更新"
+  },
+  "Water_7CA7DEA9": {
+    "English": "Water",
+    "Chinese": "水体"
+  },
+  "WelcometoCrystalStudio_3E35F116": {
+    "English": "Welcome to Crystal Studio",
+    "Chinese": "欢迎使用 Crystal Studio"
+  },
+  "Wide_147170E7": {
+    "English": "Wide",
+    "Chinese": "宽"
+  },
+  "WiderBorderChance_7AAAA257": {
+    "English": "Wider Border Chance",
+    "Chinese": "加宽边界概率"
+  },
+  "WiderBorder_538E1AA9": {
+    "English": "Wider Border · ",
+    "Chinese": "加宽边界 ·"
+  },
+  "WidthinCells164096_B58B17A5": {
+    "English": "Width in Cells (16–4096)",
+    "Chinese": "宽度（16–4096 格）"
+  },
+  "WindingHighStreet_B6E6EDA4": {
+    "English": "Winding High Street",
+    "Chinese": "蜿蜒主街"
+  },
+  "WindingPaths_A5115EFC": {
+    "English": "Winding Paths",
+    "Chinese": "蜿蜒道路"
+  },
+  "WoodlandinBichonRockyCoverinDesertStyles_3B279EE4": {
+    "English": "Woodland in Bichon; Rocky Cover in Desert Styles",
+    "Chinese": "比奇风格使用林地；沙漠风格使用岩石覆盖"
+  },
+  "WoomaPalace_9D025CF4": {
+    "English": "WoomaPalace",
+    "Chinese": "沃玛宫殿"
+  },
+  "WoomaTemple_02317ED8": {
+    "English": "WoomaTemple",
+    "Chinese": "沃玛寺庙"
+  },
+  "WoomaTemple_7F0F736E": {
+    "English": "Wooma Temple",
+    "Chinese": "沃玛寺庙"
+  },
+  "WoomyonWoods_1AD46BEB": {
+    "English": "WoomyonWoods",
+    "Chinese": "沃玛森林"
+  },
+  "WorkFaster_29D1CBE3": {
+    "English": "Work Faster",
+    "Chinese": "快捷操作"
+  },
+  "Yes_85A39AB3": {
+    "English": "Yes",
+    "Chinese": "是"
+  },
+  "YourAssetsLiveHere_E5E1BE63": {
+    "English": "Your Assets Live Here",
+    "Chinese": "资源配置"
+  },
+  "ZoomIn_5A982CF9": {
+    "English": "Zoom In",
+    "Chinese": "放大"
+  },
+  "ZoomIn_BE6B96AF": {
+    "English": "Zoom _In",
+    "Chinese": "放大(_I)"
+  },
+  "ZoomOut_24649EE0": {
+    "English": "Zoom Out",
+    "Chinese": "缩小"
+  },
+  "ZoomOut_8ABEB91F": {
+    "English": "Zoom _Out",
+    "Chinese": "缩小(_O)"
+  },
+  "Zoom_509C517E": {
+    "English": "Zoom",
+    "Chinese": "缩放"
+  },
+  "ZumaPalace_61F07E6E": {
+    "English": "ZumaPalace",
+    "Chinese": "祖玛宫殿"
+  },
+  "ZumaTemple_5CB8D152": {
+    "English": "ZumaTemple",
+    "Chinese": "祖玛寺庙"
+  },
+  "ZumaTemple_FA4123B1": {
+    "English": "Zuma Temple",
+    "Chinese": "祖玛寺庙"
+  },
+  "assets_8BF729FF": {
+    "English": "assets",
+    "Chinese": "资源"
+  },
+  "blocked_6973DDDD": {
+    "English": "blocked",
+    "Chinese": "阻挡"
+  },
+  "bush_749A1A16": {
+    "English": "bush",
+    "Chinese": "灌木"
+  },
+  "bushes_4C75B952": {
+    "English": "bushes",
+    "Chinese": "灌木"
+  },
+  "cell_39D02B42": {
+    "English": "cell",
+    "Chinese": "格"
+  },
+  "cells_57104C57": {
+    "English": "cells",
+    "Chinese": "格"
+  },
+  "clear_913A4CB9": {
+    "English": "clear",
+    "Chinese": "畅通"
+  },
+  "file_3B9C358F": {
+    "English": "file",
+    "Chinese": "文件"
+  },
+  "fromThisType_9EC0062E": {
+    "English": " from This Type",
+    "Chinese": "（当前类型）"
+  },
+  "high_6EF7C9B1": {
+    "English": "high",
+    "Chinese": "高"
+  },
+  "house_D6E21286": {
+    "English": "house",
+    "Chinese": "房屋"
+  },
+  "known_7117FFF2": {
+    "English": "known",
+    "Chinese": "已知"
+  },
+  "libraries_01CFC309": {
+    "English": "libraries",
+    "Chinese": "资源库"
+  },
+  "library_B718F135": {
+    "English": "library",
+    "Chinese": "资源库"
+  },
+  "list_A330395C": {
+    "English": "list",
+    "Chinese": "列表"
+  },
+  "low_6C1FF09D": {
+    "English": "low",
+    "Chinese": "低"
+  },
+  "notApplicable_86463DAF": {
+    "English": "notApplicable",
+    "Chinese": "不适用"
+  },
+  "object_2958D416": {
+    "English": "object",
+    "Chinese": "物体"
+  },
+  "objects_E4CD3029": {
+    "English": "objects",
+    "Chinese": "物体"
+  },
+  "ofThisType_5570490F": {
+    "English": " of This Type",
+    "Chinese": "（当前类型）"
+  },
+  "off_B4DC66DD": {
+    "English": "off",
+    "Chinese": "关闭"
+  },
+  "on_B8D31E85": {
+    "English": "on",
+    "Chinese": "开启"
+  },
+  "reviewed_E4F934F3": {
+    "English": "reviewed",
+    "Chinese": "已审核"
+  },
+  "rock_350A770C": {
+    "English": "rock",
+    "Chinese": "岩石"
+  },
+  "rocks_F6056EF7": {
+    "English": "rocks",
+    "Chinese": "岩石"
+  },
+  "sets_82C6DB3D": {
+    "English": "sets",
+    "Chinese": "组合"
+  },
+  "sprites_A34B89CC": {
+    "English": "sprites",
+    "Chinese": "图片"
+  },
+  "stale_A03F2386": {
+    "English": "stale",
+    "Chinese": "需要复核"
+  },
+  "stamps_48306FD0": {
+    "English": "stamps",
+    "Chinese": "物体"
+  },
+  "tree_DC9C5EDB": {
+    "English": "tree",
+    "Chinese": "树木"
+  },
+  "trees_29D80730": {
+    "English": "trees",
+    "Chinese": "树木"
+  },
+  "unknown_B23A6A84": {
+    "English": "unknown",
+    "Chinese": "未知"
+  },
+  "unreviewed_43100289": {
+    "English": "unreviewed",
+    "Chinese": "未审核"
+  },
+  "Languagerestartrequired_01562EF9": {
+    "English": "Language (restart required)",
+    "Chinese": "语言（重启后生效）"
+  },
+  "LanguagechangestakeeffectafterrestartingCrystalStudio_E1C6AF42": {
+    "English": "Language changes take effect after restarting Crystal Studio.",
+    "Chinese": "语言设置将在重启 Crystal Studio 后生效。"
+  },
+  "LanguagesavedRestartCrystalStudiotoapply_513C84B7": {
+    "English": "Language saved. Restart Crystal Studio to apply.",
+    "Chinese": "语言设置已保存，重启 Crystal Studio 后生效。"
+  },
+  "ExtractMapObjects_1151B2C9": {
+    "English": "Extract Map Objects",
+    "Chinese": "提取地图物体"
+  },
+  "Currentmap_A6E14D93": {
+    "English": "Current map",
+    "Chinese": "当前地图"
+  },
+  "Currentselection_BA8FC363": {
+    "English": "Current selection",
+    "Chinese": "当前选区"
+  },
+  "Mapdirectory_FFDE7D38": {
+    "English": "Map directory",
+    "Chinese": "地图目录"
+  },
+  "Resourcefolder_E4D24E62": {
+    "English": "Resource folder",
+    "Chinese": "资源目录"
+  },
+  "Searchcandidatesorsource_46143E9F": {
+    "English": "Search candidates or source",
+    "Chinese": "搜索候选或来源"
+  },
+  "Allcandidates_E2DF9422": {
+    "English": "All candidates",
+    "Chinese": "全部候选"
+  },
+  "Unreviewed_F5265A26": {
+    "English": "Unreviewed",
+    "Chinese": "未确认"
+  },
+  "Reviewed_FAD6057B": {
+    "English": "Reviewed",
+    "Chinese": "已确认"
+  },
+  "Existingobjects_8277F622": {
+    "English": "Existing objects",
+    "Chinese": "已有物体"
+  },
+  "Newobjects_4B24B93D": {
+    "English": "New objects",
+    "Chinese": "新物体"
+  },
+  "Selectionboundary_5ACB052B": {
+    "English": "Selection boundary",
+    "Chinese": "跨选区边界"
+  },
+  "Choosemaps_55696090": {
+    "English": "Choose maps…",
+    "Chinese": "选择地图目录…"
+  },
+  "Chooseresources_A80EAC2B": {
+    "English": "Choose resources…",
+    "Chinese": "选择资源目录…"
+  },
+  "Scan_EA1C510D": {
+    "English": "Scan",
+    "Chinese": "开始扫描"
+  },
+  "ReviewobjectboundariesandcollisionbeforesavingSourcemapsremainunc_5C76B2B4": {
+    "English": "Review object boundaries and collision before saving. Source maps remain unchanged.",
+    "Chinese": "保存前请确认物体边界与碰撞归属。源地图保持不变。"
+  },
+  "Previous_A57B08A4": {
+    "English": "Previous",
+    "Chinese": "上一页"
+  },
+  "Next_1FF57A29": {
+    "English": "Next",
+    "Chinese": "下一页"
+  },
+  "Reviewselected_06032AE3": {
+    "English": "Review selected",
+    "Chinese": "确认所选"
+  },
+  "Markunreviewed_C2A098E5": {
+    "English": "Mark unreviewed",
+    "Chinese": "标为未确认"
+  },
+  "Mergeselected_9E6BA404": {
+    "English": "Merge selected",
+    "Chinese": "合并所选"
+  },
+  "Excludeselected_2748363F": {
+    "English": "Exclude selected",
+    "Chinese": "排除所选"
+  },
+  "SavereviewedtoPalette_61B89585": {
+    "English": "Save reviewed to Palette",
+    "Chinese": "保存已确认项至调色板"
+  },
+  "ReviewupdatedUseUndotorestorethepreviousreview_4CFC273D": {
+    "English": "Review updated. Use Undo to restore the previous review.",
+    "Chinese": "复核已更新，可撤销至之前的状态。"
+  },
+  "Noscanresults_E636107A": {
+    "English": "No scan results.",
+    "Chinese": "尚无扫描结果。"
+  },
+  "0N0existing1N0new2N0duplicates3N0unreviewed4N0ready_DB54B78E": {
+    "English": "{0:N0} existing · {1:N0} new · {2:N0} duplicates · {3:N0} unreviewed · {4:N0} ready",
+    "Chinese": "已有 {0:N0} · 新增 {1:N0} · 重复 {2:N0} · 未确认 {3:N0} · 可保存 {4:N0}"
+  },
+  "Choosearesourcefolder_B9E8BD69": {
+    "English": "Choose a resource folder.",
+    "Chinese": "请选择资源目录。"
+  },
+  "Chooseamapdirectory_EC8F12BB": {
+    "English": "Choose a map directory.",
+    "Chinese": "请选择地图目录。"
+  },
+  "Creatingmapsnapshot_BC79B33F": {
+    "English": "Creating map snapshot…",
+    "Chinese": "正在创建地图快照…"
+  },
+  "Selectamapareafirst_8FFB4C3B": {
+    "English": "Select a map area first.",
+    "Chinese": "请先选择地图区域。"
+  },
+  "01N0maps2N0candidates3N0occurrences4_0493D36D": {
+    "English": "{0} · {1:N0} maps · {2:N0} candidates · {3:N0} occurrences\n{4}",
+    "Chinese": "{0} · {1:N0} 张地图 · {2:N0} 个候选 · {3:N0} 处来源\n{4}"
+  },
+  "Scancomplete0N0maps1N0warningsSelectcandidatestoreview_EF686667": {
+    "English": "Scan complete · {0:N0} maps · {1:N0} warnings. Select candidates to review.",
+    "Chinese": "扫描完成 · {0:N0} 张地图 · {1:N0} 条警告。请选择候选进行复核。"
+  },
+  "ScancancelledSourcemapsremainunchanged_2A767F2C": {
+    "English": "Scan cancelled. Source maps remain unchanged.",
+    "Chinese": "扫描已取消，源地图保持不变。"
+  },
+  "Savingreviewedobjects_C3FC5109": {
+    "English": "Saving reviewed objects…",
+    "Chinese": "正在保存已确认物体…"
+  },
+  "Saved0N0uniqueobjectsReport1_F8E0C3CE": {
+    "English": "Saved {0:N0} unique objects. Report: {1}",
+    "Chinese": "已保存 {0:N0} 个去重物体。报告：{1}"
+  },
+  "ExportcancelledCatalogueunchanged_A206C849": {
+    "English": "Export cancelled. Catalogue unchanged.",
+    "Chinese": "导出已取消，目录索引保持不变。"
+  },
+  "Allcategories_9D5097A8": {
+    "English": "All categories",
+    "Chinese": "全部分类"
+  },
+  "Unclassified_1372A381": {
+    "English": "Unclassified",
+    "Chinese": "待分类"
+  },
+  "Selectacandidatetoinspectitsfragmentscollisionandsources_8DA1000A": {
+    "English": "Select a candidate to inspect its fragments, collision and sources.",
+    "Chinese": "请选择候选，查看组成图片、碰撞和来源。"
+  },
+  "0N0selected_6958BC16": {
+    "English": "{0:N0} selected",
+    "Chinese": "已选 {0:N0} 项"
+  },
+  "Nameleaveemptytoretain_548E6AAC": {
+    "English": "Name (leave empty to retain)",
+    "Chinese": "名称（空白表示保留）"
+  },
+  "Allowcompleteobjectscrossingtheselection_1AD3B23E": {
+    "English": "Allow complete objects crossing the selection",
+    "Chinese": "允许保存跨选区的完整物体"
+  },
+  "Applynamecategoryboundary_AEDB6B29": {
+    "English": "Apply name / category / boundary",
+    "Chinese": "应用名称、分类与边界设置"
+  },
+  "Isolatedobject_CE907591": {
+    "English": "Isolated object",
+    "Chinese": "独立物体"
+  },
+  "Mapcontext_5996E153": {
+    "English": "Map context",
+    "Chinese": "地图上下文"
+  },
+  "Splitselectedfragments_6CA58BD4": {
+    "English": "Split selected fragments",
+    "Chinese": "拆分所选图片"
+  },
+  "Excludefragments_ACAEC054": {
+    "English": "Exclude fragments",
+    "Chinese": "排除所选图片"
+  },
+  "CollisionpinklowbluehighNearbyflagsstartunchecked_695A25B6": {
+    "English": "Collision: pink = low, blue = high. Nearby flags start unchecked.",
+    "Chinese": "碰撞：粉色为低阻挡，蓝色为高阻挡。附近的碰撞默认不选中。"
+  },
+  "Sources_CAF85B08": {
+    "English": "Sources",
+    "Chinese": "来源"
+  },
+  "01fragments2sources_BE9164C4": {
+    "English": "{0} · {1} fragments · {2} sources",
+    "Chinese": "{0} · {1} 张图片 · {2} 处来源"
+  },
+  "Confirmedplacementmetadata_4DFAC49F": {
+    "English": "Confirmed placement metadata.",
+    "Chinese": "已确认的放置元数据。"
+  },
+  "Matchedanexistingobjecttemplate_16C7A12F": {
+    "English": "Matched an existing object template.",
+    "Chinese": "与已有物体模板匹配。"
+  },
+  "Automaticsizelimitexceededindividualfragmentrequiresreview_DFE66189": {
+    "English": "Automatic size limit exceeded; individual fragment requires review.",
+    "Chinese": "超过自动分组范围限制，单张图片需要人工确认。"
+  },
+  "Artworkmissinggroupingrequiresreview_9CCCE980": {
+    "English": "Artwork missing; grouping requires review.",
+    "Chinese": "缺少图片资源，需要人工确认分组。"
+  },
+  "Groupedbyspriteboundslibraryandimagesequencereviewobjectboundarie_F91CA9AD": {
+    "English": "Grouped by sprite bounds, library and image sequence; review object boundaries.",
+    "Chinese": "根据图片显示范围、资源库与图片序号分组，请确认物体边界。"
+  },
+  "Categorysupportedbyatleast80offragments_0E26AA38": {
+    "English": "Category supported by at least 80% of fragments.",
+    "Chinese": "至少 80% 的组成图片支持该分类。"
+  },
+  "Manuallymergedreviewfragmentsandcollision_114B6FAA": {
+    "English": "Manually merged; review fragments and collision.",
+    "Chinese": "已人工合并，请确认图片与碰撞。"
+  },
+  "Enteranobjectname_A7E583D2": {
+    "English": "Enter an object name.",
+    "Chinese": "请输入物体名称。"
+  },
+  "Selectforegroundfragmentsfirst_38D9C647": {
+    "English": "Select foreground fragments first.",
+    "Chinese": "请先选择前景图片。"
+  },
+  "Onlycollisionpresentinthesourcecanbeincluded_65B34BB0": {
+    "English": "Only collision present in the source can be included.",
+    "Chinese": "仅可选择源地图中存在的碰撞。"
+  },
+  "Selectatleasttwocandidates_521325E2": {
+    "English": "Select at least two candidates.",
+    "Chinese": "请至少选择两个候选。"
+  },
+  "MergerequiressingleoccurrencesfromthesamesourceScanthatmapseparat_6BD97A06": {
+    "English": "Merge requires single occurrences from the same source. Scan that map separately to merge repeated objects.",
+    "Chinese": "合并需要同一来源中各自仅有一处的候选。对于重复物体，请单独扫描该地图后整理。"
+  },
+  "Mergedobjectsoverlapataforegroundanchor_6032DF44": {
+    "English": "Merged objects overlap at a foreground anchor.",
+    "Chinese": "所合并物体的前景锚点重叠。"
+  },
+  "Reviewatleastonecandidatebeforesaving_43D55B3F": {
+    "English": "Review at least one candidate before saving.",
+    "Chinese": "保存前请至少确认一个候选。"
+  },
+  "ThecataloguechangedduringexportScanagainbeforesaving_9753549F": {
+    "English": "The catalogue changed during export. Scan again before saving.",
+    "Chinese": "导出期间目录索引已变化，请重新扫描后保存。"
+  },
+  "Discoveringforegroundfragments_BC60E689": {
+    "English": "Discovering foreground fragments",
+    "Chinese": "正在发现前景图片"
+  },
+  "Mapcomplete_9BD840A6": {
+    "English": "Map complete",
+    "Chinese": "地图扫描完成"
+  },
+  "Readingmap_52C88853": {
+    "English": "Reading map",
+    "Chinese": "正在读取地图"
+  },
+  "Mergerequirescandidateswithoccurrencesinthesamesource_0B80DF25": {
+    "English": "Merge requires candidates with occurrences in the same source.",
+    "Chinese": "合并需要所选候选在同一来源中存在相应物体。"
+  },
+  "Undo_A8283ADE": {
+    "English": "Undo",
+    "Chinese": "撤销"
+  },
+  "Redo_74273989": {
+    "English": "Redo",
+    "Chinese": "重做"
+  },
+  "Invalidextractionoccurrencerecordsincatalogue_702E7E6B": {
+    "English": "Invalid extraction occurrence records in catalogue.",
+    "Chinese": "目录索引中的提取来源记录无效。"
+  }
+}
