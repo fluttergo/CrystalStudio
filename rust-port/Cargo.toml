@@ -1,0 +1,17 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/mir2-map",
+    "crates/mir2-assets",
+    "crates/miredit-render",
+    "crates/miredit-gui",
+    "crates/mir2-stamp",
+    "crates/mir2-format",
+    "crates/miredit-core",
+    "crates/miredit-web",
+    # vendored 的 WIL/WIX 解码器子集（`mir2-assets` 的 path 依赖，decoder-only）。
+    # 它落在 workspace 目录内，Cargo 本来就会把它当成员；这里**显式登记**，
+    # 免得「成员靠隐含」这件事随 Cargo 行为漂移（显式后 `cargo metadata` 可核对，
+    # `cargo check --workspace` 也一并覆盖它）。
+    "vendor/wil2atlas",
+]

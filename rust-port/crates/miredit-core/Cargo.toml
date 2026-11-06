@@ -1,0 +1,42 @@
+[package]
+name = "miredit-core"
+version = "0.1.0"
+edition = "2021"
+description = "地图编辑器编辑内核（无 UI 依赖：图层/笔刷/落笔/填充/撤销/原子保存/可序列化命令）"
+license = "MIT"
+
+[dependencies]
+# 依赖白名单（任务书 §七；**2026-11-05 扩一条**）：`std` + `mir2-map` + `mir2-format` + `mir2-stamp`。
+# 扩 `mir2-stamp` 的理由与代价见下面那段（它带 serde，进库本体是**有意**的，不是漏改）。
+#
+# - `mir2-format`：**九种格式**的字节层真值（`RawMap` / 九种 writer / 未解尾区）。
+#   2026-11-05 接入：本 crate 从"只认 12/14/36 三档"升级为"9 种都能开、能编辑、能原格式写回"。
+#   `mir2-map` 仍留着，因为**渲染层**（`miredit-render`）的入口签名是 `&mir2_map::Map`，
+#   而编辑逻辑（paint/fill/undo）与 103 条既有测试都钉在它上面（见 `src/convert.rs` 模块文档）。
+# - 不依赖 `miredit-gui`：那是被抽取方，本 crate 反过来要能被它当门面用；
+# - 不依赖 `mir2-assets`（**库本体**）：`Family` / `LibRef` 在本 crate 里按同口径**重新定义**
+#   （见 brush.rs 文档 §一 与 `Family` 的「与 mir2_assets::Family 的关系」一节）。
+#   2026-11-05 裁定：**不做** `pub use mir2_assets::{Family, LibRef}` ——
+#   两边的 `label()` 是两套不同用途的词表（界面词 vs 数据层日志词），合并会打红 4 条逐字断言；
+# - 不引 serde：`cmd::Command` 只依赖 `std`，网页层自己做序列化（任务书 §五）。
+mir2-map = { path = "../mir2-map" }
+mir2-format = { path = "../mir2-format" }
+# 2026-11-05 接入（**从 dev-dependencies 上移**）：`stamp_convert` 把 `.X` 印章直接转成
+# `Vec<StampCellInput>`，即「印章 id → 格表」这一步下沉进内核，调用方（GUI / 网页）不必
+# 各自再解析一遍 `.X`，也就不会出现「两边对库号/图号的掩码口径不一致」的静默漂移。
+#
+# ⚠ 代价必须记账：`mir2-stamp` 带 `serde` + `serde_json`（只为读 `catalogue/palette.json`），
+# 上移后这两个 crate 进入**库本体**依赖树。它们本来就在本 workspace 的 `Cargo.lock` 里
+# （2026-11-06 起由 `mir2-stamp` 与 `miredit-web` 引入；vendored 的 `wil2atlas` 子集已裁掉 serde），
+# 因此**不新增锁文件版本、不新增传递依赖树**；
+# 但「编辑内核只依赖 std + mir2-map + mir2-format」这条白名单**从此作废**（见 `lib.rs` §一）。
+mir2-stamp = { path = "../mir2-stamp" }
+
+[dev-dependencies]
+# 仅测试用（**不进库本体**）：`brush.rs::族与mir2_assets按序号一一对应` 要拿
+# `mir2_assets::Family` 与本 crate 的 `Family` 逐序号比对（变体数 / index / stem），
+# 防"一边加了变体、另一边没加"的静默漂移。
+# 为什么必须真的依赖：不依赖就只能各测各的，跨 crate 的集合一致性**没有任何机制**能发现。
+mir2-assets = { path = "../mir2-assets" }
+# ⚠ `mir2-stamp` 已**上移到 `[dependencies]`**（见上面那段注释）：`stamp_convert` 是库本体的一部分，
+# 测试与生产代码吃的是同一条转换路径，不再存在「测试里读真 `.X`、库里不读」的两套口径。

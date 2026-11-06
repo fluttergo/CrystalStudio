@@ -1,0 +1,23 @@
+[package]
+name = "mir2-stamp"
+version = "0.1.0"
+edition = "2021"
+description = "CrystalStudio `.X` 印章读写往返保真库 + 印章目录索引（编辑器印章体系地基）"
+license = "MIT"
+
+[dependencies]
+# 本 crate 的**唯一**第三方依赖，只为读 `catalogue/palette.json`（5.09 MB / 9,159 条 JSON 对象数组）。
+# 为什么允许破例（其余代码仍然只用 std）：
+#   1. 手写 JSON 解析器要自己处理 `\uXXXX` 转义、代理对、浮点/整数边界、重复键、错误定位，
+#      出错面远大于收益，且「解析错一条就静默少一条」正是本项目零容忍的假数据来源；
+#   2. 这两个 crate **本来就在本 workspace 的 `Cargo.lock` 里**（`serde` 1.0.229 / `serde_json` 1.0.154；
+#      2026-11-06 起，引入它们的**就是本 crate（`mir2-stamp`）与 `miredit-web`** ——
+#      早先那句「由 tools/wil2atlas 引入」已随解码器 vendor 化失效：vendored 子集刻意裁掉了 serde）
+#      ⇒ 加进来**不新增锁文件版本、不新增传递依赖树、不改 workspace 根
+#      `Cargo.toml`**，只是给 `mir2-stamp` 增加两条依赖边；
+#   3. `derive` 特性只用于 `Deserialize`，不引 `Serialize`（本 crate 不写 palette.json）。
+serde = { version = "1", features = ["derive"] }
+# `raw_value`：把 `objects[]` 的每条**原样切片**保留下来（不建 `Value` DOM 树），
+# 再逐条 `from_str` 成结构体。这样既能「一条坏数据只坏一条」（可跳过并计数），
+# 又不用为 9,159 条各建一棵 `serde_json::Value`（实测比 DOM 路线省一半时间）。
+serde_json = { version = "1", features = ["raw_value"] }

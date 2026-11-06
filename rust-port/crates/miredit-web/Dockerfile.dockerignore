@@ -1,0 +1,22 @@
+# 构建上下文排除清单（**专门给 `crates/miredit-web/Dockerfile` 用**）。
+#
+# 为什么是这个文件名：BuildKit 支持「与 Dockerfile 同目录、名字为 `<Dockerfile>.dockerignore`」
+# 的专用忽略文件（Docker 文档 "Dockerfile-specific .dockerignore"）。这样就不用去
+# `tools/` 根下新增一个 `.dockerignore`（那不在本 crate 的可写范围里）。
+# 非 BuildKit 环境下本文件会被忽略 —— 那只是上下文变大，不影响正确性。
+#
+# 路径一律相对**构建上下文根**（= `E:\GodM2\tools`）。
+
+# 参考图 / 截图 / 布局数据：编译用不到，几十 MB
+miredit/layout
+# 前端静态瓦片夹具：同上（前端有自己的镜像）
+miredit/web/tiles
+# 任何残留的构建产物
+miredit/target
+miredit/crates/*/target
+wil2atlas/target
+# 版本库元数据与编辑器杂项
+.git
+.gitignore
+**/*.swp
+**/.DS_Store

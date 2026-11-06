@@ -1,0 +1,41 @@
+[package]
+name = "miredit-web"
+version = "0.1.0"
+edition = "2021"
+description = "网页版地图编辑器的 HTTP 后端：把 miredit-core（编辑内核）与 miredit-render（出图）暴露成 REST/WS API"
+license = "MIT"
+
+[dependencies]
+# ── 第三方依赖只有四条（任务书 §四：axum + tokio + serde/serde_json，别的一律不引）──
+#
+# `axum`：HTTP 路由 + WebSocket。理由：本 crate 要同时提供 REST（JSON）与 WS 推送，
+#   axum 一套 `Router` 就能同时覆盖两者，且与 hyper 1.x / tower 同源，不需要再引
+#   `hyper`、`tower-http`（CORS 与静态文件本 crate 自己写，见 `server.rs` / `static_files.rs）。
+#   `ws` 特性是 `/api/events` 的硬需求（`WebSocketUpgrade`）。
+axum = { version = "0.8", features = ["ws"] }
+# `tokio`：异步运行时。`rt-multi-thread` 跑多核；`net` 起 TCP；`signal` 接 Ctrl-C / docker stop；
+#   `sync` 给 `broadcast`（WS 推送通道）；`time` 给 WS 心跳；`fs` 给静态文件读取。
+#   本 crate **不用** `tokio::process` / `tokio::io` 的其它部分。
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "signal", "sync", "time", "fs"] }
+# `serde` / `serde_json`：请求体与响应体的序列化。注意 `miredit-core::Command` **没有** derive
+#   （那个 crate 刻意不引 serde），所以 `Command` 的转换是手写的，见 `json.rs`。
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# ── 同 workspace 的本地 crate（都是「复用」，不重写）──
+# 编辑内核：Document / EditSession / Command / apply / save_session / set_brush_from_palette。
+miredit-core = { path = "../miredit-core" }
+# 出图：try_render_region_with + LayerMask + CollisionOverlay + Viewport + png_io。
+miredit-render = { path = "../miredit-render" }
+# 图库定位与帧解码（LibPaths::discover / WilSource::frame / frame_count）。
+mir2-assets = { path = "../mir2-assets" }
+# 多格式判别：只为 `tolerant_trailer_bytes` 这一条如实字段（read_any_tolerant 的 trailer 长度）。
+mir2-format = { path = "../mir2-format" }
+# 印章目录（9,159 条 + 中文分类 kind_label_zh）。
+mir2-stamp = { path = "../mir2-stamp" }
+# 地图档位名（`Old12` / `New14` / `Ext36`）与格字段：与 miredit-core 同源，直接用它的类型。
+mir2-map = { path = "../mir2-map" }
+
+[[bin]]
+name = "miredit-web"
+path = "src/main.rs"

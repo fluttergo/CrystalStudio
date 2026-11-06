@@ -1,0 +1,23 @@
+[package]
+name = "miredit-render"
+version = "0.1.0"
+edition = "2021"
+description = "地图离屏合成器：map + 图库 → RGBA（无窗口，供 GUI 与截图比对共用）"
+license = "MIT"
+
+[dependencies]
+mir2-map = { path = "../mir2-map" }
+mir2-assets = { path = "../mir2-assets" }
+# 仅用于「导出参考图 / 读客户端截图做分块比对」，**渲染核心（canvas / compose / frames）不依赖它**。
+# 见 src/png_io.rs 与 src/compare.rs 的文件头说明。
+png = "0.18"
+
+[dev-dependencies]
+# ⚠ **只许出现在这里，不许进 `[dependencies]`**：架构蓝图规定本 crate 只依赖
+# `mir2-format` + `mir2-assets`。`tests/stamp.rs` 用它把真实 `.X` 适配成
+# `miredit_render::stamp::PositionedCell`（渲染库本体不认识 `mir2_stamp::Stamp`）。
+mir2-stamp = { path = "../mir2-stamp" }
+
+[[bin]]
+name = "render_maps"
+path = "src/bin/render_maps.rs"

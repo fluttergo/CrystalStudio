@@ -1,0 +1,49 @@
+# Rust 构建产物（本仓构建统一重定向到 I 盘 target，此处兜底）
+/target/
+**/target/
+*.rlib
+*.rmeta
+*.pdb
+*.exe
+*.dll
+*.so
+*.dylib
+
+# 运行期生成的瓦片缓存（可由 /api/tiles 重新生成，非源码）
+/web/tiles/
+
+# compose 卷的缺省占位目录（首次 `docker compose up` 会在这里建空目录，不是源码）
+/docker/data/
+
+# 验收截图与渲染参考图（体积大，证据归档在 deliverables/ 与本地 layout/refs/）
+/layout/refs/
+
+# 取证/临时脚本
+/tools/_probe_*.py
+*_tmp*
+*.orig
+*.bak
+*.rej
+
+# 环境
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+
+# 凭据（禁止入库；token 只走环境变量 / Authorization 头）
+*token*
+*credential*
+*secret*
+
+# 大体量只读资料：随项目本地保存，但不进 git 仓库
+# 上游 C# 源码（300.7 MB / 19041 文件）与出图证据（212 MB）
+# 见 docs/README.md 的路径对照表
+/_upstream/
+/evidence/
+
+
+# 上游根 .gitignore 的 bin/ 会误伤 Rust 的 src/bin 源文件；在嵌套层重新纳入
+!crates/*/src/bin/
+!crates/*/src/bin/*.rs

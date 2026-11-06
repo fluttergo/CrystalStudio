@@ -1,0 +1,61 @@
+/* =============================================================================
+   maplist.css —— 「打开地图」对话框里的地图列表（GET /api/maps）
+   · 单独成文件：app.css 已 598 行，守住「单文件 ≤600 行」（与 brush-size.css /
+     doors.css 同一套办法：新功能的样式不再往 app.css 里堆）
+   · 加载顺序在 app.css 之后 ⇒ 同特异性下本文件的规则生效
+   ============================================================================= */
+
+/* ---------- 1. 桌面：搜索行 + 计数行 + 固定高度可滚列表 ---------- */
+.maplist__head { display: flex; gap: 8px; align-items: stretch; }
+.maplist__search {
+  flex: 1 1 auto; min-width: 0;
+  padding: 8px 10px; border: 1px solid var(--line-2); border-radius: 6px;
+  background: #fff; font-family: var(--mono); font-size: 12.5px;
+}
+.maplist__search:focus { outline: 2px solid var(--gold-soft); border-color: var(--gold); }
+.maplist__refresh { flex: 0 0 auto; }
+.maplist__meta { margin: 0; font-size: 11.5px; color: var(--ink-3); font-family: var(--mono); }
+
+/* 列表容器：桌面固定高度 + 内部滚动（1097 条也不会把对话框顶出屏幕） */
+.maplist__list {
+  display: flex; flex-direction: column; gap: 6px;
+  max-height: 46vh; overflow-y: auto; overscroll-behavior: contain;
+  padding-right: 2px;
+}
+
+/* 触控目标 ≥44px（桌面同样适用；移动端在下面放大到 52px） */
+.maplist__item { min-height: 44px; }
+.maplist__item[aria-selected="true"],
+.maplist__item:focus-visible { border-color: var(--gold); background: var(--gold-soft); outline: none; }
+
+.maplist__empty, .maplist__error {
+  margin: 0; padding: 10px; font-size: 12px; line-height: 1.55; color: var(--ink-3);
+}
+.maplist__error { color: #a4321f; }
+
+/* 「手打路径（退路）」折叠区 */
+.maplist__fallback { font-size: 12px; color: var(--ink-2); }
+.maplist__fallback > summary { cursor: pointer; padding: 6px 0; }
+.maplist__fallback .dialog__field { margin-top: 6px; }
+
+/* ---------- 2. 手机（<768px）：对话框变底部抽屉，列表在框内滚 ---------- */
+@media (max-width: 767.98px) {
+  .dialog--open {
+    position: fixed; inset: auto 0 0 0;
+    width: 100%; max-width: none; margin: 0;
+    max-height: 88dvh;
+    border-radius: 14px 14px 0 0;
+  }
+  .dialog--open .dialog__form {
+    max-height: 88dvh;
+    padding-bottom: calc(14px + var(--safe-b));
+  }
+  /* 列表吃掉剩余高度并自己滚（flex 子项要能收缩，才滚得动） */
+  .dialog--open .maplist__list {
+    flex: 1 1 auto; min-height: 120px; max-height: none;
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+  }
+  .maplist__item { min-height: 52px; }
+  /* 搜索框字号 ≥14px：iOS 上 16px 以下会触发页面放大 */
+  .maplist__search { font-size: 14px; padding: 10px 12px; }
+}

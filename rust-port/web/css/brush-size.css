@@ -1,0 +1,78 @@
+/* =============================================================================
+   brush-size.css —— 笔刷尺寸控件（工具区滑杆 + 预设按钮 + 状态栏文字）
+   · 口径与后端 `SetBrushSize` 完全一致：3..=31 的**奇数**共 15 档
+     （真源 `crates/miredit-core/src/brush.rs:288-314` 的 BRUSH_MIN/BRUSH_MAX/BRUSH_STEP）
+   · 为什么单独成文件：`css/app.css` 已 598 行，本仓硬规则「单文件 ≤600 行」
+   · 移动端触控目标 ≥44px：滑杆点击区 44px、预设按钮 44px
+   ============================================================================= */
+
+.bsize {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--line);
+}
+
+.bsize__head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
+.bsize__label { font-size: 12px; color: var(--ink-2); }
+/* 当前尺寸：等宽字体 + 金底，和状态栏同一个数（都来自后端回执） */
+.bsize__val {
+  margin-left: auto;
+  min-width: 52px; text-align: center;
+  padding: 1px 6px;
+  font-family: var(--mono); font-size: 12.5px; font-weight: 600;
+  color: var(--gold-dark); background: var(--gold-soft);
+  border: 1px solid #e0cd93; border-radius: 4px;
+}
+
+/* ---------- 滑杆（Chromium / Firefox 各一套伪元素） ---------- */
+.bsize__range {
+  -webkit-appearance: none; appearance: none;
+  display: block; width: 100%; height: 32px; margin: 0;
+  background: transparent; cursor: pointer;
+  /* 抽屉里纵向滚动照旧可用，横向手势交给滑杆自己 */
+  touch-action: pan-y;
+}
+.bsize__range::-webkit-slider-runnable-track {
+  height: 6px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-soft) 100%);
+  border: 1px solid var(--line-2);
+}
+.bsize__range::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 20px; height: 20px; margin-top: -6px;
+  border-radius: 50%; background: #fff; border: 2px solid var(--gold-dark);
+  box-shadow: 0 1px 2px rgba(47, 42, 33, .28);
+}
+.bsize__range::-moz-range-track {
+  height: 6px; border-radius: 3px;
+  background: var(--gold-soft); border: 1px solid var(--line-2);
+}
+.bsize__range::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; border: 2px solid var(--gold-dark);
+}
+.bsize__range:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
+
+/* ---------- 预设档（3 / 5 / 7 / 9 / 15 / 31） ---------- */
+.bsize__presets { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 2px; }
+.bsize__preset {
+  min-height: 32px; padding: 0 2px;
+  font-family: var(--mono); font-size: 12px;
+  color: var(--ink-2); background: #fff;
+  border: 1px solid var(--line); border-radius: 5px;
+  transition: border-color .12s, background .12s, color .12s;
+}
+.bsize__preset:hover { border-color: var(--gold); background: var(--gold-soft); }
+.bsize__preset[aria-pressed="true"] {
+  color: #6b4f14; font-weight: 600;
+  border-color: var(--gold-dark); background: var(--gold-soft);
+  box-shadow: inset 0 0 0 1px var(--gold);
+}
+
+/* ---------- 手机：触控目标 ≥44px ---------- */
+@media (max-width: 767.98px) {
+  .bsize__range { height: 44px; }
+  .bsize__range::-webkit-slider-thumb { width: 26px; height: 26px; margin-top: -10px; }
+  .bsize__presets { gap: 6px; }
+  .bsize__preset { min-height: 44px; font-size: 13px; }
+}

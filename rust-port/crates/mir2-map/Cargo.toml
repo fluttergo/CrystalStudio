@@ -1,0 +1,9 @@
+[package]
+name = "mir2-map"
+version = "0.1.0"
+edition = "2021"
+description = "传奇 M2 `.map` 地图读写往返保真库（Old12 / New14 / Ext36 三档）"
+license = "MIT"
+
+[dependencies]
+# 故意留空：本 crate 只允许 std 依赖。
