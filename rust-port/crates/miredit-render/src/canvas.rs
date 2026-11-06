@@ -6,8 +6,10 @@
 //! 「索引 0 约定为全透明」），而客户端是「逐格贴精灵」：后贴的盖住先贴的，
 //! 透明像素不遮不挡。这与 `Sprite2D` / `draw_texture` 的默认 alpha 混合同语义。
 //!
-//! 本模块只做两件事：**整型 over 混合**（无浮点、无 SIMD、结果可复现）与**裁剪贴图**。
-//! 不含任何游戏语义 —— 落格规则在 `compose.rs`，这里只认「像素坐标」。
+//! 本模块只管三件事：**整型 over 混合**（无浮点、无 SIMD、结果可复现）、**前景加性
+//! （additive）混合**（`FrontBlend`，见 `CrystalStudio/MapSpriteDrawing.cs:5,68-96@6450da90`）、
+//! 以及把帧按像素坐标**裁剪**贴进画布。不含任何游戏语义 —— 落格规则在 `compose.rs`，
+//! 这里只认「像素坐标」。
 
 use mir2_assets::Frame;
 
@@ -37,6 +39,84 @@ impl Canvas {
     /// 调用方（`compose`）据此判定「这一格算不算落笔」—— [`crate::RenderStats::cells_drawn`]
     /// 的口径就是「实际产生了绘制」，不是「扫过了这一格」。
     pub(crate) fn blit(&mut self, frame: &Frame, x: i32, y: i32) -> bool {
+        // 全透明像素（`索引 0`）：不碰目标（与精灵绘制的「不遮挡」一致）⇒ 闭包返回 `None`。
+        self.逐像素贴(frame, x, y, |src, dst| {
+            if src[3] == 0 {
+                None
+            } else {
+                Some(over(src, dst))
+            }
+        })
+    }
+
+    /// 把一帧按**加性混合**（additive）贴在 `(x, y)`：裁剪 / 空帧 / 越界 / `sa == 0`
+    /// 这些边界与 [`Canvas::blit`] **完全同一条**（两者共用 `逐像素贴` 骨架），
+    /// **只有「单像素怎么算」这一步不同**（`additive`）。
+    ///
+    /// # 出处（上游语义）
+    ///
+    /// 上游 `CrystalStudio/MapSpriteDrawing.cs:5@6450da90`：
+    /// `FrontBlend(frames) => (frames & 0x80) != 0` 选中这条混合；`:68-96` 的
+    /// `Composite` 在 **Pbgra32（预乘）** 空间逐像素做：
+    ///
+    /// ```text
+    /// :91  rgb 逐通道  min(255, dst + src)                  // 预乘空间直接相加
+    /// :92  a   = max(旧 dst.a, max(加后 rgb 三通道))         // alpha 不参与加法
+    /// ```
+    ///
+    /// 结果**保持预乘**（`RasterFormats.Pbgra32`），展回 straight 是 Skia 落地时的事。
+    ///
+    /// # 本画布是 straight ⇒ 三步折算
+    ///
+    /// [`Canvas`] 存的是 **straight（非预乘）RGBA8**（[`Canvas::blit`] 的 `over` 也是
+    /// straight），所以这里必须自己「预乘 → 相加 → 反预乘」：
+    ///
+    /// ```text
+    /// p      = (c * a + 127) / 255                    // 预乘（四舍五入）
+    /// r/g/b  = min(255, p(dst) + p(src))              // 与 :91 同一条
+    /// A      = max(dst.a, max(r, g, b))               // 与 :92 同一条（读**加后**的 RGB）
+    /// out.rgb= clamp((p * 255 + A/2) / A, 0, 255)     // 反预乘（四舍五入）
+    /// out.a  = A
+    /// ```
+    ///
+    /// ⚠ **预乘 / 反预乘的舍入口径是本仓自定的（待回源）**：上游把反预乘交给 Skia 的
+    /// `Pbgra32 → 屏幕` 转换，本仓**没有取到** Skia/Avalonia 那一步的确切舍入方式
+    /// ⇒ 这里取「四舍五入 + 夹 255」这套与本模块 `over` 一致的整型口径。
+    /// **有据的部分**是「相加」「取 max」「alpha 不参与加法」三步（`:91-92` 逐字）；
+    /// **不确定的只有反预乘那一次舍入**（是否 round-half-up、是否用 `(p*255 + A/2)/A`
+    /// 这种近似）。**列待回源**：Skia 的 Pbgra32 反预乘舍入。
+    ///
+    /// 不透明底（`dst.a == 255`）走快路径：此时预乘与反预乘都是恒等变换 ⇒
+    /// 直接 `min(255, dst.rgb + 预乘(src.rgb))`、`A = 255`，**一次舍入都不引入**
+    /// （这一条是**精确等价**，不是近似）。
+    ///
+    /// 返回 `true` 的口径与 [`Canvas::blit`] 逐条相同：**真的往画布写了至少 1 个像素**。
+    /// `sa == 0` 的像素一个字节都不碰（也不计落笔）—— 加性混合下它的贡献恒为 0。
+    pub(crate) fn blit_additive(&mut self, frame: &Frame, x: i32, y: i32) -> bool {
+        self.逐像素贴(frame, x, y, |src, dst| {
+            if src[3] == 0 {
+                None
+            } else {
+                Some(additive(src, dst))
+            }
+        })
+    }
+
+    /// 逐像素合成的公共骨架：**求交裁剪 + 循环 + 「到底写了没」**。
+    ///
+    /// `逐像素(src, dst)` 返回 `Some(out)` ⇒ 把该像素写回 `out`（**不比较新旧值**：
+    /// 只要执行了写入就算「写了」，与本模块既有口径一致）；返回 `None` ⇒ 该像素
+    /// **一个字节都不碰**，也不算写。
+    ///
+    /// [`Canvas::blit`]（`over`）与 [`Canvas::blit_additive`]（`additive`）**只有这一步
+    /// 的闭包不同** ⇒ 三条边界（空帧、与画布无交集、整片全透明）只有一份实现，不会两边漂。
+    fn 逐像素贴(
+        &mut self,
+        frame: &Frame,
+        x: i32,
+        y: i32,
+        mut 逐像素: impl FnMut([u8; 4], [u8; 4]) -> Option<[u8; 4]>,
+    ) -> bool {
         if frame.width == 0 || frame.height == 0 {
             return false;
         }
@@ -73,16 +153,15 @@ impl Canvas {
                     frame.rgba[si + 2],
                     frame.rgba[si + 3],
                 ];
-                if src[3] == 0 {
-                    continue; // 全透明像素：不碰目标（与精灵绘制的「不遮挡」一致）
-                }
                 let dst = [
                     self.rgba[di],
                     self.rgba[di + 1],
                     self.rgba[di + 2],
                     self.rgba[di + 3],
                 ];
-                let out = over(src, dst);
+                let Some(out) = 逐像素(src, dst) else {
+                    continue;
+                };
                 self.rgba[di..di + 4].copy_from_slice(&out);
                 写了 = true;
             }
@@ -216,6 +295,56 @@ fn over(src: [u8; 4], dst: [u8; 4]) -> [u8; 4] {
     ]
 }
 
+/// 单像素「前景加性混合」（straight RGBA8 画布上的整型实现）。
+///
+/// 上游 `CrystalStudio/MapSpriteDrawing.cs:68-96@6450da90` 在 **Pbgra32（预乘）**
+/// 空间做 `rgb = min(255, dst+src)`、`a = max(旧 dst.a, max(加后 rgb))`，并保持预乘。
+/// 本画布是 straight ⇒ 这里**先预乘、再相加、再反预乘**（公式与「本仓自定舍入」的
+/// 说明见 [`Canvas::blit_additive`] 的文档）。
+///
+/// 调用方（`blit_additive`）已保证 `src[3] != 0`（`sa == 0` 的像素在加性混合下贡献
+/// 恒为 0 ⇒ 根本不进来）。
+#[inline]
+fn additive(src: [u8; 4], dst: [u8; 4]) -> [u8; 4] {
+    let sa = u32::from(src[3]);
+    let da = u32::from(dst[3]);
+    // 预乘：`p = (c*a + 127)/255`（四舍五入）。`a == 255` 时 `p == c`（恒等）。
+    let 预乘 = |c: u8, a: u32| (u32::from(c) * a + 127) / 255;
+    let (sr, sg, sb) = (预乘(src[0], sa), 预乘(src[1], sa), 预乘(src[2], sa));
+
+    // 不透明底快路径：`da == 255` ⇒ dst 的预乘值就是原值、`A` 必为 255、
+    // 反预乘是恒等 ⇒ 直接相加，不引入任何舍入（精确等价，不是近似）。
+    if da == 255 {
+        let 加 = |d: u8, s: u32| (u32::from(d) + s).min(255) as u8;
+        return [
+            加(dst[0], sr),
+            加(dst[1], sg),
+            加(dst[2], sb),
+            255,
+        ];
+    }
+
+    let (dr, dg, db) = (预乘(dst[0], da), 预乘(dst[1], da), 预乘(dst[2], da));
+    // 逐通道相加并夹到 255（`:91`）
+    let r = (dr + sr).min(255);
+    let g = (dg + sg).min(255);
+    let b = (db + sb).min(255);
+    // alpha 不参与加法：取「旧 dst.a」与「加后 RGB 最大值」中的大者（`:92`）
+    let out_a = da.max(r).max(g).max(b);
+    if out_a == 0 {
+        // 只有「底色全透明 + 源 RGB 也是 0」才会到这里：加性结果确实是全透明黑。
+        return [0, 0, 0, 0];
+    }
+    // 反预乘：`out = (p*255 + A/2)/A`，夹 255（本仓自定舍入口径，见方法文档）
+    let 反预乘 = |p: u32| ((p * 255 + out_a / 2) / out_a).min(255) as u8;
+    [
+        反预乘(r),
+        反预乘(g),
+        反预乘(b),
+        out_a.min(255) as u8,
+    ]
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -293,5 +422,129 @@ mod tests {
         let mut c3 = Canvas::new(2, 2);
         assert!(!c3.fill_rect([1, 2, 3, 255], 0, 0, 0, 2));
         assert!(!c3.fill_rect([1, 2, 3, 255], 9, 9, 4, 4));
+    }
+
+    // -----------------------------------------------------------------------
+    // 前景加性混合（`MapSpriteDrawing.cs:5,68-96@6450da90`）
+    //
+    // 下面用 `1×1` 画布：底色**直接种进缓冲区**（绕开 `over` 自己的舍入），
+    // 保证「dst 就是这个值」这个前提精确，再把一帧同样 1×1 的源贴上去。
+    // -----------------------------------------------------------------------
+
+    /// 1×1 画布：先把底色种成 `dst`，再用 `src` 走 [`Canvas::blit_additive`]。
+    fn 加性单像素(dst: [u8; 4], src: [u8; 4]) -> [u8; 4] {
+        let mut c = Canvas::new(1, 1);
+        c.rgba.copy_from_slice(&dst);
+        assert!(
+            c.blit_additive(&帧(1, 1, src.to_vec()), 0, 0),
+            "`sa != 0` 的加性像素必须真正写入并回报 true"
+        );
+        let px = c.into_rgba();
+        [px[0], px[1], px[2], px[3]]
+    }
+
+    /// **向量 1**：不透明底 + 不透明源 ⇒ 逐通道 `min(255, dst+src)`，alpha 恒 255。
+    /// 同一组参数走 `over()` 得到的是「覆盖」（源不透明 ⇒ 直接取源），两者必须不同。
+    #[test]
+    fn 加性_向量1_不透明底逐通道加法() {
+        let dst = [50, 100, 150, 255];
+        let src = [200, 200, 200, 255];
+        assert_eq!(
+            加性单像素(dst, src),
+            [250, 255, 255, 255],
+            "r 250（50+200）/ g 255（100+200 夹到 255）/ b 255（150+200 夹到 255）"
+        );
+        // 对照：`over` 在同参数下是「源覆盖」——`sa == 255` 直接取源
+        assert_eq!(
+            over(src, dst),
+            [200, 200, 200, 255],
+            "over 是覆盖不是加法（sa=255 快路径直接取源）"
+        );
+    }
+
+    /// **向量 2**：全透明底 + 半透明源 ⇒ 预乘相加后反预乘。
+    ///
+    /// 整数公式逐步核（全程 `u32`）：
+    /// `sr=(200*100+127)/255=78`、`sg=(150*100+127)/255=59`、`sb=(100*100+127)/255=39`；
+    /// `oa=max(0, max(78,59,39))=78`；
+    /// 反预乘 `(78*255+39)/78=255`、`(59*255+39)/78=193`、`(39*255+39)/78=128`。
+    #[test]
+    fn 加性_向量2_透明底预乘加后反预乘() {
+        assert_eq!(
+            加性单像素([0, 0, 0, 0], [200, 150, 100, 100]),
+            [255, 193, 128, 78],
+            "预乘 (78,59,39) + oa=max(0,78)=78 ⇒ 反预乘 (255,193,128)"
+        );
+    }
+
+    /// **向量 3**：高亮夹到 255；再补一个 `src.a == 128` 的变体（走完整预乘/反预乘路径）。
+    #[test]
+    fn 加性_向量3_高亮夹断与半透明源变体() {
+        // ① 不透明底 + 接近满值的源 ⇒ 三通道全部夹在 255
+        assert_eq!(
+            加性单像素([250, 250, 250, 255], [250, 250, 250, 255]),
+            [255, 255, 255, 255]
+        );
+        // ② 全透明底 + 灰 (200) / a=128：sr=(200*128+127)/255=100 ⇒ oa=100
+        //    反预乘 (100*255+50)/100 = 255（255.5 截成 255，不溢出 u8）
+        assert_eq!(
+            加性单像素([0, 0, 0, 0], [200, 200, 200, 128]),
+            [255, 255, 255, 100],
+            "预乘 100 / oa 100 ⇒ 反预乘 255（夹断在 255）"
+        );
+        // ③ 半透明底（a=128）+ 半透明源：走完整三步，且 `A = max(旧 dst.a, max(rgb))`
+        //    必须不小于旧 dst.a（`:92` 的 max 只升不降）
+        let out = 加性单像素([0, 0, 0, 128], [10, 20, 30, 64]);
+        assert_eq!(
+            out,
+            [6, 10, 16, 128],
+            "sr/sg/sb=(3,5,8)、oa=max(128,max)=128 ⇒ 反预乘 (6,10,16)"
+        );
+        assert!(out[3] >= 128, "A 不许低于旧 dst.a：{out:?}");
+    }
+
+    /// 加性混合的三条边界与 `blit` 同口径（共用同一份骨架）。
+    #[test]
+    fn 加性_边界与blit同口径() {
+        // ① `sa == 0` ⇒ 一个字节都不碰、返回 false
+        let mut c = Canvas::new(1, 1);
+        c.rgba.copy_from_slice(&[7, 8, 9, 255]);
+        assert!(
+            !c.blit_additive(&帧(1, 1, vec![200, 200, 200, 0]), 0, 0),
+            "全透明源在加性混合下贡献恒 0 ⇒ 不许写、不许算落笔"
+        );
+        assert_eq!(c.into_rgba(), vec![7, 8, 9, 255]);
+
+        // ② 空帧 / 完全在画布外 ⇒ false
+        let mut c2 = Canvas::new(2, 2);
+        assert!(!c2.blit_additive(&帧(0, 0, Vec::new()), 0, 0));
+        assert!(!c2.blit_additive(&帧(4, 4, [1u8, 2, 3, 255].repeat(16)), 10, 10));
+        assert!(c2.into_rgba().iter().all(|b| *b == 0));
+
+        // ③ 越界裁剪：2×2 帧贴在 (-1,-1) ⇒ 只有 (0,0) 落在画布内。
+        //    注意底色**全透明**时的加性结果不是「原样贴上源」：预乘相加得
+        //    `(100,0,0)`、`A = max(0, 100) = 100` ⇒ 反预乘 `(255,0,0,100)`
+        //    （= 预乘语义下的同一像素，肉眼上等价于「39% 的红」）。
+        let mut c3 = Canvas::new(2, 2);
+        assert!(c3.blit_additive(&帧(2, 2, [100u8, 0, 0, 255].repeat(4)), -1, -1));
+        let px = c3.into_rgba();
+        assert_eq!(&px[0..4], &[255, 0, 0, 100], "(0,0) 应被写到");
+        assert_eq!(&px[4..8], &[0, 0, 0, 0], "(1,0) 在帧外");
+        assert_eq!(&px[12..16], &[0, 0, 0, 0], "(0,1) 在帧外");
+    }
+
+    /// 抽公共骨架后，**默认路径（`blit`）必须与 `over()` 逐字节相同**（防误改）。
+    #[test]
+    fn 默认路径_blit与over逐字节相同() {
+        let 源 = [10u8, 20, 30, 64];
+        let 底 = [50u8, 100, 150, 128];
+        let mut c = Canvas::new(1, 1);
+        c.rgba.copy_from_slice(&底);
+        assert!(c.blit(&帧(1, 1, 源.to_vec()), 0, 0));
+        assert_eq!(
+            c.into_rgba(),
+            over(源, 底).to_vec(),
+            "`blit` 改走公共骨架后，输出必须仍逐字节等于 `over(src, dst)`"
+        );
     }
 }

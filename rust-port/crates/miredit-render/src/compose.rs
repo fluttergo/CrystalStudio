@@ -136,6 +136,42 @@
 //! 4. **光罩位置用前景帧的 `anchor`，三层合成不用**：官方光罩无条件加 `sprite.X/Y`
 //!    （`Presentation.cs:84-86`），画精灵却只在特例下加（`MapSpriteDrawing.cs:19-31`）
 //!    ⇒ 本模块只把 `src` 递给 `lighting::apply` 取偏移，三个落格循环一行都不碰它。
+//!
+//! # 九、前景加性混合（`Front.Frames & 0x80`，**只管表层**）
+//!
+//! 上游 `CrystalStudio/MapSpriteDrawing.cs:5@6450da90`：
+//!
+//! ```text
+//! internal static bool FrontBlend(byte frames) => (frames & 0x80) != 0;   // :5
+//! ```
+//!
+//! 被 `FrontBlend` 选中的帧**不做覆盖，而做加性叠加**（`MapViewport.cs:381`：
+//! `dc.DrawImage(blend ? MapSpriteDrawing.Additive(...) : s.Bitmap, bounds)`）。
+//! 合成公式在 `MapSpriteDrawing.cs:68-96` 的 `Composite`（Pbgra32 预乘空间）：
+//! RGB 逐通道 `min(255, dst+src)`、alpha **不参与加法**取 `max(旧 dst.a, max(加后 RGB))`。
+//! 本仓的画布是 straight RGBA8 ⇒ 预乘/反预乘在 [`crate::canvas`] 里显式做，
+//! 舍入口径与「待回源」标注见 `Canvas::blit_additive` 的文档。
+//!
+//! 四条硬口径：
+//!
+//! 1. **只在前景层**：本模块只有 §表层这个循环看 `cell.ani_frame` 的 `0x80`；
+//!    地表/中层一行都不碰。中层那套 `MiddleBlend`（`MapSpriteDrawing.cs:8`）对
+//!    **12/14 B 档作废**：这两档的 `.map` 里**没有**中层动画字节
+//!    （`mir2-format::Cell::mid_ani_frame` 恒填 `0`）⇒ `MiddleFrames(frames) ≡ 0`
+//!    ⇒ `MiddleBlend` 永不成立。本单不动中层；
+//! 2. **与门偏移正交**：`ani_frame` 决定「怎么混」，`门偏移` 决定「取第几帧」，
+//!    两者互不影响（门偏移的实现与文档见 §七）；
+//! 3. **不进缓存键**：混合方式是**每帧现算**的 `u8` 高位判断，不是 `RenderOptions`
+//!    之类的显式选项 ⇒ [`FrameCache`] 的键（库 + 帧号）不需要、也不许变；
+//! 4. **`cells_drawn` 口径不变**：仍只认「真的写了至少 1 个像素」，判定来源换成
+//!    `blit` / `blit_additive` 各自的返回值（两者共用同一份裁剪骨架，口径逐条相同）。
+//!
+//! ⚠ **未覆盖**（如实登记）：印章渲染（`crate::stamp`，`StampCellInput` 无前景 frames
+//! 高位语义）、缩略图、总览（`MapViewport.Overview.cs` / `MinimapExporter.cs` 那几处
+//! 上游也传 `FrontBlend`，本仓尚未接线）。另有上游 `Bounds(..., blend: true)` 在
+//! **特定库/图号**上会额外加帧锚点（`MapSpriteDrawing.cs:43-52`：库 `14/27`、`100..198`、
+//! 图号 `2723..2732`）—— 本仓三层合成**一律不加锚点**，这是 `mir2_assets::Frame::anchor`
+//! 文档（`frame.rs:41-49`）里已登记的**有意差异**，本单不改。
 
 use mir2_assets::{LibRef, SpriteSource};
 use mir2_map::Map;
@@ -253,9 +289,21 @@ pub(crate) fn render(
                     Some(f) => {
                         // y_top = (y+1)*32 - 帧高 ⇒ 帧底边 = 格底边
                         let (px, py) = 底边锚点(dx, dy, f.height);
+                        // **前景加性混合**：`Front.Frames & 0x80`（上游
+                        // `MapSpriteDrawing.cs:5@6450da90` 的 `FrontBlend`）置位时走
+                        // `blit_additive`，否则仍走 `blit`（默认路径逐字节不变）。
+                        //
+                        // 与门偏移**正交**：门只改「取第几帧」（上行 `索引`），混合方式只
+                        // 看 `ani_frame` 的高位，两者互不影响（模块文档 §九）。
+                        let 加性 = cell.ani_frame & 0x80 != 0;
                         // 大件帧的锚点可能在画布上方，但底边总落在格底；
                         // 只有真的写了像素（非空帧、非全透明）才算落笔
-                        if canvas.blit(&f, px, py) {
+                        let 落笔 = if 加性 {
+                            canvas.blit_additive(&f, px, py)
+                        } else {
+                            canvas.blit(&f, px, py)
+                        };
+                        if 落笔 {
                             touched[(dx * cells_h + dy) as usize] = true;
                         }
                     }
@@ -456,5 +504,126 @@ fn 校验错误(vp: &Viewport) -> RenderError {
     RenderError::DimensionOverflow {
         width: vp.cells_w as u64 * CELL_W as u64,
         height: vp.cells_h as u64 * CELL_H as u64,
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 单测：**混合方式只由 `ani_frame` 的 0x80 位决定**（模块文档 §九）
+// ---------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use mir2_assets::Frame;
+
+    /// 造一张 `w×h` 的合成 `.map`：52 B 文件头 + 每格 12 B 格体（字段偏移同
+    /// `old12.rs:126-139`：`fr_img` 在 4..6、`ani_frame` 在 8）。
+    fn 合成图(w: u16, h: u16, 填: impl Fn(u16, u16, &mut [u8])) -> Map {
+        let mut bytes = vec![0u8; 52 + 12 * (w as usize * h as usize)];
+        bytes[0..2].copy_from_slice(&w.to_le_bytes());
+        bytes[2..4].copy_from_slice(&h.to_le_bytes());
+        for y in 0..h {
+            for x in 0..w {
+                let base = 52 + 12 * (y as usize * w as usize + x as usize);
+                填(x, y, &mut bytes[base..base + 12]);
+            }
+        }
+        Map::parse(&bytes).expect("合成图应能解析")
+    }
+
+    /// 一张格：`fr_img = 1`（⇒ 帧号 0），前景动画字节由 `ani` 给。
+    fn 一格图(ani: u8) -> Map {
+        合成图(1, 1, |_, _, 格| {
+            格[4..6].copy_from_slice(&1u16.to_le_bytes()); // fr_img
+            格[8] = ani; // ani_frame（`Front.Frames`）
+        })
+    }
+
+    /// 定帧源：任意请求都返回同一张 48×32 半透明灰。
+    ///
+    /// 选半透明灰是因为它能让两条混合路径**必然分叉**：
+    /// `over` 在全透明底上给 `(200,200,200,128)`，加性混合给 `(255,255,255,100)`。
+    struct 定帧源(Frame);
+
+    impl SpriteSource for 定帧源 {
+        fn frame(&self, _lib: LibRef, _index: u32) -> Option<Frame> {
+            Some(self.0.clone())
+        }
+    }
+
+    fn 渲染一格(map: &Map, src: &dyn SpriteSource) -> (Vec<u8>, RenderStats) {
+        let vp = Viewport::new(0, 0, 1, 1);
+        let 只前景 = LayerMask {
+            ground: false,
+            middle: false,
+            front: true,
+        };
+        let 图 = render(
+            map,
+            src,
+            &vp,
+            &只前景,
+            CollisionOverlay::none(),
+            RenderOptions::default(),
+        )
+        .expect("1×1 合成图应能渲染");
+        (图.rgba, 图.stats)
+    }
+
+    /// **`ani_frame & 0x80 == 0` ⇒ 输出必须与 `blit` 逐字节相同**（防误改默认路径）。
+    ///
+    /// 同时钉住「低 7 位不参与混合判断」：`0x00` 与 `0x05` 都必须等于 `blit` 的结果。
+    #[test]
+    fn 加性混合_高位不置位时与blit逐字节相同() {
+        let 帧 = Frame {
+            width: 48,
+            height: 32,
+            rgba: [200u8, 200, 200, 128].repeat(48 * 32),
+            ..Frame::default()
+        };
+        let src = 定帧源(帧.clone());
+
+        // 参照：同一个帧走 `Canvas::blit`（帧 48×32 贴在 (0,0)，1×1 格 = 48×32 px）
+        let mut 参照 = Canvas::new(48, 32);
+        assert!(参照.blit(&帧, 0, 0));
+        let 参照 = 参照.into_rgba();
+
+        for ani in [0x00u8, 0x05] {
+            let (rgba, stats) = 渲染一格(&一格图(ani), &src);
+            assert_eq!(
+                rgba, 参照,
+                "ani_frame=0x{ani:02X}（0x80 未置位）必须与 `blit` 逐字节相同"
+            );
+            assert_eq!(stats.cells_drawn, 1, "ani_frame=0x{ani:02X}：落笔口径不变");
+        }
+    }
+
+    /// **`ani_frame & 0x80 != 0` ⇒ 走加性混合**，且结果等于 `Canvas::blit_additive`。
+    #[test]
+    fn 加性混合_高位置位时走加性() {
+        let 帧 = Frame {
+            width: 48,
+            height: 32,
+            rgba: [200u8, 200, 200, 128].repeat(48 * 32),
+            ..Frame::default()
+        };
+        let src = 定帧源(帧.clone());
+
+        let mut 参照 = Canvas::new(48, 32);
+        assert!(参照.blit_additive(&帧, 0, 0));
+        let 参照 = 参照.into_rgba();
+
+        let (rgba, stats) = 渲染一格(&一格图(0x80), &src);
+        assert_eq!(rgba, 参照, "0x80 置位必须走 `blit_additive`");
+        assert_eq!(stats.cells_drawn, 1, "落笔口径不变（加性也真的写了像素）");
+        // 与默认路径必须不同（否则本用例对分派不敏感 ⇒ 假通过）
+        let mut 默认 = Canvas::new(48, 32);
+        assert!(默认.blit(&帧, 0, 0));
+        assert_ne!(
+            rgba,
+            默认.into_rgba(),
+            "同一帧走加性混合必须与覆盖混合不同（半透明灰源在全透明底上必然分叉）"
+        );
+        println!("[加性] 0x80 置位：首像素 {:?}", &rgba[0..4]);
     }
 }

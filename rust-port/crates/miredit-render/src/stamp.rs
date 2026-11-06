@@ -17,9 +17,23 @@
 //! **层序**：地表 → 中层 → 物件（后画的压前画的），与 `compose.rs:113-202` 的段序一致
 //! （`map_view.gd:108-114`、`map_overlay_layer.gd:22-24`）。
 //!
-//! **层内顺序**：**列优先**——`dx` 外、`dy` 内（`compose.rs:115/149/176` 的 `for dx` 在外层）。
-//! 印章的格是稀疏集合，本模块把格**按 `(dx, dy)` 升序稳定排序**后再画，等价于地图里
-//! 「按坐标从小到大扫一遍」的遍历序；同坐标的重复格保持调用方给的顺序（稳定排序）。
+//! **层内顺序**：**行优先**——`dy` 外、`dx` 内。印章的格是稀疏集合，本模块把格
+//! **按 `(dy, dx)` 升序稳定排序**后再画；同坐标的重复格保持调用方给的顺序（稳定排序）。
+//!
+//! 出处（上游两条印章路径**都是行优先**，与地图的列优先无关）：
+//!
+//! | 上游文件:行 | 排序 |
+//! |---|---|
+//! | `CrystalStudio/MapViewport.StampRendering.cs:141` / `:143` | `cells.OrderBy(c => c.Y).ThenBy(c => c.X)`（中层、物件各一遍；`:137-138` 注释「Assembled stamps use the map's layer and row order」） |
+//! | `CrystalStudio/StampPreview.cs:60` | `drawings.OrderBy(c => c.Layer).ThenBy(c => c.Y).ThenBy(c => c.X)` |
+//!
+//! ⚠ **与 [`crate::compose`] 的列优先是「有意不同」**（A-010 口径修正，2026-11-06）：地图渲染按
+//! 格扫（`compose.rs` 模块文档「二、层序与层内顺序」：`for dx` 在外层，以 Godot 客户端
+//! `map_overlay_layer.gd:46-53`
+//! 为准），印章**不套用**那个顺序 —— 上游给印章单独定了行优先。因此**跨格重叠**（帧比格大、
+//! 两格在 x/y 上交叉）时，印章的遮挡关系可能与地图渲染**相反**，这是口径而非 bug，别再「修回去」。
+//! 格间不重叠（含 1×1 单格）时两种顺序输出逐字节相同，故 `tests/stamp.rs` 的
+//! 「印章与地图渲染逐字节同源」与本条不冲突。
 //!
 //! # 二、与地图渲染的三处**有意差异**（都是任务口径，不是漏改）
 //!
@@ -238,7 +252,8 @@ impl StampImage {
 ///
 /// # 参数
 ///
-/// - `cells`：格集合（相对坐标 + 三族图号/库号），顺序随意（内部按 `(dx, dy)` 稳定排序）；
+/// - `cells`：格集合（相对坐标 + 三族图号/库号），顺序随意（内部按 `(dy, dx)` **行优先**稳定排序，
+///   见模块文档「层内顺序」）；
 /// - `src`：帧源（`mir2_assets::SpriteSource`，与地图渲染同一套）；
 /// - `opts`：缩放/留白选项，见 [`StampRenderOptions`]。
 ///
@@ -315,10 +330,12 @@ pub fn render_stamp(
     let mut missing = 0usize;
     // 「这一格至少写过 1 个像素」——`cells_drawn` 的唯一判据（同 `compose.rs:44-47`）
     let mut touched = vec![false; cells.len()];
-    // 列优先（`dx` 外、`dy` 内），等价于 `compose.rs:115/149/176` 的遍历序；
+    // 行优先（`dy` 外、`dx` 内）：A-010 口径修正，对齐上游 `MapViewport.StampRendering.cs:141/143`
+    // （`cells.OrderBy(c => c.Y).ThenBy(c => c.X)`）与 `StampPreview.cs:60`（Layer → Y → X）。
+    // ⚠ 与 `compose.rs` 的列优先**有意不同**（模块文档「层内顺序」一段），跨格重叠时遮挡可能相反。
     // 稳定排序 ⇒ 同坐标的重复格保持调用方给的顺序。
     let mut 顺序: Vec<usize> = (0..cells.len()).collect();
-    顺序.sort_by_key(|i| (cells[*i].dx, cells[*i].dy));
+    顺序.sort_by_key(|i| (cells[*i].dy, cells[*i].dx));
 
     // ---- 地表：左上角锚定（`compose.rs:136`）----
     for &i in &顺序 {
