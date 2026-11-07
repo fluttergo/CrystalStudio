@@ -1,250 +1,988 @@
 {
-  "ModuleChannelRegion": {"English":"Region {0} · {1} cells","Chinese":"通行区域 {0} · {1} 格"},
-  "ModuleChannel1": {"English":"Ground references use mixed grid phases without a captured footprint. Capture this module from the map again.","Chinese":"模块没有截取占地记录，地面引用的网格相位不一致。请从原地图重新截取该模块。"},
-  "ModuleChannel2": {"English":"This block is too large. Add cuts before saving.","Chinese":"此块超过大小限制，请继续切分后入库。"},
-  "ModuleChannel3": {"English":"Cuts must preserve the two-cell ground grid and leave at least two cells on each side.","Chinese":"切线须对齐两格地面网格，且两侧各保留至少两格。"},
-  "ModuleChannel4": {"English":"The partition must cover the entire map without gaps.","Chinese":"分区必须完整覆盖地图，不能留空隙。"},
-  "ModuleChannel5": {"English":"This cut crosses a protected region. Move the cut or remove the protection.","Chinese":"切线穿过保护区域，请移动切线或移除保护。"},
-  "ModuleChannel6": {"English":"Select two adjacent blocks whose union is a rectangle; no other block may be included.","Chinese":"请选择合并后仍为矩形的两个相邻模块，不能包含其他模块。"},
-  "ModuleChannel7": {"English":"Fixed grid","Chinese":"固定网格"},
-  "ModuleChannel8": {"English":"Along corridors","Chinese":"按通道拆分"},
-  "ModuleChannel9": {"English":"Split method","Chinese":"拆分方式"},
-  "ModuleChannel10": {"English":"Select block","Chinese":"选择模块"},
-  "ModuleChannel11": {"English":"Vertical cut","Chinese":"添加竖向切线"},
-  "ModuleChannel12": {"English":"Horizontal cut","Chinese":"添加横向切线"},
-  "ModuleChannel13": {"English":"Move cut","Chinese":"移动切线"},
-  "ModuleChannel14": {"English":"Merge blocks","Chinese":"合并模块"},
-  "ModuleChannel15": {"English":"Protect region","Chinese":"保护区域"},
-  "ModuleChannel16": {"English":"Locate problem","Chinese":"定位问题"},
-  "ModuleChannel17": {"English":"Passable regions","Chinese":"显示通行区域"},
-  "ModuleChannel18": {"English":"Clear protection","Chinese":"清除手动保护"},
-  "ModuleChannel19": {"English":"Protected","Chinese":"保护区域"},
-  "ModuleChannel20": {"English":"Click or drag inside a block to place a cut. Orange is a draft; red explains a rejected cut. Esc cancels.","Chinese":"在模块内点击或拖动放置切线。橙色为草稿，红色表示操作无效；按 Esc 取消。"},
-  "ModuleChannel21": {"English":"Drag a complete shared edge between two blocks. T-junction edges must be merged first.","Chinese":"拖动两个模块之间的完整公共边界。T 形交接边界须先合并后再调整。"},
-  "ModuleChannel22": {"English":"Click two adjacent blocks to merge their rectangular union.","Chinese":"依次点击两个相邻模块，合并为完整矩形。"},
-  "ModuleChannel23": {"English":"Drag a protected rectangle. Automatic and manual cuts will avoid it. Esc cancels.","Chinese":"拖动框选保护区域，自动及手动切线均避开此区域。按 Esc 取消。"},
-  "ModuleChannel24": {"English":"Click a block to inspect it; checkboxes choose what to save. Green is the main passage, orange marks other regions; blank cells may be passable.","Chinese":"点击模块查看，勾选决定入库。绿色为主通路，橙色标记其他通路；空白格也可能可通行。"},
-  "ModuleChannel25": {"English":"Preview is out of date. Re-run the split before editing or saving.","Chinese":"预览已过期，请重新拆分后再编辑或入库。"},
-  "ModuleChannel26": {"English":"Existing cuts cross a protected region. Merge the affected blocks or preview the split again.","Chinese":"已有切线穿过保护区域，请合并相关模块或重新预览拆分。"},
-  "ModuleChannel27": {"English":"The grid crosses a protected region. Use corridor mode or change the block dimensions.","Chinese":"网格穿过保护区域，请改用按通道拆分或调整分块尺寸。"},
-  "ModuleChannel28": {"English":"Preview even-sized blocks. Connections are paired across shared passable edges; empty or disconnected blocks are excluded. Choose fixed blocks or corridor-aware cuts, then inspect and adjust the candidates.","Chinese":"尺寸以格为单位，须填写偶数；按通道拆分时仅作大小参考。接口在共享通路两侧成对生成，可预览并调整候选模块；空白或断连块不可入库。"},
-  "ModuleChannel29": {"English":"Dead end","Chinese":"尽头"},
-  "ModuleChannel30": {"English":"Straight passage","Chinese":"直道"},
-  "ModuleChannel31": {"English":"Bend","Chinese":"弯道"},
-  "ModuleChannel32": {"English":"Junction","Chinese":"岔路"},
-  "ModuleSplitEvenDimensions": {"English":"Use even block dimensions from 4 to 512 cells.","Chinese":"分块宽高须为 4～512 的偶数。"},
-  "ModuleSplitMapLimit": {"English":"Split maps of at least 2 × 2 and at most 4,000,000 cells.","Chinese":"可拆分至少 2 × 2、总格数不超过 400 万的地图。"},
-  "ModuleSplitCountLimit": {"English":"The split would exceed 256 blocks. Increase the block dimensions.","Chinese":"拆分结果超过 256 块，请增大分块宽高。"},
-  "ModuleSplitEmpty": {"English":"Empty block; excluded from the module pool.","Chinese":"空白块，不进入模块池。"},
-  "ModuleSplitNoSeam": {"English":"No usable connection to another valid block. Adjust the block dimensions.","Chinese":"没有通向其他有效分块的可用接口，请调整分块宽高。"},
-  "ModuleSplitPreview": {"English":"Preview split","Chinese":"预览拆分"},
-  "ModuleSplitSave": {"English":"Save selected modules","Chinese":"所选模块入库"},
-  "ModuleSplitGenerate": {"English":"Save and generate a new map","Chinese":"入库并随机生成"},
-  "ModuleSplitPrefix": {"English":"Module name prefix","Chinese":"模块名称前缀"},
-  "ModuleSplitWidth": {"English":"Block width","Chinese":"分块宽度"},
-  "ModuleSplitHeight": {"English":"Block height","Chinese":"分块高度"},
-  "ModuleSplitHelp": {"English":"Preview even-sized blocks. Connections are paired across shared passable edges; empty or disconnected blocks are excluded. This is a grid split, not room recognition.","Chinese":"按偶数宽高分块，共享可通行边界的接口成对生成。空白或内部不连通的块不可入库。当前按网格拆分，不识别房间结构。"},
-  "ModuleSplitSelectValid": {"English":"Select valid blocks","Chinese":"选择有效分块"},
-  "ModuleSplitStop": {"English":"Stop","Chinese":"停止"},
-  "ModuleSplitStale": {"English":"Block dimensions changed. Preview the split again before saving.","Chinese":"分块尺寸已改变，请重新预览后再入库。"},
-  "ModuleSplitPrefixLimit": {"English":"Enter a module name prefix of 1–96 characters.","Chinese":"请填写 1～96 个字符的模块名称前缀。"},
-  "ModuleSplitPreviewFirst": {"English":"Preview the split before saving modules.","Chinese":"请先预览拆分结果，再保存模块。"},
-  "ModuleSplitSummary": {"English":"{0} blocks · {1} usable · {2} selected.","Chinese":"共 {0} 块，可用 {1} 块，已选 {2} 块。"},
-  "ModuleSplitMatchRequired": {"English":"Select modules with matching opposite connections to generate a map.","Chinese":"请选中含相对匹配接口的模块，再随机生成地图。"},
-  "ModuleBatchSaveCount": {"English":"Select between 1 and 256 modules for saving.","Chinese":"请选择 1～256 个模块入库。"},
-  "ModuleSplitSaved": {"English":"Saved {0} modules from the map.","Chinese":"已从地图拆分并入库 {0} 个模块。"},
-  "ModuleSplitMapTitle": {"English":"Split map into modules","Chinese":"从地图批量拆分模块"},
-  "ModuleReferenceWidth": {"English":"Reference width","Chinese":"参考宽度"},
-  "ModuleReferenceHeight": {"English":"Reference height","Chinese":"参考高度"},
-  "ModuleReferenceHint": {"English":"Map size is estimated from module footprints and count. These dimensions are a reference; the generator adjusts them as needed, up to 4096 per side and 1,000,000 cells. The original map is preserved.","Chinese":"根据模块占地与数量估算新地图大小。宽高仅作参考，程序按需调整；最终单边不超过 4096，总格数不超过 100 万。保留原地图。"},
-  "ModuleReferencePositive": {"English":"Enter positive whole numbers for the reference width and height.","Chinese":"参考宽度和高度须填写正整数。"},
-  "ModuleInstanceCount": {"English":"Enter 2–128 placed module instances. One selected module type can be reused.","Chinese":"生成数量须为 2～128 个实例，不是勾选的模块种类数；只选一种模块也可以重复生成。"},
-  "ModuleValidSearchOptions": {"English":"Choose a valid layout and search limit.","Chinese":"请选择有效的布局方式和搜索次数上限。"},
-  "ModuleAutomaticCapacity": {"English":"Even the smallest module needs at least {0} footprint cells for {1} instances, exceeding the 1,000,000-cell limit. Reduce the count or use smaller modules.","Chinese":"即使全部采用最小模块，生成 {1} 个实例也至少需要 {0} 格占地，超过 100 万格上限。请减少数量或使用更小的模块。"},
-  "ModuleAutomaticLimit": {"English":"Tried {0} map sizes for {1} modules (best attempt: {2}), within 4096 per side and 1,000,000 cells. This bounded search does not prove no layout exists. Try fewer modules, another seed or compatible connections.","Chinese":"已在单边 4096、总格数 100 万的限制内尝试 {0} 种地图尺寸。目标 {1} 个模块，最佳尝试 {2} 个；本轮搜索未找到完整布局，不代表绝对无解。请减少数量、更换种子或调整匹配接口。"},
-  "ModuleAutomaticTrying": {"English":"Trying a {0} × {1} new map based on module footprints…","Chinese":"正在根据模块占地尝试 {0} × {1} 的新地图……"},
-  "ModuleAutomaticActualSize": {"English":"Reference: {0} × {1}. Actual new map: {2} × {3}.","Chinese":"参考尺寸：{0} × {1}；实际新地图：{2} × {3}。"},
-  "ModuleUXMapTab": {"English":"Open a map tab to work with modules.","Chinese":"请先切换到普通地图标签页，再使用模块功能。"},
-  "ModuleUXLibraries": {"English":"Load game libraries in Settings before generating a module map.","Chinese":"请先在设置中加载游戏素材库，再生成模块地图。"},
-  "ModuleUXEdgeError": {"English":"Connection {0}: place the full opening on its boundary, with room for the inward cell.","Chinese":"接口 {0} 必须完整位于对应边界上，且向内一格不能越界。"},
-  "ModuleUXOverlapError": {"English":"Connection {0} overlaps another enabled connection at ({1}, {2}).","Chinese":"接口 {0} 在 ({1}, {2}) 与另一个已启用接口重叠。"},
-  "ModuleUXBlockedError": {"English":"Connection {0} is blocked at ({1}, {2}). Move the opening or repair the map collision.","Chinese":"接口 {0} 在 ({1}, {2}) 遇到碰撞阻挡。请移动接口，或返回地图修正碰撞。"},
-  "ModuleUXNoEnabled": {"English":"Enable at least one connection before saving a module.","Chinese":"保存模块前至少启用一个连接点。"},
-  "ModuleUXList": {"English":"Connections · check to enable, click to edit","Chinese":"连接点：勾选启用，点击条目编辑"},
-  "ModuleUXEnable": {"English":"Enable connection","Chinese":"启用连接点"},
-  "ModuleUXFit": {"English":"Fit preview","Chinese":"适应画面"},
-  "ModuleUXGrid": {"English":"Grid","Chinese":"网格"},
-  "ModuleUXCollision": {"English":"Collision","Chinese":"碰撞"},
-  "ModuleUXNavigation": {"English":"Wheel: zoom · Middle/Space: pan · Esc: cancel draft · Delete: remove · Ctrl+Z/Y: undo/redo","Chinese":"滚轮缩放 · 中键／空格拖动画布 · Esc 取消草稿 · Delete 删除 · Ctrl+Z/Y 撤销／重做"},
-  "ModuleUXAdvanced": {"English":"Advanced coordinates","Chinese":"高级坐标"},
-  "ModuleUXLegend": {"English":"Green: enabled · Cyan + handles: selected · Dashed orange: draft · Red: invalid · Dashed grey: disabled","Chinese":"绿色：启用；青色及端点：选中；橙色虚线：草稿；红色：非法；灰色虚线：未启用。"},
-  "ModuleUXBoundary": {"English":"Place the connection on the module boundary.","Chinese":"请把连接点放在模块边界上。"},
-  "ModuleUXPlace": {"English":"Click or drag along a boundary to place a connection. Esc cancels.","Chinese":"点击边界放置一格连接点，沿边界拖动设置宽度。Esc 取消。"},
-  "ModuleUXEditing": {"English":"Editing {0}. Drag its body to move or its handles to resize.","Chinese":"正在编辑 {0}。拖动主体移动，拖动端点调整宽度。"},
-  "ModuleUXSelect": {"English":"Select a connection on the map or in the list.","Chinese":"在画布或列表中选择连接点。"},
-  "ModuleUXUnique": {"English":"Connection IDs must be unique.","Chinese":"连接点编号不能重复。"},
-  "ModuleUXSuggestions": {"English":"Detected openings are suggestions based on collision data. Empty cells are walkable; disabling an opening does not build a wall.","Chinese":"识别结果是根据碰撞数据提出的接口建议。空白格视为可通行；取消启用不会自动补墙。"},
-  "ModuleUXFinish": {"English":"Finish or cancel the current connection edit before saving.","Chinese":"请先完成或取消当前连接点编辑，再保存。"},
-  "ModuleUXApply": {"English":"Apply connections, then save the object to use it in map generation.","Chinese":"应用连接点后，保存对象即可用于生成模块地图。"},
-  "ModuleUXCount": {"English":"{0} connections","Chinese":"{0} 个接口"},
-  "ModuleUXRegions": {"English":"Module boundaries","Chinese":"模块边界"},
-  "ModuleUXSearch": {"English":"Search name, tag or connection type","Chinese":"搜索名称、标签或接口类型"},
-  "ModuleUXSelectResults": {"English":"Select search results","Chinese":"选择搜索结果"},
-  "ModuleUXClearResults": {"English":"Clear search results","Chinese":"取消搜索结果"},
-  "ModuleNewMapCreate": {"English":"Create new map","Chinese":"创建新地图"},
-  "ModuleNewMapWidth": {"English":"New map width","Chinese":"新地图宽度"},
-  "ModuleNewMapHeight": {"English":"New map height","Chinese":"新地图高度"},
-  "ModuleNewMapHint": {"English":"Generate on a new blank map. The current map and selection are preserved. Choose dimensions from 16 to 4096, up to 1,000,000 cells.","Chinese":"在独立空白地图上生成，保留当前地图及选区。新地图宽高为 16～4096，总格数不超过 100 万。"},
-  "ModuleNewMapLimit": {"English":"Module generation supports up to 1,000,000 cells. Choose a smaller new map.","Chinese":"模块生成支持最多 100 万格，请缩小新地图尺寸。"},
-  "ModuleUXReady": {"English":"Preview ready · click a module to inspect its connections.","Chinese":"预览已就绪，点击模块查看来源及接口。"},
-  "ModuleUXRunning": {"English":"Generating… Previous preview is for reference only.","Chinese":"正在生成……旧预览仅供参考。"},
-  "ModuleUXStale": {"English":"Parameters changed. Generate again before applying.","Chinese":"参数已改变，请重新生成后再应用。"},
-  "ModuleUXFailed": {"English":"Generation failed. Previous preview is for reference only.","Chinese":"生成失败。旧预览仅供参考，不能应用。"},
-  "ModuleUXSelected": {"English":"Selected: {0} / {1}","Chinese":"已选择 {0} / {1} 种模块"},
-  "ModuleUXAreaSummary": {"English":"Area: ({0}, {1}) · {2} × {3}","Chinese":"生成区域：({0}, {1}) · {2} × {3} 格"},
-  "ModuleUXProblem": {"English":"Problem module: {0} · Connection: {1} · Cell: ({2}, {3})","Chinese":"问题模块：{0} · 接口：{1} · 坐标：({2}, {3})"},
-  "ModuleCaptureTitle": {"English":"Create module from selection","Chinese":"从选区生成模块"},
-  "ModuleCaptureNew": {"English":"New module","Chinese":"新模块"},
-  "ModuleCaptureName": {"English":"Module name","Chinese":"模块名称"},
-  "ModuleCaptureSave": {"English":"Save module to catalogue","Chinese":"保存模块入库"},
-  "ModuleCaptureSize": {"English":"Selection: {0} × {1} cells. Empty margins are preserved.","Chinese":"选区：{0} × {1} 格。保留边缘空白格。"},
-  "ModuleCaptureReady": {"English":"The module is connected and ready to save. It will appear in automatic generation after saving.","Chinese":"模块内部连通，可以保存。入库后可在自动生成模块地图中选择。"},
-  "ModuleCaptureSelect": {"English":"Press M and drag a rectangular map selection, then use Tools → Create module from selection.","Chinese":"按 M 切换选择工具，拖出矩形选区，再点击“工具 → 从选区生成模块”。"},
-  "ModuleCaptureSaved": {"English":"Module saved. Use Tools → Generate modules automatically to create a new map.","Chinese":"模块已入库。点击“工具 → 自动生成模块地图”创建新地图。"},
-  "ModuleCaptureEmptyPool": {"English":"No modules yet. Select a map region and use Tools → Create module from selection.","Chinese":"尚无可用模块。请先框选地图区域，再点击“工具 → 从选区生成模块”制作。"},
-  "ModuleCaptureInvalidArea": {"English":"Select a rectangle at least 2 × 2 and at most 1,000,000 cells inside the map.","Chinese":"请在地图内选择至少 2 × 2 格、最多 100 万格的矩形区域，单边不超过 4096 格。"},
-  "ModuleCaptureInvalidName": {"English":"Enter a module name of 1–128 characters without control characters.","Chinese":"请输入 1～128 个字符的模块名称，不可包含控制字符。"},
-  "ModuleCaptureCatalogueChanged": {"English":"The catalogue changed during module saving. Open the preview again.","Chinese":"保存时素材目录发生变化，请重新打开模块预览。"},
-  "ModuleGenerationTitle": {"English":"Generate modules automatically","Chinese":"自动生成模块地图"},
-  "ModuleGenerationOptions": {"English":"The generation area must be inside the target map, at least 2 × 2 and at most 1,000,000 cells.","Chinese":"生成区域必须位于目标地图内，至少为 2 × 2，且不超过 100 万格。"},
-  "ModuleGenerationPoolLimit": {"English":"Select between 1 and 256 modules for automatic generation.","Chinese":"请勾选 1～256 种模块参与自动生成。"},
-  "ModuleGenerationPoolSize": {"English":"The selected module pool is too large. Select fewer modules.","Chinese":"所选模块素材范围过大，请减少参与生成的模块种类。"},
-  "ModuleGenerationSearchFailed": {"English":"Could not generate {0} connected modules (best attempt: {1}). Try a larger area, fewer modules, another seed or more matching modules.","Chinese":"本轮未能生成 {0} 个连通模块（最佳尝试为 {1} 个，不代表绝对无解）。请扩大区域、减少数量、更换种子或添加更多接口匹配的模块。"},
-  "ModuleGenerationNoMatchingPorts": {"English":"Cannot connect the selected modules: no pair has opposite directions, the same type and equal width. Target: {0}; only one module can be placed. Edit connections or select compatible modules; changing the seed will not help.","Chinese":"所选模块没有方向相反、类型相同且宽度相等的接口对，无法连接。目标 {0} 个，目前只能放置单个模块。请编辑连接点或选择接口匹配的模块；更换种子无法解决。"},
-  "ModuleGenerationSearchLimit": {"English":"Search limit reached for {0} modules (best attempt: {1}). This does not prove no layout exists. Try an empty area, fewer modules or another seed.","Chinese":"生成 {0} 个模块时达到本轮搜索次数上限（最佳尝试 {1} 个），不代表绝对无解。请尝试空白区域、减少数量或更换种子。"},
-  "ModuleGenerationAreaSize": {"English":"No module fits the {0} × {1} generation area. Module sizes: {2}. Expand the area or select smaller modules; reducing the count will not help.","Chinese":"生成区域 {0} × {1} 放不下任何一个模块。模块尺寸：{2}。请扩大区域或选择较小模块；仅减少数量无法解决。"},
-  "ModuleGenerationGroundAlignment": {"English":"No first module can align its ground tiles inside this area. Expand the area or shift its origin by one cell.","Chinese":"首个模块的地面格子无法在当前区域内对齐。请扩大区域，或将区域起点平移一格。"},
-  "ModuleGenerationAreaOccupied": {"English":"No first module fits an empty footprint in area ({0}, {1}), {2} × {3}; {4} cells contain map content. Ground, objects and collision flags all count as occupied. Use a blank map or an empty region, not the source selection used to capture modules.","Chinese":"区域 ({0}, {1})、大小 {2} × {3} 内没有能容纳首个模块的完整空白占地，其中 {4} 格已有地图内容。地面、对象及碰撞标记均算占用。请使用空白地图或空白区域，不要在截取模块的原选区内生成。"},
-  "ModuleGenerationInterior": {"English":"All walkable cells and connections inside a module must be connected without leaving its footprint.","Chinese":"模块内部所有可行走格和连接点必须连通，且不能通过模块外部绕路。"},
-  "ModuleGenerationModuleError": {"English":"Module {0}: {1}","Chinese":"模块 {0}：{1}"},
-  "ModuleGenerationDisconnected": {"English":"The generated modules are not fully connected.","Chinese":"生成结果中的模块未能整体连通。"},
-  "ModuleGenerationPool": {"English":"Module pool (instances may repeat)","Chinese":"参与生成的模块（允许重复使用）"},
-  "ModuleGenerationSelectAll": {"English":"Select all modules","Chinese":"全选模块"},
-  "ModuleGenerationClear": {"English":"Clear module selection","Chinese":"清空勾选"},
-  "ModuleGenerationCount": {"English":"Module count","Chinese":"生成模块数量"},
-  "ModuleGenerationSeed": {"English":"Generation seed","Chinese":"随机种子"},
-  "ModuleGenerationLeft": {"English":"Area left X","Chinese":"区域左上角 X"},
-  "ModuleGenerationTop": {"English":"Area top Y","Chinese":"区域左上角 Y"},
-  "ModuleGenerationWidth": {"English":"Area width","Chinese":"区域宽度"},
-  "ModuleGenerationHeight": {"English":"Area height","Chinese":"区域高度"},
-  "ModuleGenerationLayout": {"English":"Layout style","Chinese":"布局方式"},
-  "ModuleGenerationCompact": {"English":"Compact","Chinese":"紧凑"},
-  "ModuleGenerationBranching": {"English":"Branching","Chinese":"分支"},
-  "ModuleGenerationChain": {"English":"Chain","Chinese":"链式"},
-  "ModuleGenerationHelp": {"English":"The generator chooses modules and connections automatically. Chain extends the latest module; Branching spreads outward from the start; Compact prefers nearby connections. Only empty footprints are used.","Chinese":"程序自动选择模块和连接点。链式沿最新模块继续扩展；分支从起点向外逐层展开；紧凑优先连接附近接口。只在空白占地中放置模块。"},
-  "ModuleGenerationGenerate": {"English":"Generate connected layout","Chinese":"生成连通布局"},
-  "ModuleGenerationShuffle": {"English":"New seed","Chinese":"更换种子"},
-  "ModuleGenerationStop": {"English":"Stop generation","Chinese":"停止生成"},
-  "ModuleGenerationNumbers": {"English":"Enter whole numbers for module count, seed and reference dimensions.","Chinese":"模块数量、随机种子及参考宽高均须填写整数。"},
-  "ModuleGenerationWorking": {"English":"Selecting and connecting modules…","Chinese":"正在自动选取并连接模块……"},
-  "ModuleGenerationReady": {"English":"Generated {0} modules and {1} connections. All {2} walkable cells are connected. Seed: {3}. Ctrl+Z undoes the whole layout.","Chinese":"已生成 {0} 个模块、{1} 处连接，全部 {2} 个可行走格整体连通。种子：{3}。Ctrl+Z 可整体撤销。"},
-  "ModuleGenerationCancelled": {"English":"Generation cancelled. The map was not changed.","Chinese":"已停止生成，地图未被修改。"},
-  "ModuleGenerationApplied": {"English":"Created a new map with {0} connected modules. Ctrl+Z to undo the layout.","Chinese":"已创建包含 {0} 个连通模块的新地图，可按 Ctrl+Z 整体撤销布局。"},
-  "CellHoverInfo": {"English": "Tile information on hover", "Chinese": "地砖信息悬浮"},
-  "CellWalkable": {"English": "Walkable", "Chinese": "可行走"},
-  "CellNotWalkable": {"English": "Not walkable", "Chinese": "不可行走"},
-  "RecoverMaps": {"English": "Recover Maps", "Chinese": "恢复地图"},
-  "CheckMap": {"English": "Check Map", "Chinese": "检查地图"},
-  "DimensionsTotalLimit": {"English": "Use dimensions from 16 to 4096, with at most 16,000,000 cells.", "Chinese": "宽高须为 16～4096，且总格数不能超过 1600 万。"},
-  "MixedUnchanged": {"English": "Mixed — leave unchanged", "Chinese": "混合值 — 留空不修改"},
-  "AutomaticRecoveryUnavailable": {"English": "Automatic recovery is unavailable.", "Chinese": "自动恢复不可用。"},
-  "RecoveryWriteFailed": {"English": "Could not write the automatic recovery snapshot.", "Chinese": "自动恢复快照写入失败。"},
-  "NoRecoverySnapshots": {"English": "No recovery snapshots are available.", "Chinese": "没有可恢复的快照。"},
-  "OpenRecoveredCopy": {"English": "Open Recovered Copy", "Chinese": "打开恢复副本"},
-  "DeleteSnapshot": {"English": "Delete Snapshot", "Chinese": "删除快照"},
-  "RecoveredMapName": {"English": "Recovered — {0}", "Chinese": "恢复 — {0}"},
-  "DeleteRecoveryQuestion": {"English": "Delete this recovery snapshot?", "Chinese": "删除此恢复快照？"},
-  "CheckingMap": {"English": "Checking map…", "Chinese": "正在检查地图…"},
-  "LocateIssue": {"English": "Locate", "Chinese": "定位"},
-  "MapChangedCheckAgain": {"English": "The map changed. Run the check again.", "Chinese": "地图已发生变化，请重新检查。"},
-  "MapCheckSummary": {"English": "{0:N0} findings; showing {1:N0}. Disconnected areas may be intentional.", "Chinese": "发现 {0:N0} 项，显示 {1:N0} 项。独立区域可能是有意设计，请人工复核。"},
-  "LoadLibrariesForCheck": {"English": "Load libraries to check image references.", "Chinese": "加载资源库后可检查图像引用。"},
-  "CheckImageReference": {"English": "{0}: {1} · Library {2}, Image {3}", "Chinese": "{0}：{1} · 资源库 {2}，图片 {3}"},
-  "MissingLibraryCheck": {"English": "Missing library", "Chinese": "缺失资源库"},
-  "InvalidImageCheck": {"English": "Invalid image number", "Chinese": "图片编号无效"},
-  "EmptyImageCheck": {"English": "Empty image", "Chinese": "图片为空"},
-  "UnreadableImageCheck": {"English": "Unreadable image", "Chinese": "图片无法读取"},
-  "OpenDoorCheck": {"English": "Open door", "Chinese": "开门状态"},
-  "DoorNoForeground": {"English": "Door has no foreground image", "Chinese": "门属性没有对应的前景图像"},
-  "DoorNoNeighbour": {"English": "Door has no walkable neighbouring cell", "Chinese": "门周围没有可行走单元格"},
-  "DisconnectedArea": {"English": "Disconnected walkable area: {0:N0} cells", "Chinese": "独立可行走区域：{0:N0} 格"},
-  "LayerIsLocked": {"English": "This layer is locked.", "Chinese": "当前图层已锁定。"},
-  "UnlockAllLayers": {"English": "Unlock all layers before editing multiple layers.", "Chinese": "请先解锁所有图层，再执行跨图层操作。"},
-  "LockLayer": {"English": "Lock {0}", "Chinese": "锁定{0}"},
-  "AiSettings_20261105": { "English": "AI settings", "Chinese": "AI 设置" },
-  "AiVision_20261105": { "English": "Vision AI", "Chinese": "视觉识图 AI" },
-  "AiImage_20261105": { "English": "Image AI", "Chinese": "生图 AI" },
-  "AiChat_20261105": { "English": "Chat AI", "Chinese": "对话 AI" },
-  "AiRoleHint_20261105": { "English": "Configure vision, image generation and chat independently. Object recognition uses Vision AI.", "Chinese": "视觉识图、生图和对话分别设置。物体识别使用视觉识图 AI。" },
-  "AiProvider_20261105": { "English": "Provider", "Chinese": "服务商" },
-  "AiBaseUrl_20261105": { "English": "Service base URL", "Chinese": "接口基础地址" },
-  "AiKey_20261105": { "English": "API key", "Chinese": "API 密钥" },
-  "AiModel_20261105": { "English": "Model", "Chinese": "模型名称" },
-  "AiPath_20261105": { "English": "Request path", "Chinese": "请求路径" },
-  "AiDefaultPath_20261105": { "English": "Leave empty to use the provider default path", "Chinese": "留空使用服务商默认路径" },
-  "AiAuth_20261105": { "English": "Authentication", "Chinese": "鉴权方式" },
-  "AiTimeout_20261105": { "English": "Timeout (seconds)", "Chinese": "超时时间（秒）" },
-  "AiExtra_20261105": { "English": "Extra JSON / custom request template", "Chinese": "附加 JSON / 自定义请求模板" },
-  "AiResponsePath_20261105": { "English": "Response path (optional)", "Chinese": "响应字段路径（可选）" },
-  "AiSize_20261105": { "English": "Image size format (x / star / pixel)", "Chinese": "图片尺寸格式（x / 星号 / 总像素）" },
-  "AiAdvanced_20261105": { "English": "Advanced AI settings", "Chinese": "高级 AI 设置" },
-  "AiTemplates_20261105": { "English": "Templates: {{model}}, {{prompt}}, {{system}}, {{image}}, {{images}}, {{width}}, {{height}}, {{size}}, {{n}}. Custom providers replace the request body; other providers merge extra JSON.", "Chinese": "模板变量：{{model}}、{{prompt}}、{{system}}、{{image}}、{{images}}、{{width}}、{{height}}、{{size}}、{{n}}。自定义服务使用完整请求模板，其他服务合并附加 JSON。" },
-  "AiTestImage_20261105": { "English": "Test image generation (creates an image)", "Chinese": "测试生图（会生成一张图片）" },
-  "AiTestText_20261105": { "English": "Test AI request", "Chinese": "测试 AI 请求" },
-  "AiTesting_20261105": { "English": "Testing AI request…", "Chinese": "正在测试 AI 请求…" },
-  "AiImageOk_20261105": { "English": "AI image generated successfully.", "Chinese": "AI 生图成功。" },
-  "AiTextOk_20261105": { "English": "AI request succeeded: {0}", "Chinese": "AI 请求成功：{0}" },
-  "AiCancelled_20261105": { "English": "AI request cancelled.", "Chinese": "AI 请求已取消。" },
-  "AiCorrectSelected_20261105": { "English": "AI identify / filter selected", "Chinese": "AI 识别并筛选所选" },
-  "AiCorrectAll_20261105": { "English": "AI identify / filter all unreviewed", "Chinese": "AI 识别并筛选全部未审核" },
-  "AiCorrectHint_20261105": { "English": "Uses Vision AI from Settings. Incomplete objects are excluded; uncertain results remain for review. Undo restores the whole batch.", "Chinese": "使用设置中的视觉识图 AI。不完整物件会被剔除，不确定的保留待审核；撤销可恢复整批结果。" },
-  "AiSelect_20261105": { "English": "Select candidates for AI recognition first.", "Chinese": "请先选择需要 AI 识别的候选物体。" },
-  "AiRecognizing_20261105": { "English": "AI recognizing {0} / {1}: {2}", "Chinese": "AI 正在识别 {0} / {1}：{2}" },
-  "AiRecognized_20261105": { "English": "AI checked {0} objects: {1} incomplete excluded, {2} uncertain kept. Review remaining objects before saving; Undo restores the whole batch.", "Chinese": "AI 已检查 {0} 个物件：剔除 {1} 个不完整物件，保留 {2} 个不确定项。其余结果请审核后保存；撤销可恢复整批结果。" },
-  "AiRecognitionCancelled_20261105": { "English": "AI recognition cancelled. Candidates unchanged.", "Chinese": "AI 识别已取消，候选结果未更改。" },
-  "AiRecognitionFailed_20261105": { "English": "AI recognition failed. Candidates unchanged. {0}", "Chinese": "AI 识别失败，候选结果未更改。{0}" },
-  "AiRecognition_20261105": { "English": "AI recognition", "Chinese": "AI 识图" },
-  "AiRecognitionJson_20261105": { "English": "AI did not return valid object recognition JSON.", "Chinese": "AI 未返回有效的物体识别 JSON。" },
-  "AiRecognitionInvalid_20261105": { "English": "AI returned an invalid object name or category. Please retry.", "Chinese": "AI 返回的物体名称或分类无效，请重试。" },
-  "AiCompletenessInvalid_20261106": { "English": "AI did not return a valid completeness decision. Please retry.", "Chinese": "AI 未返回有效的完整性判定，请重试。" },
-  "AiComplete_20261106": { "English": "Complete object", "Chinese": "完整物件" },
-  "AiUncertain_20261106": { "English": "Completeness uncertain", "Chinese": "完整性不确定" },
-  "AiInvalidRole_20261105": { "English": "This provider does not support the selected AI role.", "Chinese": "此服务商不支持所选 AI 用途。" },
-  "AiInvalidUrl_20261105": { "English": "Enter a valid HTTP or HTTPS AI service address.", "Chinese": "请填写有效的 HTTP 或 HTTPS AI 接口地址。" },
-  "AiInvalidModel_20261105": { "English": "Enter an AI model name.", "Chinese": "请填写 AI 模型名称。" },
-  "AiInvalidTimeout_20261105": { "English": "AI timeout must be between 1 and 1800 seconds.", "Chinese": "AI 超时时间须为 1 至 1800 秒。" },
-  "AiInvalidAuth_20261105": { "English": "Unknown AI authentication method.", "Chinese": "未知的 AI 鉴权方式。" },
-  "AiInvalidExtra_20261105": { "English": "AI extra body must be a JSON object.", "Chinese": "AI 附加参数 / 模板必须为有效的 JSON 对象。" },
-  "AiMissingTextPath_20261105": { "English": "AI response path did not contain text.", "Chinese": "AI 响应字段路径中未找到文本。" },
-  "AiMissingText_20261105": { "English": "AI returned no text. Check the model and response path.", "Chinese": "AI 未返回文本，请检查模型和响应字段路径。" },
-  "AiMissingTask_20261105": { "English": "DashScope did not return a task ID.", "Chinese": "百炼未返回生图任务编号。" },
-  "AiFailedTask_20261105": { "English": "DashScope image task failed or was cancelled.", "Chinese": "百炼生图任务失败或已取消。" },
-  "AiMissingImage_20261105": { "English": "AI returned no image. Check the image model and response path.", "Chinese": "AI 未返回图片，请检查生图模型和响应字段路径。" },
-  "AiInvalidImage_20261105": { "English": "AI returned invalid image data.", "Chinese": "AI 返回的图片数据无效。" },
-  "AiTimedOut_20261105": { "English": "AI request timed out. Check the service or increase the timeout.", "Chinese": "AI 请求超时，请检查服务或增加超时时间。" },
-  "AiConnectFailed_20261105": { "English": "Could not connect to the AI service. Check its address and network connection.", "Chinese": "无法连接 AI 服务，请检查接口地址和网络连接。" },
-  "AiInvalidJson_20261105": { "English": "AI returned invalid JSON.", "Chinese": "AI 返回的 JSON 无效。" },
-  "AiHttpError_20261105": { "English": "AI service returned HTTP {0}: {1}", "Chinese": "AI 接口返回 HTTP {0}：{1}" },
-  "AiExpectedDataUrl_20261105": { "English": "Expected a base64 image data URL.", "Chinese": "需要 Base64 格式的图片数据地址。" },
-  "AiOpenAI_20261105": { "English": "OpenAI / Compatible", "Chinese": "OpenAI / 兼容中转" },
-  "GoogleGeminiNanoBanana_20261105": { "English": "Google Gemini / Nano Banana", "Chinese": "Google Gemini / Nano Banana" },
-  "AiArk_20261105": { "English": "Volcengine Ark / Seedream", "Chinese": "火山方舟（豆包 Seedream）" },
-  "AiDashscope_20261105": { "English": "Alibaba DashScope / Wanx", "Chinese": "阿里云百炼（通义万相）" },
-  "AiZhipu_20261105": { "English": "Zhipu GLM / CogView", "Chinese": "智谱 GLM（CogView）" },
-  "SiliconFlow_20261105": { "English": "SiliconFlow", "Chinese": "硅基流动 SiliconFlow" },
-  "StabilityAI_20261105": { "English": "Stability AI", "Chinese": "Stability AI" },
-  "AiLocalSd_20261105": { "English": "Local SD WebUI / Forge", "Chinese": "本地 SD WebUI / Forge" },
-  "AiCustom_20261105": { "English": "Custom request template", "Chinese": "自定义请求模板" },
+  "ModuleChannelRegion": {
+    "English": "Region {0} · {1} cells",
+    "Chinese": "通行区域 {0} · {1} 格"
+  },
+  "ModuleChannel1": {
+    "English": "Ground references use mixed grid phases without a captured footprint. Capture this module from the map again.",
+    "Chinese": "模块没有截取占地记录，地面引用的网格相位不一致。请从原地图重新截取该模块。"
+  },
+  "ModuleChannel2": {
+    "English": "This block is too large. Add cuts before saving.",
+    "Chinese": "此块超过大小限制，请继续切分后入库。"
+  },
+  "ModuleChannel3": {
+    "English": "Cuts must preserve the two-cell ground grid and leave at least two cells on each side.",
+    "Chinese": "切线须对齐两格地面网格，且两侧各保留至少两格。"
+  },
+  "ModuleChannel4": {
+    "English": "The partition must cover the entire map without gaps.",
+    "Chinese": "分区必须完整覆盖地图，不能留空隙。"
+  },
+  "ModuleChannel5": {
+    "English": "This cut crosses a protected region. Move the cut or remove the protection.",
+    "Chinese": "切线穿过保护区域，请移动切线或移除保护。"
+  },
+  "ModuleChannel6": {
+    "English": "Select two adjacent blocks whose union is a rectangle; no other block may be included.",
+    "Chinese": "请选择合并后仍为矩形的两个相邻模块，不能包含其他模块。"
+  },
+  "ModuleChannel7": {
+    "English": "Fixed grid",
+    "Chinese": "固定网格"
+  },
+  "ModuleChannel8": {
+    "English": "Along corridors",
+    "Chinese": "按通道拆分"
+  },
+  "ModuleChannel9": {
+    "English": "Split method",
+    "Chinese": "拆分方式"
+  },
+  "ModuleChannel10": {
+    "English": "Select block",
+    "Chinese": "选择模块"
+  },
+  "ModuleChannel11": {
+    "English": "Vertical cut",
+    "Chinese": "添加竖向切线"
+  },
+  "ModuleChannel12": {
+    "English": "Horizontal cut",
+    "Chinese": "添加横向切线"
+  },
+  "ModuleChannel13": {
+    "English": "Move cut",
+    "Chinese": "移动切线"
+  },
+  "ModuleChannel14": {
+    "English": "Merge blocks",
+    "Chinese": "合并模块"
+  },
+  "ModuleChannel15": {
+    "English": "Protect region",
+    "Chinese": "保护区域"
+  },
+  "ModuleChannel16": {
+    "English": "Locate problem",
+    "Chinese": "定位问题"
+  },
+  "ModuleChannel17": {
+    "English": "Passable regions",
+    "Chinese": "显示通行区域"
+  },
+  "ModuleChannel18": {
+    "English": "Clear protection",
+    "Chinese": "清除手动保护"
+  },
+  "ModuleChannel19": {
+    "English": "Protected",
+    "Chinese": "保护区域"
+  },
+  "ModuleChannel20": {
+    "English": "Click or drag inside a block to place a cut. Orange is a draft; red explains a rejected cut. Esc cancels.",
+    "Chinese": "在模块内点击或拖动放置切线。橙色为草稿，红色表示操作无效；按 Esc 取消。"
+  },
+  "ModuleChannel21": {
+    "English": "Drag a complete shared edge between two blocks. T-junction edges must be merged first.",
+    "Chinese": "拖动两个模块之间的完整公共边界。T 形交接边界须先合并后再调整。"
+  },
+  "ModuleChannel22": {
+    "English": "Click two adjacent blocks to merge their rectangular union.",
+    "Chinese": "依次点击两个相邻模块，合并为完整矩形。"
+  },
+  "ModuleChannel23": {
+    "English": "Drag a protected rectangle. Automatic and manual cuts will avoid it. Esc cancels.",
+    "Chinese": "拖动框选保护区域，自动及手动切线均避开此区域。按 Esc 取消。"
+  },
+  "ModuleChannel24": {
+    "English": "Click a block to inspect it; checkboxes choose what to save. Green is the main passage, orange marks other regions; blank cells may be passable.",
+    "Chinese": "点击模块查看，勾选决定入库。绿色为主通路，橙色标记其他通路；空白格也可能可通行。"
+  },
+  "ModuleChannel25": {
+    "English": "Preview is out of date. Re-run the split before editing or saving.",
+    "Chinese": "预览已过期，请重新拆分后再编辑或入库。"
+  },
+  "ModuleChannel26": {
+    "English": "Existing cuts cross a protected region. Merge the affected blocks or preview the split again.",
+    "Chinese": "已有切线穿过保护区域，请合并相关模块或重新预览拆分。"
+  },
+  "ModuleChannel27": {
+    "English": "The grid crosses a protected region. Use corridor mode or change the block dimensions.",
+    "Chinese": "网格穿过保护区域，请改用按通道拆分或调整分块尺寸。"
+  },
+  "ModuleChannel28": {
+    "English": "Preview even-sized blocks. Connections are paired across shared passable edges; empty or disconnected blocks are excluded. Choose fixed blocks or corridor-aware cuts, then inspect and adjust the candidates.",
+    "Chinese": "尺寸以格为单位，须填写偶数；按通道拆分时仅作大小参考。接口在共享通路两侧成对生成，可预览并调整候选模块；空白或断连块不可入库。"
+  },
+  "ModuleChannel29": {
+    "English": "Dead end",
+    "Chinese": "尽头"
+  },
+  "ModuleChannel30": {
+    "English": "Straight passage",
+    "Chinese": "直道"
+  },
+  "ModuleChannel31": {
+    "English": "Bend",
+    "Chinese": "弯道"
+  },
+  "ModuleChannel32": {
+    "English": "Junction",
+    "Chinese": "岔路"
+  },
+  "ModuleSplitEvenDimensions": {
+    "English": "Use even block dimensions from 4 to 512 cells.",
+    "Chinese": "分块宽高须为 4～512 的偶数。"
+  },
+  "ModuleSplitMapLimit": {
+    "English": "Split maps of at least 2 × 2 and at most 4,000,000 cells.",
+    "Chinese": "可拆分至少 2 × 2、总格数不超过 400 万的地图。"
+  },
+  "ModuleSplitCountLimit": {
+    "English": "The split would exceed 256 blocks. Increase the block dimensions.",
+    "Chinese": "拆分结果超过 256 块，请增大分块宽高。"
+  },
+  "ModuleSplitEmpty": {
+    "English": "Empty block; excluded from the module pool.",
+    "Chinese": "空白块，不进入模块池。"
+  },
+  "ModuleSplitNoSeam": {
+    "English": "No usable connection to another valid block. Adjust the block dimensions.",
+    "Chinese": "没有通向其他有效分块的可用接口，请调整分块宽高。"
+  },
+  "ModuleSplitPreview": {
+    "English": "Preview split",
+    "Chinese": "预览拆分"
+  },
+  "ModuleSplitSave": {
+    "English": "Save selected modules",
+    "Chinese": "所选模块入库"
+  },
+  "ModuleSplitGenerate": {
+    "English": "Save and generate a new map",
+    "Chinese": "入库并随机生成"
+  },
+  "ModuleSplitPrefix": {
+    "English": "Module name prefix",
+    "Chinese": "模块名称前缀"
+  },
+  "ModuleSplitWidth": {
+    "English": "Block width",
+    "Chinese": "分块宽度"
+  },
+  "ModuleSplitHeight": {
+    "English": "Block height",
+    "Chinese": "分块高度"
+  },
+  "ModuleSplitHelp": {
+    "English": "Preview even-sized blocks. Connections are paired across shared passable edges; empty or disconnected blocks are excluded. This is a grid split, not room recognition.",
+    "Chinese": "按偶数宽高分块，共享可通行边界的接口成对生成。空白或内部不连通的块不可入库。当前按网格拆分，不识别房间结构。"
+  },
+  "ModuleSplitSelectValid": {
+    "English": "Select valid blocks",
+    "Chinese": "选择有效分块"
+  },
+  "ModuleSplitStop": {
+    "English": "Stop",
+    "Chinese": "停止"
+  },
+  "ModuleSplitStale": {
+    "English": "Block dimensions changed. Preview the split again before saving.",
+    "Chinese": "分块尺寸已改变，请重新预览后再入库。"
+  },
+  "ModuleSplitPrefixLimit": {
+    "English": "Enter a module name prefix of 1–96 characters.",
+    "Chinese": "请填写 1～96 个字符的模块名称前缀。"
+  },
+  "ModuleSplitPreviewFirst": {
+    "English": "Preview the split before saving modules.",
+    "Chinese": "请先预览拆分结果，再保存模块。"
+  },
+  "ModuleSplitSummary": {
+    "English": "{0} blocks · {1} usable · {2} selected.",
+    "Chinese": "共 {0} 块，可用 {1} 块，已选 {2} 块。"
+  },
+  "ModuleSplitMatchRequired": {
+    "English": "Select modules with matching opposite connections to generate a map.",
+    "Chinese": "请选中含相对匹配接口的模块，再随机生成地图。"
+  },
+  "ModuleBatchSaveCount": {
+    "English": "Select between 1 and 256 modules for saving.",
+    "Chinese": "请选择 1～256 个模块入库。"
+  },
+  "ModuleSplitSaved": {
+    "English": "Saved {0} modules from the map.",
+    "Chinese": "已从地图拆分并入库 {0} 个模块。"
+  },
+  "ModuleSplitMapTitle": {
+    "English": "Split map into modules",
+    "Chinese": "从地图批量拆分模块"
+  },
+  "ModuleReferenceWidth": {
+    "English": "Reference width",
+    "Chinese": "参考宽度"
+  },
+  "ModuleReferenceHeight": {
+    "English": "Reference height",
+    "Chinese": "参考高度"
+  },
+  "ModuleReferenceHint": {
+    "English": "Map size is estimated from module footprints and count. These dimensions are a reference; the generator adjusts them as needed, up to 4096 per side and 1,000,000 cells. The original map is preserved.",
+    "Chinese": "根据模块占地与数量估算新地图大小。宽高仅作参考，程序按需调整；最终单边不超过 4096，总格数不超过 100 万。保留原地图。"
+  },
+  "ModuleReferencePositive": {
+    "English": "Enter positive whole numbers for the reference width and height.",
+    "Chinese": "参考宽度和高度须填写正整数。"
+  },
+  "ModuleInstanceCount": {
+    "English": "Enter 2–128 placed module instances. One selected module type can be reused.",
+    "Chinese": "生成数量须为 2～128 个实例，不是勾选的模块种类数；只选一种模块也可以重复生成。"
+  },
+  "ModuleValidSearchOptions": {
+    "English": "Choose a valid layout and search limit.",
+    "Chinese": "请选择有效的布局方式和搜索次数上限。"
+  },
+  "ModuleAutomaticCapacity": {
+    "English": "Even the smallest module needs at least {0} footprint cells for {1} instances, exceeding the 1,000,000-cell limit. Reduce the count or use smaller modules.",
+    "Chinese": "即使全部采用最小模块，生成 {1} 个实例也至少需要 {0} 格占地，超过 100 万格上限。请减少数量或使用更小的模块。"
+  },
+  "ModuleAutomaticLimit": {
+    "English": "Tried {0} map sizes for {1} modules (best attempt: {2}), within 4096 per side and 1,000,000 cells. This bounded search does not prove no layout exists. Try fewer modules, another seed or compatible connections.",
+    "Chinese": "已在单边 4096、总格数 100 万的限制内尝试 {0} 种地图尺寸。目标 {1} 个模块，最佳尝试 {2} 个；本轮搜索未找到完整布局，不代表绝对无解。请减少数量、更换种子或调整匹配接口。"
+  },
+  "ModuleAutomaticTrying": {
+    "English": "Trying a {0} × {1} new map based on module footprints…",
+    "Chinese": "正在根据模块占地尝试 {0} × {1} 的新地图……"
+  },
+  "ModuleAutomaticActualSize": {
+    "English": "Reference: {0} × {1}. Actual new map: {2} × {3}.",
+    "Chinese": "参考尺寸：{0} × {1}；实际新地图：{2} × {3}。"
+  },
+  "ModuleUXMapTab": {
+    "English": "Open a map tab to work with modules.",
+    "Chinese": "请先切换到普通地图标签页，再使用模块功能。"
+  },
+  "ModuleUXLibraries": {
+    "English": "Load game libraries in Settings before generating a module map.",
+    "Chinese": "请先在设置中加载游戏素材库，再生成模块地图。"
+  },
+  "ModuleUXEdgeError": {
+    "English": "Connection {0}: place the full opening on its boundary, with room for the inward cell.",
+    "Chinese": "接口 {0} 必须完整位于对应边界上，且向内一格不能越界。"
+  },
+  "ModuleUXOverlapError": {
+    "English": "Connection {0} overlaps another enabled connection at ({1}, {2}).",
+    "Chinese": "接口 {0} 在 ({1}, {2}) 与另一个已启用接口重叠。"
+  },
+  "ModuleUXBlockedError": {
+    "English": "Connection {0} is blocked at ({1}, {2}). Move the opening or repair the map collision.",
+    "Chinese": "接口 {0} 在 ({1}, {2}) 遇到碰撞阻挡。请移动接口，或返回地图修正碰撞。"
+  },
+  "ModuleUXNoEnabled": {
+    "English": "Enable at least one connection before saving a module.",
+    "Chinese": "保存模块前至少启用一个连接点。"
+  },
+  "ModuleUXList": {
+    "English": "Connections · check to enable, click to edit",
+    "Chinese": "连接点：勾选启用，点击条目编辑"
+  },
+  "ModuleUXEnable": {
+    "English": "Enable connection",
+    "Chinese": "启用连接点"
+  },
+  "ModuleUXFit": {
+    "English": "Fit preview",
+    "Chinese": "适应画面"
+  },
+  "ModuleUXGrid": {
+    "English": "Grid",
+    "Chinese": "网格"
+  },
+  "ModuleUXCollision": {
+    "English": "Collision",
+    "Chinese": "碰撞"
+  },
+  "ModuleUXNavigation": {
+    "English": "Wheel: zoom · Middle/Space: pan · Esc: cancel draft · Delete: remove · Ctrl+Z/Y: undo/redo",
+    "Chinese": "滚轮缩放 · 中键／空格拖动画布 · Esc 取消草稿 · Delete 删除 · Ctrl+Z/Y 撤销／重做"
+  },
+  "ModuleUXAdvanced": {
+    "English": "Advanced coordinates",
+    "Chinese": "高级坐标"
+  },
+  "ModuleUXLegend": {
+    "English": "Green: enabled · Cyan + handles: selected · Dashed orange: draft · Red: invalid · Dashed grey: disabled",
+    "Chinese": "绿色：启用；青色及端点：选中；橙色虚线：草稿；红色：非法；灰色虚线：未启用。"
+  },
+  "ModuleUXBoundary": {
+    "English": "Place the connection on the module boundary.",
+    "Chinese": "请把连接点放在模块边界上。"
+  },
+  "ModuleUXPlace": {
+    "English": "Click or drag along a boundary to place a connection. Esc cancels.",
+    "Chinese": "点击边界放置一格连接点，沿边界拖动设置宽度。Esc 取消。"
+  },
+  "ModuleUXEditing": {
+    "English": "Editing {0}. Drag its body to move or its handles to resize.",
+    "Chinese": "正在编辑 {0}。拖动主体移动，拖动端点调整宽度。"
+  },
+  "ModuleUXSelect": {
+    "English": "Select a connection on the map or in the list.",
+    "Chinese": "在画布或列表中选择连接点。"
+  },
+  "ModuleUXUnique": {
+    "English": "Connection IDs must be unique.",
+    "Chinese": "连接点编号不能重复。"
+  },
+  "ModuleUXSuggestions": {
+    "English": "Detected openings are suggestions based on collision data. Empty cells are walkable; disabling an opening does not build a wall.",
+    "Chinese": "识别结果是根据碰撞数据提出的接口建议。空白格视为可通行；取消启用不会自动补墙。"
+  },
+  "ModuleUXFinish": {
+    "English": "Finish or cancel the current connection edit before saving.",
+    "Chinese": "请先完成或取消当前连接点编辑，再保存。"
+  },
+  "ModuleUXApply": {
+    "English": "Apply connections, then save the object to use it in map generation.",
+    "Chinese": "应用连接点后，保存对象即可用于生成模块地图。"
+  },
+  "ModuleUXCount": {
+    "English": "{0} connections",
+    "Chinese": "{0} 个接口"
+  },
+  "ModuleUXRegions": {
+    "English": "Module boundaries",
+    "Chinese": "模块边界"
+  },
+  "ModuleUXSearch": {
+    "English": "Search name, tag or connection type",
+    "Chinese": "搜索名称、标签或接口类型"
+  },
+  "ModuleUXSelectResults": {
+    "English": "Select search results",
+    "Chinese": "选择搜索结果"
+  },
+  "ModuleUXClearResults": {
+    "English": "Clear search results",
+    "Chinese": "取消搜索结果"
+  },
+  "ModuleNewMapCreate": {
+    "English": "Create new map",
+    "Chinese": "创建新地图"
+  },
+  "ModuleNewMapWidth": {
+    "English": "New map width",
+    "Chinese": "新地图宽度"
+  },
+  "ModuleNewMapHeight": {
+    "English": "New map height",
+    "Chinese": "新地图高度"
+  },
+  "ModuleNewMapHint": {
+    "English": "Generate on a new blank map. The current map and selection are preserved. Choose dimensions from 16 to 4096, up to 1,000,000 cells.",
+    "Chinese": "在独立空白地图上生成，保留当前地图及选区。新地图宽高为 16～4096，总格数不超过 100 万。"
+  },
+  "ModuleNewMapLimit": {
+    "English": "Module generation supports up to 1,000,000 cells. Choose a smaller new map.",
+    "Chinese": "模块生成支持最多 100 万格，请缩小新地图尺寸。"
+  },
+  "ModuleUXReady": {
+    "English": "Preview ready · click a module to inspect its connections.",
+    "Chinese": "预览已就绪，点击模块查看来源及接口。"
+  },
+  "ModuleUXRunning": {
+    "English": "Generating… Previous preview is for reference only.",
+    "Chinese": "正在生成……旧预览仅供参考。"
+  },
+  "ModuleUXStale": {
+    "English": "Parameters changed. Generate again before applying.",
+    "Chinese": "参数已改变，请重新生成后再应用。"
+  },
+  "ModuleUXFailed": {
+    "English": "Generation failed. Previous preview is for reference only.",
+    "Chinese": "生成失败。旧预览仅供参考，不能应用。"
+  },
+  "ModuleUXSelected": {
+    "English": "Selected: {0} / {1}",
+    "Chinese": "已选择 {0} / {1} 种模块"
+  },
+  "ModuleUXAreaSummary": {
+    "English": "Area: ({0}, {1}) · {2} × {3}",
+    "Chinese": "生成区域：({0}, {1}) · {2} × {3} 格"
+  },
+  "ModuleUXProblem": {
+    "English": "Problem module: {0} · Connection: {1} · Cell: ({2}, {3})",
+    "Chinese": "问题模块：{0} · 接口：{1} · 坐标：({2}, {3})"
+  },
+  "ModuleCaptureTitle": {
+    "English": "Create module from selection",
+    "Chinese": "从选区生成模块"
+  },
+  "ModuleCaptureNew": {
+    "English": "New module",
+    "Chinese": "新模块"
+  },
+  "ModuleCaptureName": {
+    "English": "Module name",
+    "Chinese": "模块名称"
+  },
+  "ModuleCaptureSave": {
+    "English": "Save module to catalogue",
+    "Chinese": "保存模块入库"
+  },
+  "ModuleCaptureSize": {
+    "English": "Selection: {0} × {1} cells. Empty margins are preserved.",
+    "Chinese": "选区：{0} × {1} 格。保留边缘空白格。"
+  },
+  "ModuleCaptureReady": {
+    "English": "The module is connected and ready to save. It will appear in automatic generation after saving.",
+    "Chinese": "模块内部连通，可以保存。入库后可在自动生成模块地图中选择。"
+  },
+  "ModuleCaptureSelect": {
+    "English": "Press M and drag a rectangular map selection, then use Tools → Create module from selection.",
+    "Chinese": "按 M 切换选择工具，拖出矩形选区，再点击“工具 → 从选区生成模块”。"
+  },
+  "ModuleCaptureSaved": {
+    "English": "Module saved. Use Tools → Generate modules automatically to create a new map.",
+    "Chinese": "模块已入库。点击“工具 → 自动生成模块地图”创建新地图。"
+  },
+  "ModuleCaptureEmptyPool": {
+    "English": "No modules yet. Select a map region and use Tools → Create module from selection.",
+    "Chinese": "尚无可用模块。请先框选地图区域，再点击“工具 → 从选区生成模块”制作。"
+  },
+  "ModuleCaptureInvalidArea": {
+    "English": "Select a rectangle at least 2 × 2 and at most 1,000,000 cells inside the map.",
+    "Chinese": "请在地图内选择至少 2 × 2 格、最多 100 万格的矩形区域，单边不超过 4096 格。"
+  },
+  "ModuleCaptureInvalidName": {
+    "English": "Enter a module name of 1–128 characters without control characters.",
+    "Chinese": "请输入 1～128 个字符的模块名称，不可包含控制字符。"
+  },
+  "ModuleCaptureCatalogueChanged": {
+    "English": "The catalogue changed during module saving. Open the preview again.",
+    "Chinese": "保存时素材目录发生变化，请重新打开模块预览。"
+  },
+  "ModuleGenerationTitle": {
+    "English": "Generate modules automatically",
+    "Chinese": "自动生成模块地图"
+  },
+  "ModuleGenerationOptions": {
+    "English": "The generation area must be inside the target map, at least 2 × 2 and at most 1,000,000 cells.",
+    "Chinese": "生成区域必须位于目标地图内，至少为 2 × 2，且不超过 100 万格。"
+  },
+  "ModuleGenerationPoolLimit": {
+    "English": "Select between 1 and 256 modules for automatic generation.",
+    "Chinese": "请勾选 1～256 种模块参与自动生成。"
+  },
+  "ModuleGenerationPoolSize": {
+    "English": "The selected module pool is too large. Select fewer modules.",
+    "Chinese": "所选模块素材范围过大，请减少参与生成的模块种类。"
+  },
+  "ModuleGenerationSearchFailed": {
+    "English": "Could not generate {0} connected modules (best attempt: {1}). Try a larger area, fewer modules, another seed or more matching modules.",
+    "Chinese": "本轮未能生成 {0} 个连通模块（最佳尝试为 {1} 个，不代表绝对无解）。请扩大区域、减少数量、更换种子或添加更多接口匹配的模块。"
+  },
+  "ModuleGenerationNoMatchingPorts": {
+    "English": "Cannot connect the selected modules: no pair has opposite directions, the same type and equal width. Target: {0}; only one module can be placed. Edit connections or select compatible modules; changing the seed will not help.",
+    "Chinese": "所选模块没有方向相反、类型相同且宽度相等的接口对，无法连接。目标 {0} 个，目前只能放置单个模块。请编辑连接点或选择接口匹配的模块；更换种子无法解决。"
+  },
+  "ModuleGenerationSearchLimit": {
+    "English": "Search limit reached for {0} modules (best attempt: {1}). This does not prove no layout exists. Try an empty area, fewer modules or another seed.",
+    "Chinese": "生成 {0} 个模块时达到本轮搜索次数上限（最佳尝试 {1} 个），不代表绝对无解。请尝试空白区域、减少数量或更换种子。"
+  },
+  "ModuleGenerationAreaSize": {
+    "English": "No module fits the {0} × {1} generation area. Module sizes: {2}. Expand the area or select smaller modules; reducing the count will not help.",
+    "Chinese": "生成区域 {0} × {1} 放不下任何一个模块。模块尺寸：{2}。请扩大区域或选择较小模块；仅减少数量无法解决。"
+  },
+  "ModuleGenerationGroundAlignment": {
+    "English": "No first module can align its ground tiles inside this area. Expand the area or shift its origin by one cell.",
+    "Chinese": "首个模块的地面格子无法在当前区域内对齐。请扩大区域，或将区域起点平移一格。"
+  },
+  "ModuleGenerationAreaOccupied": {
+    "English": "No first module fits an empty footprint in area ({0}, {1}), {2} × {3}; {4} cells contain map content. Ground, objects and collision flags all count as occupied. Use a blank map or an empty region, not the source selection used to capture modules.",
+    "Chinese": "区域 ({0}, {1})、大小 {2} × {3} 内没有能容纳首个模块的完整空白占地，其中 {4} 格已有地图内容。地面、对象及碰撞标记均算占用。请使用空白地图或空白区域，不要在截取模块的原选区内生成。"
+  },
+  "ModuleGenerationInterior": {
+    "English": "All walkable cells and connections inside a module must be connected without leaving its footprint.",
+    "Chinese": "模块内部所有可行走格和连接点必须连通，且不能通过模块外部绕路。"
+  },
+  "ModuleGenerationModuleError": {
+    "English": "Module {0}: {1}",
+    "Chinese": "模块 {0}：{1}"
+  },
+  "ModuleGenerationDisconnected": {
+    "English": "The generated modules are not fully connected.",
+    "Chinese": "生成结果中的模块未能整体连通。"
+  },
+  "ModuleGenerationPool": {
+    "English": "Module pool (instances may repeat)",
+    "Chinese": "参与生成的模块（允许重复使用）"
+  },
+  "ModuleGenerationSelectAll": {
+    "English": "Select all modules",
+    "Chinese": "全选模块"
+  },
+  "ModuleGenerationClear": {
+    "English": "Clear module selection",
+    "Chinese": "清空勾选"
+  },
+  "ModuleGenerationCount": {
+    "English": "Module count",
+    "Chinese": "生成模块数量"
+  },
+  "ModuleGenerationSeed": {
+    "English": "Generation seed",
+    "Chinese": "随机种子"
+  },
+  "ModuleGenerationLeft": {
+    "English": "Area left X",
+    "Chinese": "区域左上角 X"
+  },
+  "ModuleGenerationTop": {
+    "English": "Area top Y",
+    "Chinese": "区域左上角 Y"
+  },
+  "ModuleGenerationWidth": {
+    "English": "Area width",
+    "Chinese": "区域宽度"
+  },
+  "ModuleGenerationHeight": {
+    "English": "Area height",
+    "Chinese": "区域高度"
+  },
+  "ModuleGenerationLayout": {
+    "English": "Layout style",
+    "Chinese": "布局方式"
+  },
+  "ModuleGenerationCompact": {
+    "English": "Compact",
+    "Chinese": "紧凑"
+  },
+  "ModuleGenerationBranching": {
+    "English": "Branching",
+    "Chinese": "分支"
+  },
+  "ModuleGenerationChain": {
+    "English": "Chain",
+    "Chinese": "链式"
+  },
+  "ModuleGenerationHelp": {
+    "English": "The generator chooses modules and connections automatically. Chain extends the latest module; Branching spreads outward from the start; Compact prefers nearby connections. Only empty footprints are used.",
+    "Chinese": "程序自动选择模块和连接点。链式沿最新模块继续扩展；分支从起点向外逐层展开；紧凑优先连接附近接口。只在空白占地中放置模块。"
+  },
+  "ModuleGenerationGenerate": {
+    "English": "Generate connected layout",
+    "Chinese": "生成连通布局"
+  },
+  "ModuleGenerationShuffle": {
+    "English": "New seed",
+    "Chinese": "更换种子"
+  },
+  "ModuleGenerationStop": {
+    "English": "Stop generation",
+    "Chinese": "停止生成"
+  },
+  "ModuleGenerationNumbers": {
+    "English": "Enter whole numbers for module count, seed and reference dimensions.",
+    "Chinese": "模块数量、随机种子及参考宽高均须填写整数。"
+  },
+  "ModuleGenerationWorking": {
+    "English": "Selecting and connecting modules…",
+    "Chinese": "正在自动选取并连接模块……"
+  },
+  "ModuleGenerationReady": {
+    "English": "Generated {0} modules and {1} connections. All {2} walkable cells are connected. Seed: {3}. Ctrl+Z undoes the whole layout.",
+    "Chinese": "已生成 {0} 个模块、{1} 处连接，全部 {2} 个可行走格整体连通。种子：{3}。Ctrl+Z 可整体撤销。"
+  },
+  "ModuleGenerationCancelled": {
+    "English": "Generation cancelled. The map was not changed.",
+    "Chinese": "已停止生成，地图未被修改。"
+  },
+  "ModuleGenerationApplied": {
+    "English": "Created a new map with {0} connected modules. Ctrl+Z to undo the layout.",
+    "Chinese": "已创建包含 {0} 个连通模块的新地图，可按 Ctrl+Z 整体撤销布局。"
+  },
+  "CellHoverInfo": {
+    "English": "Tile information on hover",
+    "Chinese": "地砖信息悬浮"
+  },
+  "CellWalkable": {
+    "English": "Walkable",
+    "Chinese": "可行走"
+  },
+  "CellNotWalkable": {
+    "English": "Not walkable",
+    "Chinese": "不可行走"
+  },
+  "RecoverMaps": {
+    "English": "Recover Maps",
+    "Chinese": "恢复地图"
+  },
+  "CheckMap": {
+    "English": "Check Map",
+    "Chinese": "检查地图"
+  },
+  "DimensionsTotalLimit": {
+    "English": "Use dimensions from 16 to 4096, with at most 16,000,000 cells.",
+    "Chinese": "宽高须为 16～4096，且总格数不能超过 1600 万。"
+  },
+  "MixedUnchanged": {
+    "English": "Mixed — leave unchanged",
+    "Chinese": "混合值 — 留空不修改"
+  },
+  "AutomaticRecoveryUnavailable": {
+    "English": "Automatic recovery is unavailable.",
+    "Chinese": "自动恢复不可用。"
+  },
+  "RecoveryWriteFailed": {
+    "English": "Could not write the automatic recovery snapshot.",
+    "Chinese": "自动恢复快照写入失败。"
+  },
+  "NoRecoverySnapshots": {
+    "English": "No recovery snapshots are available.",
+    "Chinese": "没有可恢复的快照。"
+  },
+  "OpenRecoveredCopy": {
+    "English": "Open Recovered Copy",
+    "Chinese": "打开恢复副本"
+  },
+  "DeleteSnapshot": {
+    "English": "Delete Snapshot",
+    "Chinese": "删除快照"
+  },
+  "RecoveredMapName": {
+    "English": "Recovered — {0}",
+    "Chinese": "恢复 — {0}"
+  },
+  "DeleteRecoveryQuestion": {
+    "English": "Delete this recovery snapshot?",
+    "Chinese": "删除此恢复快照？"
+  },
+  "CheckingMap": {
+    "English": "Checking map…",
+    "Chinese": "正在检查地图…"
+  },
+  "LocateIssue": {
+    "English": "Locate",
+    "Chinese": "定位"
+  },
+  "MapChangedCheckAgain": {
+    "English": "The map changed. Run the check again.",
+    "Chinese": "地图已发生变化，请重新检查。"
+  },
+  "MapCheckSummary": {
+    "English": "{0:N0} findings; showing {1:N0}. Disconnected areas may be intentional.",
+    "Chinese": "发现 {0:N0} 项，显示 {1:N0} 项。独立区域可能是有意设计，请人工复核。"
+  },
+  "LoadLibrariesForCheck": {
+    "English": "Load libraries to check image references.",
+    "Chinese": "加载资源库后可检查图像引用。"
+  },
+  "CheckImageReference": {
+    "English": "{0}: {1} · Library {2}, Image {3}",
+    "Chinese": "{0}：{1} · 资源库 {2}，图片 {3}"
+  },
+  "MissingLibraryCheck": {
+    "English": "Missing library",
+    "Chinese": "缺失资源库"
+  },
+  "InvalidImageCheck": {
+    "English": "Invalid image number",
+    "Chinese": "图片编号无效"
+  },
+  "EmptyImageCheck": {
+    "English": "Empty image",
+    "Chinese": "图片为空"
+  },
+  "UnreadableImageCheck": {
+    "English": "Unreadable image",
+    "Chinese": "图片无法读取"
+  },
+  "OpenDoorCheck": {
+    "English": "Open door",
+    "Chinese": "开门状态"
+  },
+  "DoorNoForeground": {
+    "English": "Door has no foreground image",
+    "Chinese": "门属性没有对应的前景图像"
+  },
+  "DoorNoNeighbour": {
+    "English": "Door has no walkable neighbouring cell",
+    "Chinese": "门周围没有可行走单元格"
+  },
+  "DisconnectedArea": {
+    "English": "Disconnected walkable area: {0:N0} cells",
+    "Chinese": "独立可行走区域：{0:N0} 格"
+  },
+  "LayerIsLocked": {
+    "English": "This layer is locked.",
+    "Chinese": "当前图层已锁定。"
+  },
+  "UnlockAllLayers": {
+    "English": "Unlock all layers before editing multiple layers.",
+    "Chinese": "请先解锁所有图层，再执行跨图层操作。"
+  },
+  "LockLayer": {
+    "English": "Lock {0}",
+    "Chinese": "锁定{0}"
+  },
+  "AiSettings_20261105": {
+    "English": "AI settings",
+    "Chinese": "AI 设置"
+  },
+  "AiVision_20261105": {
+    "English": "Vision AI",
+    "Chinese": "视觉识图 AI"
+  },
+  "AiImage_20261105": {
+    "English": "Image AI",
+    "Chinese": "生图 AI"
+  },
+  "AiChat_20261105": {
+    "English": "Chat AI",
+    "Chinese": "对话 AI"
+  },
+  "AiRoleHint_20261105": {
+    "English": "Configure vision, image generation and chat independently. Object recognition uses Vision AI.",
+    "Chinese": "视觉识图、生图和对话分别设置。物体识别使用视觉识图 AI。"
+  },
+  "AiProvider_20261105": {
+    "English": "Provider",
+    "Chinese": "服务商"
+  },
+  "AiBaseUrl_20261105": {
+    "English": "Service base URL",
+    "Chinese": "接口基础地址"
+  },
+  "AiKey_20261105": {
+    "English": "API key",
+    "Chinese": "API 密钥"
+  },
+  "AiModel_20261105": {
+    "English": "Model",
+    "Chinese": "模型名称"
+  },
+  "AiPath_20261105": {
+    "English": "Request path",
+    "Chinese": "请求路径"
+  },
+  "AiDefaultPath_20261105": {
+    "English": "Leave empty to use the provider default path",
+    "Chinese": "留空使用服务商默认路径"
+  },
+  "AiAuth_20261105": {
+    "English": "Authentication",
+    "Chinese": "鉴权方式"
+  },
+  "AiTimeout_20261105": {
+    "English": "Timeout (seconds)",
+    "Chinese": "超时时间（秒）"
+  },
+  "AiExtra_20261105": {
+    "English": "Extra JSON / custom request template",
+    "Chinese": "附加 JSON / 自定义请求模板"
+  },
+  "AiResponsePath_20261105": {
+    "English": "Response path (optional)",
+    "Chinese": "响应字段路径（可选）"
+  },
+  "AiSize_20261105": {
+    "English": "Image size format (x / star / pixel)",
+    "Chinese": "图片尺寸格式（x / 星号 / 总像素）"
+  },
+  "AiAdvanced_20261105": {
+    "English": "Advanced AI settings",
+    "Chinese": "高级 AI 设置"
+  },
+  "AiTemplates_20261105": {
+    "English": "Templates: {{model}}, {{prompt}}, {{system}}, {{image}}, {{images}}, {{width}}, {{height}}, {{size}}, {{n}}. Custom providers replace the request body; other providers merge extra JSON.",
+    "Chinese": "模板变量：{{model}}、{{prompt}}、{{system}}、{{image}}、{{images}}、{{width}}、{{height}}、{{size}}、{{n}}。自定义服务使用完整请求模板，其他服务合并附加 JSON。"
+  },
+  "AiTestImage_20261105": {
+    "English": "Test image generation (creates an image)",
+    "Chinese": "测试生图（会生成一张图片）"
+  },
+  "AiTestText_20261105": {
+    "English": "Test AI request",
+    "Chinese": "测试 AI 请求"
+  },
+  "AiTesting_20261105": {
+    "English": "Testing AI request…",
+    "Chinese": "正在测试 AI 请求…"
+  },
+  "AiImageOk_20261105": {
+    "English": "AI image generated successfully.",
+    "Chinese": "AI 生图成功。"
+  },
+  "AiTextOk_20261105": {
+    "English": "AI request succeeded: {0}",
+    "Chinese": "AI 请求成功：{0}"
+  },
+  "AiCancelled_20261105": {
+    "English": "AI request cancelled.",
+    "Chinese": "AI 请求已取消。"
+  },
+  "AiCorrectSelected_20261105": {
+    "English": "AI identify / filter selected",
+    "Chinese": "AI 识别并筛选所选"
+  },
+  "AiCorrectAll_20261105": {
+    "English": "AI identify / filter all unreviewed",
+    "Chinese": "AI 识别并筛选全部未审核"
+  },
+  "AiCorrectHint_20261105": {
+    "English": "Uses Vision AI from Settings. Incomplete objects are excluded; uncertain results remain for review. Undo restores the whole batch.",
+    "Chinese": "使用设置中的视觉识图 AI。不完整物件会被剔除，不确定的保留待审核；撤销可恢复整批结果。"
+  },
+  "AiSelect_20261105": {
+    "English": "Select candidates for AI recognition first.",
+    "Chinese": "请先选择需要 AI 识别的候选物体。"
+  },
+  "AiRecognizing_20261105": {
+    "English": "AI recognizing {0} / {1}: {2}",
+    "Chinese": "AI 正在识别 {0} / {1}：{2}"
+  },
+  "AiRecognized_20261105": {
+    "English": "AI checked {0} objects: {1} incomplete excluded, {2} uncertain kept. Review remaining objects before saving; Undo restores the whole batch.",
+    "Chinese": "AI 已检查 {0} 个物件：剔除 {1} 个不完整物件，保留 {2} 个不确定项。其余结果请审核后保存；撤销可恢复整批结果。"
+  },
+  "AiRecognitionCancelled_20261105": {
+    "English": "AI recognition cancelled. Candidates unchanged.",
+    "Chinese": "AI 识别已取消，候选结果未更改。"
+  },
+  "AiRecognitionFailed_20261105": {
+    "English": "AI recognition failed. Candidates unchanged. {0}",
+    "Chinese": "AI 识别失败，候选结果未更改。{0}"
+  },
+  "AiRecognition_20261105": {
+    "English": "AI recognition",
+    "Chinese": "AI 识图"
+  },
+  "AiRecognitionJson_20261105": {
+    "English": "AI did not return valid object recognition JSON.",
+    "Chinese": "AI 未返回有效的物体识别 JSON。"
+  },
+  "AiRecognitionInvalid_20261105": {
+    "English": "AI returned an invalid object name or category. Please retry.",
+    "Chinese": "AI 返回的物体名称或分类无效，请重试。"
+  },
+  "AiCompletenessInvalid_20261106": {
+    "English": "AI did not return a valid completeness decision. Please retry.",
+    "Chinese": "AI 未返回有效的完整性判定，请重试。"
+  },
+  "AiComplete_20261106": {
+    "English": "Complete object",
+    "Chinese": "完整物件"
+  },
+  "AiUncertain_20261106": {
+    "English": "Completeness uncertain",
+    "Chinese": "完整性不确定"
+  },
+  "AiInvalidRole_20261105": {
+    "English": "This provider does not support the selected AI role.",
+    "Chinese": "此服务商不支持所选 AI 用途。"
+  },
+  "AiInvalidUrl_20261105": {
+    "English": "Enter a valid HTTP or HTTPS AI service address.",
+    "Chinese": "请填写有效的 HTTP 或 HTTPS AI 接口地址。"
+  },
+  "AiInvalidModel_20261105": {
+    "English": "Enter an AI model name.",
+    "Chinese": "请填写 AI 模型名称。"
+  },
+  "AiInvalidTimeout_20261105": {
+    "English": "AI timeout must be between 1 and 1800 seconds.",
+    "Chinese": "AI 超时时间须为 1 至 1800 秒。"
+  },
+  "AiInvalidAuth_20261105": {
+    "English": "Unknown AI authentication method.",
+    "Chinese": "未知的 AI 鉴权方式。"
+  },
+  "AiInvalidExtra_20261105": {
+    "English": "AI extra body must be a JSON object.",
+    "Chinese": "AI 附加参数 / 模板必须为有效的 JSON 对象。"
+  },
+  "AiMissingTextPath_20261105": {
+    "English": "AI response path did not contain text.",
+    "Chinese": "AI 响应字段路径中未找到文本。"
+  },
+  "AiMissingText_20261105": {
+    "English": "AI returned no text. Check the model and response path.",
+    "Chinese": "AI 未返回文本，请检查模型和响应字段路径。"
+  },
+  "AiMissingTask_20261105": {
+    "English": "DashScope did not return a task ID.",
+    "Chinese": "百炼未返回生图任务编号。"
+  },
+  "AiFailedTask_20261105": {
+    "English": "DashScope image task failed or was cancelled.",
+    "Chinese": "百炼生图任务失败或已取消。"
+  },
+  "AiMissingImage_20261105": {
+    "English": "AI returned no image. Check the image model and response path.",
+    "Chinese": "AI 未返回图片，请检查生图模型和响应字段路径。"
+  },
+  "AiInvalidImage_20261105": {
+    "English": "AI returned invalid image data.",
+    "Chinese": "AI 返回的图片数据无效。"
+  },
+  "AiTimedOut_20261105": {
+    "English": "AI request timed out. Check the service or increase the timeout.",
+    "Chinese": "AI 请求超时，请检查服务或增加超时时间。"
+  },
+  "AiConnectFailed_20261105": {
+    "English": "Could not connect to the AI service. Check its address and network connection.",
+    "Chinese": "无法连接 AI 服务，请检查接口地址和网络连接。"
+  },
+  "AiInvalidJson_20261105": {
+    "English": "AI returned invalid JSON.",
+    "Chinese": "AI 返回的 JSON 无效。"
+  },
+  "AiHttpError_20261105": {
+    "English": "AI service returned HTTP {0}: {1}",
+    "Chinese": "AI 接口返回 HTTP {0}：{1}"
+  },
+  "AiExpectedDataUrl_20261105": {
+    "English": "Expected a base64 image data URL.",
+    "Chinese": "需要 Base64 格式的图片数据地址。"
+  },
+  "AiOpenAI_20261105": {
+    "English": "OpenAI / Compatible",
+    "Chinese": "OpenAI / 兼容中转"
+  },
+  "GoogleGeminiNanoBanana_20261105": {
+    "English": "Google Gemini / Nano Banana",
+    "Chinese": "Google Gemini / Nano Banana"
+  },
+  "AiArk_20261105": {
+    "English": "Volcengine Ark / Seedream",
+    "Chinese": "火山方舟（豆包 Seedream）"
+  },
+  "AiDashscope_20261105": {
+    "English": "Alibaba DashScope / Wanx",
+    "Chinese": "阿里云百炼（通义万相）"
+  },
+  "AiZhipu_20261105": {
+    "English": "Zhipu GLM / CogView",
+    "Chinese": "智谱 GLM（CogView）"
+  },
+  "SiliconFlow_20261105": {
+    "English": "SiliconFlow",
+    "Chinese": "硅基流动 SiliconFlow"
+  },
+  "StabilityAI_20261105": {
+    "English": "Stability AI",
+    "Chinese": "Stability AI"
+  },
+  "AiLocalSd_20261105": {
+    "English": "Local SD WebUI / Forge",
+    "Chinese": "本地 SD WebUI / Forge"
+  },
+  "AiCustom_20261105": {
+    "English": "Custom request template",
+    "Chinese": "自定义请求模板"
+  },
   "QuickMapUsability_ProfileSize": {
     "English": "Map creation preferences are too large.",
     "Chinese": "地图创建配置已超过容量限制，请精简预设后再保存。"
@@ -4505,100 +5243,544 @@
     "English": "{0} woodland, trail and shore edge plants",
     "Chinese": "{0} 处林缘、路旁与岸边植被"
   },
-  "ForestRuinsScene": { "English": "Forest ruins", "Chinese": "森林遗迹" },
-  "RuinCount": { "English": "Ruin clearings: ", "Chinese": "遗迹空地数量：" },
-  "ForestRuinClearings": { "English": "{0} forest ruin clearings", "Chinese": "{0} 处森林遗迹空地" },
-  "MiningQuarryScene": { "English": "Mining and quarry", "Chinese": "矿区与采石场" },
-  "MineCount": { "English": "Mining yards: ", "Chinese": "采掘场数量：" },
-  "MiningYards": { "English": "{0} mining and quarry yards", "Chinese": "{0} 处矿区与采石场" },
-  "MiningArtworkUnavailable": { "English": "Mining yard artwork is unavailable in the selected libraries.", "Chinese": "当前素材库缺少完整矿区所需的素材。" },
-  "MiningDetailsUnavailable": { "English": "Some mining yard details are unavailable; only complete visible objects were used.", "Chinese": "部分矿区细节素材不可用，已仅使用完整可见物件。" },
-  "FantasyDungeonTheme": {"English": "World theme", "Chinese": "世界主题"},
-  "ClassicDungeonTheme": {"English": "Classic dungeon / cave", "Chinese": "经典地牢 / 洞穴"},
-  "CelestialPalaceTheme": {"English": "Celestial palace", "Chinese": "天宫 · 云上宫阙"},
-  "AbyssalReefTheme": {"English": "Abyssal reef", "Chinese": "海底 · 深渊珊瑚宫"},
-  "AlienPlanetTheme": {"English": "Alien planet", "Chinese": "异星 · 裂隙晶巢"},
-  "CelestialThemeDescription": {"English": "Axial halls, paired courts and bridges above a white cloud sea", "Chinese": "中轴殿堂、对称院落、云海桥廊"},
-  "AbyssalThemeDescription": {"English": "Coral chambers, tidal loops and a submerged central sanctuary", "Chinese": "珊瑚洞群、潮汐环路、海底中庭"},
-  "AlienThemeDescription": {"English": "Offset impact basins, fractured routes and crystalline life", "Chinese": "偏心环坑、断裂通道、异形晶体生态"},
-  "ClassicThemeDescription": {"English": "Classic dungeon and cave layouts", "Chinese": "经典房间与自然洞穴布局"},
-  "ThemeDetailsCount": {"English": " · {0} scene details", "Chinese": " · {0} 处主题细节"},
-  "ThemeObjectsUnavailable": {"English": "No reviewed visible objects are available for this dungeon theme.", "Chinese": "当前素材库没有此主题所需的已审查可见物件。"},
-  "ExpandMap": {"English": "Expand Map", "Chinese": "地图扩边"},
-  "ExpandMapHint": {"English": "Add blank cells on each side in steps of 2. Existing artwork is preserved.", "Chinese": "按 2 格为单位向四边增加空白区域，保留原有地图内容。"},
-  "ExpandLeftCells": {"English": "Add left (cells)", "Chinese": "左侧增加（格）"},
-  "ExpandTopCells": {"English": "Add top (cells)", "Chinese": "上方增加（格）"},
-  "ExpandRightCells": {"English": "Add right (cells)", "Chinese": "右侧增加（格）"},
-  "ExpandBottomCells": {"English": "Add bottom (cells)", "Chinese": "下方增加（格）"},
-  "ExpandedMapSize": {"English": "Expanded map: {0} × {1} cells", "Chinese": "扩边后地图：{0} × {1} 格"},
-  "InvalidExpansion": {"English": "Enter non-negative even amounts, with at least one side greater than 0. The result must fit the map size limits.", "Chinese": "请输入非负偶数，至少一侧大于 0，扩边结果不能超出地图尺寸限制。"},
-  "EyedropperTool": {"English": "Eyedropper", "Chinese": "吸管"},
-  "EyedropperToolHint": {"English": "Click a ground or middle tile to select its source artwork.", "Chinese": "点击地砖或中间层素材，拾取对应素材并在素材列表中定位。"},
-  "PanTool": {"English": "Hand / Pan", "Chinese": "手形平移"},
-  "PanToolHint": {"English": "Drag with the left mouse button to pan. Middle drag and Space + drag also work.", "Chinese": "按住鼠标左键拖动画布；也支持中键拖动和空格加拖动。"},
-  "CropToSelection": {"English": "Crop to Selection", "Chinese": "裁剪到选区"},
-  "CropSelectionHint": {"English": "Keep the selected map area. Edges align outward to 2×2 ground tiles. Undo is supported.", "Chinese": "保留所选地图范围，边界向外对齐 2×2 地砖。支持撤销。"},
-  "CroppedMapSize": {"English": "Cropped map to {0} × {1} cells", "Chinese": "地图已裁剪为 {0} × {1} 格"},
-  "MinimapExportAction": {"English": "Export", "Chinese": "导出"},
-  "MinimapSizePreset": {"English": "Size preset", "Chinese": "尺寸预设"},
-  "MinimapSmallSize": {"English": "Small (¼)", "Chinese": "小（宽高 1/4）"},
-  "MinimapMediumSize": {"English": "Medium (½)", "Chinese": "中（宽高 1/2）"},
-  "MinimapLargeSize": {"English": "Large (1:1)", "Chinese": "大（1:1）"},
-  "MinimapWidthPixels": {"English": "Width (pixels)", "Chinese": "宽度（像素）"},
-  "MinimapHeightPixels": {"English": "Height (pixels)", "Chinese": "高度（像素）"},
-  "MinimapInvalidDimensions": {"English": "Enter positive whole-number dimensions. If the image is too large, reduce its width or height.", "Chinese": "宽高请输入正整数；若图像尺寸过大，请减小宽度或高度。"},
-  "QuickMapCustomSettings": {"English": "Custom settings", "Chinese": "自定义设置"},
-  "QuickMapFolderIsFile": {"English": "The output folder or one of its parents is a file. Choose another folder.", "Chinese": "输出目录或它的某个上级路径是文件，请选择其他目录。"},
-  "QuickMapBack": {"English": "Back to map settings", "Chinese": "上一步：地图设置"},
-  "GeneratorMapSettings": {"English": "Map settings", "Chinese": "地图设置"},
-  "GeneratorMapWidth": {"English": "Map width in cells", "Chinese": "地图宽度（单元格）"},
-  "GeneratorMapHeight": {"English": "Map height in cells", "Chinese": "地图高度（单元格）"},
-  "GeneratorMapInfo": {"English": "{0} × {1} cells · Changes apply only after confirmation.", "Chinese": "{0} × {1} 单元格 · 确认后才会应用生成结果。"},
-  "GeneratorChangeSeed": {"English": "Change seed", "Chinese": "换种子"},
-  "GeneratorChangeSeedHelp": {"English": "Change only the seed, keeping other settings. The overall layout may change.", "Chinese": "仅更换种子，保留其他参数；整体布局可能改变。"},
-  "GeneratorRandomizeSettings": {"English": "Randomize settings", "Chinese": "随机参数"},
-  "GeneratorRandomizeSettingsHelp": {"English": "Randomize generator settings and the seed.", "Chinese": "随机调整生成参数及种子。"},
-  "GeneratorCentreDetailHelp": {"English": "Show a fixed crop at the map centre. Turn this off to navigate the full preview.", "Chinese": "显示地图中心的固定裁切区域；取消勾选可浏览整图预览。"},
-  "GeneratorDungeonDetailHelp": {"English": "Show a fixed crop around the first room. Turn this off to navigate the full preview.", "Chinese": "显示首个房间附近的固定裁切区域；取消勾选可浏览整图预览。"},
-  "GeneratorFitPreview": {"English": "Fit preview", "Chinese": "适应窗口"},
-  "GeneratorFitPreviewHelp": {"English": "Fit the preview to the window", "Chinese": "恢复整张预览，适应当前窗口"},
-  "GeneratorZoomIn": {"English": "Zoom in", "Chinese": "放大预览"},
-  "GeneratorZoomOut": {"English": "Zoom out", "Chinese": "缩小预览"},
-  "GeneratorNavigationHint": {"English": "Wheel: zoom · Drag: pan", "Chinese": "滚轮缩放 · 拖动平移"},
-  "GeneratorZoomHelp": {"English": "Zoom is relative to fit and only affects the preview, not the map.", "Chinese": "缩放比例以适应窗口为基准，仅改变预览，不改变地图尺寸。"},
-  "GeneratorPreviewNavigation": {"English": "Map preview navigation", "Chinese": "地图预览导航"},
-  "GeneratorExactValueHelp": {"English": "Enter an exact value; the slider's range and steps still apply.", "Chinese": "可直接输入精确数值，仍遵循原滑块的范围和档位。"},
-  "ModuleConnectionsTitle": {"English":"Module connections","Chinese":"模块连接点"},
-  "ModuleConnectionsList": {"English":"Connections","Chinese":"连接点列表"},
-  "ModuleConnectionId": {"English":"Connection ID","Chinese":"连接点编号"},
-  "ModuleConnectionKind": {"English":"Connection type","Chinese":"连接类型"},
-  "ModuleConnectionEdge": {"English":"Boundary direction","Chinese":"边界方向"},
-  "ModuleConnectionWidth": {"English":"Opening width","Chinese":"通路宽度"},
-  "ModuleConnectionNew": {"English":"New connection","Chinese":"新建连接点"},
-  "ModuleConnectionRemove": {"English":"Remove connection","Chinese":"删除连接点"},
-  "ModuleConnectionNorth": {"English":"North","Chinese":"北"},
-  "ModuleConnectionEast": {"English":"East","Chinese":"东"},
-  "ModuleConnectionSouth": {"English":"South","Chinese":"南"},
-  "ModuleConnectionWest": {"English":"West","Chinese":"西"},
-  "ModuleConnectionNumbers": {"English":"Enter integer coordinates and an opening width.","Chinese":"请输入整数坐标和通路宽度。"},
-  "ModuleConnectionEmpty": {"English":"Paint a module before defining connections.","Chinese":"请先绘制模块内容，再定义连接点。"},
-  "ModuleConnectionBounds": {"English":"Module bounds exceed the editor limit.","Chinese":"模块范围超出编辑器限制。"},
-  "ModuleConnectionLimit": {"English":"Unsupported connections or more than 64 openings.","Chinese":"连接点格式不受支持，或开口数量超过 64。"},
-  "ModuleConnectionCells": {"English":"Module contains duplicate cells.","Chinese":"模块包含重复单元格。"},
-  "ModuleConnectionFields": {"English":"Use unique connection IDs, valid types and widths from 1 to 64.","Chinese":"请使用不重复的连接点编号、有效类型及 1～64 的通路宽度。"},
-  "ModuleJoinSaveFirst": {"English":"Save module connections before joining modules.","Chinese":"请先为对象定义连接点并保存，再进行模块拼接。"},
-  "ModuleJoinName": {"English":"Invalid module name.","Chinese":"模块名称无效。"},
-  "ModuleJoinMismatch": {"English":"Choose opposite connections with the same type and width.","Chinese":"请选择方向相对、类型及宽度一致的连接点。"},
-  "ModuleJoinBoundary": {"English":"Joined modules extend outside the map.","Chinese":"拼接后的模块超出地图边界。"},
-  "ModuleJoinOverlap": {"English":"Module footprints overlap.","Chinese":"模块占地范围重叠。"},
-  "ModuleJoinLimit": {"English":"Preview at most 1,000,000 module cells at once.","Chinese":"单次拼接预览最多支持 1,000,000 个模块占地单元格。"},
-  "ModuleJoinGround": {"English":"The connection would misalign ground tiles. Use even ground coordinates and compatible module sizes.","Chinese":"此连接会导致地面素材错位，请使用偶数地面坐标及尺寸兼容的模块。"},
-  "ModuleJoinOccupied": {"English":"Module footprint contains existing content at ({0}, {1}). Choose an empty area.","Chinese":"模块占地内的 ({0}, {1}) 已有内容，请选择空白区域。"},
-  "ModuleJoinFailed": {"English":"Module placement failed.","Chinese":"模块放置失败。"},
-  "ModuleJoinBlocked": {"English":"The joined passage is blocked.","Chinese":"拼接后的接缝通路被阻塞。"},
-  "ModuleJoinStale": {"English":"The map changed after the module preview. Generate a fresh preview.","Chinese":"地图已在预览后发生变化，请重新生成拼接预览。"},
-  "ModuleJoinMapPreview": {"English":"Map preview","Chinese":"地图预览"},
-  "ModuleJoinPreviewRequired": {"English":"Generate a preview before applying.","Chinese":"请先生成预览，再应用到地图。"},
-  "ModuleJoinApply": {"English":"Apply to map","Chinese":"应用到地图"},
-  "ModuleJoinInstances": {"English":"Too many stamp instances.","Chinese":"地图中的对象实例数量已达上限。"}
+  "ForestRuinsScene": {
+    "English": "Forest ruins",
+    "Chinese": "森林遗迹"
+  },
+  "RuinCount": {
+    "English": "Ruin clearings: ",
+    "Chinese": "遗迹空地数量："
+  },
+  "ForestRuinClearings": {
+    "English": "{0} forest ruin clearings",
+    "Chinese": "{0} 处森林遗迹空地"
+  },
+  "MiningQuarryScene": {
+    "English": "Mining and quarry",
+    "Chinese": "矿区与采石场"
+  },
+  "MineCount": {
+    "English": "Mining yards: ",
+    "Chinese": "采掘场数量："
+  },
+  "MiningYards": {
+    "English": "{0} mining and quarry yards",
+    "Chinese": "{0} 处矿区与采石场"
+  },
+  "MiningArtworkUnavailable": {
+    "English": "Mining yard artwork is unavailable in the selected libraries.",
+    "Chinese": "当前素材库缺少完整矿区所需的素材。"
+  },
+  "MiningDetailsUnavailable": {
+    "English": "Some mining yard details are unavailable; only complete visible objects were used.",
+    "Chinese": "部分矿区细节素材不可用，已仅使用完整可见物件。"
+  },
+  "FantasyDungeonTheme": {
+    "English": "World theme",
+    "Chinese": "世界主题"
+  },
+  "ClassicDungeonTheme": {
+    "English": "Classic dungeon / cave",
+    "Chinese": "经典地牢 / 洞穴"
+  },
+  "CelestialPalaceTheme": {
+    "English": "Celestial palace",
+    "Chinese": "天宫 · 云上宫阙"
+  },
+  "AbyssalReefTheme": {
+    "English": "Abyssal reef",
+    "Chinese": "海底 · 深渊珊瑚宫"
+  },
+  "AlienPlanetTheme": {
+    "English": "Alien planet",
+    "Chinese": "异星 · 裂隙晶巢"
+  },
+  "CelestialThemeDescription": {
+    "English": "Axial halls, paired courts and bridges above a white cloud sea",
+    "Chinese": "中轴殿堂、对称院落、云海桥廊"
+  },
+  "AbyssalThemeDescription": {
+    "English": "Coral chambers, tidal loops and a submerged central sanctuary",
+    "Chinese": "珊瑚洞群、潮汐环路、海底中庭"
+  },
+  "AlienThemeDescription": {
+    "English": "Offset impact basins, fractured routes and crystalline life",
+    "Chinese": "偏心环坑、断裂通道、异形晶体生态"
+  },
+  "ClassicThemeDescription": {
+    "English": "Classic dungeon and cave layouts",
+    "Chinese": "经典房间与自然洞穴布局"
+  },
+  "ThemeDetailsCount": {
+    "English": " · {0} scene details",
+    "Chinese": " · {0} 处主题细节"
+  },
+  "ThemeObjectsUnavailable": {
+    "English": "No reviewed visible objects are available for this dungeon theme.",
+    "Chinese": "当前素材库没有此主题所需的已审查可见物件。"
+  },
+  "ExpandMap": {
+    "English": "Expand Map",
+    "Chinese": "地图扩边"
+  },
+  "ExpandMapHint": {
+    "English": "Add blank cells on each side in steps of 2. Existing artwork is preserved.",
+    "Chinese": "按 2 格为单位向四边增加空白区域，保留原有地图内容。"
+  },
+  "ExpandLeftCells": {
+    "English": "Add left (cells)",
+    "Chinese": "左侧增加（格）"
+  },
+  "ExpandTopCells": {
+    "English": "Add top (cells)",
+    "Chinese": "上方增加（格）"
+  },
+  "ExpandRightCells": {
+    "English": "Add right (cells)",
+    "Chinese": "右侧增加（格）"
+  },
+  "ExpandBottomCells": {
+    "English": "Add bottom (cells)",
+    "Chinese": "下方增加（格）"
+  },
+  "ExpandedMapSize": {
+    "English": "Expanded map: {0} × {1} cells",
+    "Chinese": "扩边后地图：{0} × {1} 格"
+  },
+  "InvalidExpansion": {
+    "English": "Enter non-negative even amounts, with at least one side greater than 0. The result must fit the map size limits.",
+    "Chinese": "请输入非负偶数，至少一侧大于 0，扩边结果不能超出地图尺寸限制。"
+  },
+  "EyedropperTool": {
+    "English": "Eyedropper",
+    "Chinese": "吸管"
+  },
+  "EyedropperToolHint": {
+    "English": "Click a ground or middle tile to select its source artwork.",
+    "Chinese": "点击地砖或中间层素材，拾取对应素材并在素材列表中定位。"
+  },
+  "PanTool": {
+    "English": "Hand / Pan",
+    "Chinese": "手形平移"
+  },
+  "PanToolHint": {
+    "English": "Drag with the left mouse button to pan. Middle drag and Space + drag also work.",
+    "Chinese": "按住鼠标左键拖动画布；也支持中键拖动和空格加拖动。"
+  },
+  "CropToSelection": {
+    "English": "Crop to Selection",
+    "Chinese": "裁剪到选区"
+  },
+  "CropSelectionHint": {
+    "English": "Keep the selected map area. Edges align outward to 2×2 ground tiles. Undo is supported.",
+    "Chinese": "保留所选地图范围，边界向外对齐 2×2 地砖。支持撤销。"
+  },
+  "CroppedMapSize": {
+    "English": "Cropped map to {0} × {1} cells",
+    "Chinese": "地图已裁剪为 {0} × {1} 格"
+  },
+  "MinimapExportAction": {
+    "English": "Export",
+    "Chinese": "导出"
+  },
+  "MinimapSizePreset": {
+    "English": "Size preset",
+    "Chinese": "尺寸预设"
+  },
+  "MinimapSmallSize": {
+    "English": "Small (¼)",
+    "Chinese": "小（宽高 1/4）"
+  },
+  "MinimapMediumSize": {
+    "English": "Medium (½)",
+    "Chinese": "中（宽高 1/2）"
+  },
+  "MinimapLargeSize": {
+    "English": "Large (1:1)",
+    "Chinese": "大（1:1）"
+  },
+  "MinimapWidthPixels": {
+    "English": "Width (pixels)",
+    "Chinese": "宽度（像素）"
+  },
+  "MinimapHeightPixels": {
+    "English": "Height (pixels)",
+    "Chinese": "高度（像素）"
+  },
+  "MinimapInvalidDimensions": {
+    "English": "Enter positive whole-number dimensions. If the image is too large, reduce its width or height.",
+    "Chinese": "宽高请输入正整数；若图像尺寸过大，请减小宽度或高度。"
+  },
+  "QuickMapCustomSettings": {
+    "English": "Custom settings",
+    "Chinese": "自定义设置"
+  },
+  "QuickMapFolderIsFile": {
+    "English": "The output folder or one of its parents is a file. Choose another folder.",
+    "Chinese": "输出目录或它的某个上级路径是文件，请选择其他目录。"
+  },
+  "QuickMapBack": {
+    "English": "Back to map settings",
+    "Chinese": "上一步：地图设置"
+  },
+  "GeneratorMapSettings": {
+    "English": "Map settings",
+    "Chinese": "地图设置"
+  },
+  "GeneratorMapWidth": {
+    "English": "Map width in cells",
+    "Chinese": "地图宽度（单元格）"
+  },
+  "GeneratorMapHeight": {
+    "English": "Map height in cells",
+    "Chinese": "地图高度（单元格）"
+  },
+  "GeneratorMapInfo": {
+    "English": "{0} × {1} cells · Changes apply only after confirmation.",
+    "Chinese": "{0} × {1} 单元格 · 确认后才会应用生成结果。"
+  },
+  "GeneratorChangeSeed": {
+    "English": "Change seed",
+    "Chinese": "换种子"
+  },
+  "GeneratorChangeSeedHelp": {
+    "English": "Change only the seed, keeping other settings. The overall layout may change.",
+    "Chinese": "仅更换种子，保留其他参数；整体布局可能改变。"
+  },
+  "GeneratorRandomizeSettings": {
+    "English": "Randomize settings",
+    "Chinese": "随机参数"
+  },
+  "GeneratorRandomizeSettingsHelp": {
+    "English": "Randomize generator settings and the seed.",
+    "Chinese": "随机调整生成参数及种子。"
+  },
+  "GeneratorCentreDetailHelp": {
+    "English": "Show a fixed crop at the map centre. Turn this off to navigate the full preview.",
+    "Chinese": "显示地图中心的固定裁切区域；取消勾选可浏览整图预览。"
+  },
+  "GeneratorDungeonDetailHelp": {
+    "English": "Show a fixed crop around the first room. Turn this off to navigate the full preview.",
+    "Chinese": "显示首个房间附近的固定裁切区域；取消勾选可浏览整图预览。"
+  },
+  "GeneratorFitPreview": {
+    "English": "Fit preview",
+    "Chinese": "适应窗口"
+  },
+  "GeneratorFitPreviewHelp": {
+    "English": "Fit the preview to the window",
+    "Chinese": "恢复整张预览，适应当前窗口"
+  },
+  "GeneratorZoomIn": {
+    "English": "Zoom in",
+    "Chinese": "放大预览"
+  },
+  "GeneratorZoomOut": {
+    "English": "Zoom out",
+    "Chinese": "缩小预览"
+  },
+  "GeneratorNavigationHint": {
+    "English": "Wheel: zoom · Drag: pan",
+    "Chinese": "滚轮缩放 · 拖动平移"
+  },
+  "GeneratorZoomHelp": {
+    "English": "Zoom is relative to fit and only affects the preview, not the map.",
+    "Chinese": "缩放比例以适应窗口为基准，仅改变预览，不改变地图尺寸。"
+  },
+  "GeneratorPreviewNavigation": {
+    "English": "Map preview navigation",
+    "Chinese": "地图预览导航"
+  },
+  "GeneratorExactValueHelp": {
+    "English": "Enter an exact value; the slider's range and steps still apply.",
+    "Chinese": "可直接输入精确数值，仍遵循原滑块的范围和档位。"
+  },
+  "ModuleConnectionsTitle": {
+    "English": "Module connections",
+    "Chinese": "模块连接点"
+  },
+  "ModuleConnectionsList": {
+    "English": "Connections",
+    "Chinese": "连接点列表"
+  },
+  "ModuleConnectionId": {
+    "English": "Connection ID",
+    "Chinese": "连接点编号"
+  },
+  "ModuleConnectionKind": {
+    "English": "Connection type",
+    "Chinese": "连接类型"
+  },
+  "ModuleConnectionEdge": {
+    "English": "Boundary direction",
+    "Chinese": "边界方向"
+  },
+  "ModuleConnectionWidth": {
+    "English": "Opening width",
+    "Chinese": "通路宽度"
+  },
+  "ModuleConnectionNew": {
+    "English": "New connection",
+    "Chinese": "新建连接点"
+  },
+  "ModuleConnectionRemove": {
+    "English": "Remove connection",
+    "Chinese": "删除连接点"
+  },
+  "ModuleConnectionNorth": {
+    "English": "North",
+    "Chinese": "北"
+  },
+  "ModuleConnectionEast": {
+    "English": "East",
+    "Chinese": "东"
+  },
+  "ModuleConnectionSouth": {
+    "English": "South",
+    "Chinese": "南"
+  },
+  "ModuleConnectionWest": {
+    "English": "West",
+    "Chinese": "西"
+  },
+  "ModuleConnectionNumbers": {
+    "English": "Enter integer coordinates and an opening width.",
+    "Chinese": "请输入整数坐标和通路宽度。"
+  },
+  "ModuleConnectionEmpty": {
+    "English": "Paint a module before defining connections.",
+    "Chinese": "请先绘制模块内容，再定义连接点。"
+  },
+  "ModuleConnectionBounds": {
+    "English": "Module bounds exceed the editor limit.",
+    "Chinese": "模块范围超出编辑器限制。"
+  },
+  "ModuleConnectionLimit": {
+    "English": "Unsupported connections or more than 64 openings.",
+    "Chinese": "连接点格式不受支持，或开口数量超过 64。"
+  },
+  "ModuleConnectionCells": {
+    "English": "Module contains duplicate cells.",
+    "Chinese": "模块包含重复单元格。"
+  },
+  "ModuleConnectionFields": {
+    "English": "Use unique connection IDs, valid types and widths from 1 to 64.",
+    "Chinese": "请使用不重复的连接点编号、有效类型及 1～64 的通路宽度。"
+  },
+  "ModuleJoinSaveFirst": {
+    "English": "Save module connections before joining modules.",
+    "Chinese": "请先为对象定义连接点并保存，再进行模块拼接。"
+  },
+  "ModuleJoinName": {
+    "English": "Invalid module name.",
+    "Chinese": "模块名称无效。"
+  },
+  "ModuleJoinMismatch": {
+    "English": "Choose opposite connections with the same type and width.",
+    "Chinese": "请选择方向相对、类型及宽度一致的连接点。"
+  },
+  "ModuleJoinBoundary": {
+    "English": "Joined modules extend outside the map.",
+    "Chinese": "拼接后的模块超出地图边界。"
+  },
+  "ModuleJoinOverlap": {
+    "English": "Module footprints overlap.",
+    "Chinese": "模块占地范围重叠。"
+  },
+  "ModuleJoinLimit": {
+    "English": "Preview at most 1,000,000 module cells at once.",
+    "Chinese": "单次拼接预览最多支持 1,000,000 个模块占地单元格。"
+  },
+  "ModuleJoinGround": {
+    "English": "The connection would misalign ground tiles. Use even ground coordinates and compatible module sizes.",
+    "Chinese": "此连接会导致地面素材错位，请使用偶数地面坐标及尺寸兼容的模块。"
+  },
+  "ModuleJoinOccupied": {
+    "English": "Module footprint contains existing content at ({0}, {1}). Choose an empty area.",
+    "Chinese": "模块占地内的 ({0}, {1}) 已有内容，请选择空白区域。"
+  },
+  "ModuleJoinFailed": {
+    "English": "Module placement failed.",
+    "Chinese": "模块放置失败。"
+  },
+  "ModuleJoinBlocked": {
+    "English": "The joined passage is blocked.",
+    "Chinese": "拼接后的接缝通路被阻塞。"
+  },
+  "ModuleJoinStale": {
+    "English": "The map changed after the module preview. Generate a fresh preview.",
+    "Chinese": "地图已在预览后发生变化，请重新生成拼接预览。"
+  },
+  "ModuleJoinMapPreview": {
+    "English": "Map preview",
+    "Chinese": "地图预览"
+  },
+  "ModuleJoinPreviewRequired": {
+    "English": "Generate a preview before applying.",
+    "Chinese": "请先生成预览，再应用到地图。"
+  },
+  "ModuleJoinApply": {
+    "English": "Apply to map",
+    "Chinese": "应用到地图"
+  },
+  "ModuleJoinInstances": {
+    "English": "Too many stamp instances.",
+    "Chinese": "地图中的对象实例数量已达上限。"
+  },
+  "ShandaFormat": {
+    "English": "Shanda format (.WZL+.WZX/.WIL+.WIX)",
+    "Chinese": "盛大格式 (.WZL+.WZX/.WIL+.WIX)"
+  },
+  "SetModels_Title": {
+    "English": "Composition Models",
+    "Chinese": "组合模型"
+  },
+  "SetModels_Search": {
+    "English": "Search composition models…",
+    "Chinese": "搜索组合模型…"
+  },
+  "SetModels_List": {
+    "English": "Composition model list",
+    "Chinese": "组合模型列表"
+  },
+  "SetModels_PlaceStamp": {
+    "English": "Place as Stamp",
+    "Chinese": "放置为印章"
+  },
+  "SetModels_Reading": {
+    "English": "Reading composition models…",
+    "Chinese": "正在读取组合模型…"
+  },
+  "SetModels_NoSetFiles": {
+    "English": "No .set files found. Choose a game folder containing Data and Map.",
+    "Chinese": "未找到 .set 文件。请选择包含 Data 和 Map 的游戏目录。"
+  },
+  "SetModels_Loaded": {
+    "English": "Loaded {0:N0} compositions from {1} · {2:N0} pieces · binding: {3}",
+    "Chinese": "已从 {1} 读取 {0:N0} 个组合模型 · {2:N0} 个部件 · 绑定：{3}"
+  },
+  "SetModels_Bound": {
+    "English": "Bound {0:N0}/{1:N0} images · decoded {2:N0} · {3}",
+    "Chinese": "已绑定 {0:N0}/{1:N0} 张图 · 解出 {2:N0} 张 · {3}"
+  },
+  "SetModels_NoMatch": {
+    "English": "No matching composition models.",
+    "Chinese": "没有匹配的组合模型。"
+  },
+  "SetModels_LoadLibs": {
+    "English": "Load game libraries in Settings to preview compositions.",
+    "Chinese": "请先在设置中加载游戏资源库以预览组合模型。"
+  },
+  "SetModels_NoImages": {
+    "English": "No resolvable images in this composition.",
+    "Chinese": "此组合模型没有可解析的图片。"
+  },
+  "SetModels_Placed": {
+    "English": "Composition placed as a stamp: {0} cells (pixel offsets folded onto the 48×32 grid)",
+    "Chinese": "已放置为印章：{0} 格（像素偏移按 48×32 网格近似折算）"
+  },
+  "SetModels_ReadError": {
+    "English": "Could not read .set files: {0}",
+    "Chinese": "无法读取 .set 文件：{0}"
+  },
+  "SetModels_PiecesOffsets": {
+    "English": "{0:N0} pieces · {1:N0} with images · {2}×{3}px offsets",
+    "Chinese": "{0:N0} 个部件 · {1:N0} 个含图 · 偏移范围 {2}×{3}px"
+  },
+  "SetModels_RemoveBlack": {
+    "English": "Remove black background",
+    "Chinese": "去黑底"
+  },
+  "SetModels_Import": {
+    "English": "Import SET",
+    "Chinese": "导入 SET"
+  },
+  "SetModels_PlacedAsCells": {
+    "English": "Placed as {0} cells",
+    "Chinese": "放置后 {0} 格"
+  },
+  "SetModels_Detail": {
+    "English": "{0:N0} cells · {1:N0} images · {2}×{3} grid",
+    "Chinese": "{0:N0} 格 · {1:N0} 张图 · {2}×{3} 格范围"
+  },
+  "SetModels_ExportPng": {
+    "English": "Export PNG",
+    "Chinese": "导出 PNG"
+  },
+  "SetModels_ExportPngTitle": {
+    "English": "Choose a folder for PNG export",
+    "Chinese": "选择 PNG 导出文件夹"
+  },
+  "SetModels_Exporting": {
+    "English": "Exporting compositions as PNG…",
+    "Chinese": "正在将组合模型导出为 PNG…"
+  },
+  "SetModels_Exported": {
+    "English": "Exported {0:N0} PNG images to {1}",
+    "Chinese": "已导出 {0:N0} 张 PNG 到 {1}"
+  },
+  "SetModels_ExportNoLibs": {
+    "English": "Load game libraries in Settings before exporting compositions.",
+    "Chinese": "导出组合模型前请先在设置中加载游戏资源库。"
+  },
+  "SetModels_ExportZero": {
+    "English": "No compositions to export.",
+    "Chinese": "没有可导出的组合模型。"
+  },
+  "SetModels_ExportManifest": {
+    "English": " · manifest: composition_manifest.json + .csv",
+    "Chinese": " · 已生成分类清单 composition_manifest.json 与 .csv"
+  },
+  "SetModels_ExportAll": {
+    "English": "Export All",
+    "Chinese": "导出所有"
+  },
+  "SetModels_ZeroBased": {
+    "English": "0-based numbering",
+    "Chinese": "编号从0开始"
+  },
+  "SetModels_ZeroBasedHint": {
+    "English": "Domestic editors number .set sections from 0. Enable this to name cards and exported PNGs mir_0, mir_1, ... instead of mir_1, mir_2, ...",
+    "Chinese": "国内编辑器从 0 开始编号。勾选后卡片名与导出 PNG 命名为 mir_0、mir_1……（默认 mir_1、mir_2……）"
+  },
+  "SetModels_ExportFrames": {
+    "English": "Export light frames",
+    "Chinese": "导出灯光动画帧"
+  },
+  "SetModels_ExportFramesHint": {
+    "English": "For compositions with animated lights, also write frame_00.png, frame_01.png ... into a <name>_frames folder.",
+    "Chinese": "含动态灯光的组合会额外在 <名称>_frames 文件夹中写出 frame_00.png、frame_01.png……"
+  },
+  "Existing categories": {
+    "English": "Existing categories",
+    "Chinese": "已有分类（不扫地图）"
+  },
+  "Reading existing categories…": {
+    "English": "Reading existing categories…",
+    "Chinese": "正在读取已有分类…"
+  },
+  "ExportClassicMap": {
+    "English": "Save as classic Mir2 .map…",
+    "Chinese": "另存为盛大原版 .map…"
+  },
+  "ExportClassicMapHint": {
+    "English": "Write the 52-byte header + 12-byte-per-cell layout that game clients, 996 servers and domestic editors can open.",
+    "Chinese": "导出 52 字节头 + 12 字节/格的盛大原版格式，游戏客户端、996 服务端与国内编辑器均可打开。"
+  },
+  "ClassicMap_Preserve": {
+    "English": "Preserve classic .map format on save",
+    "Chinese": "保存时保留盛大原版 .map 格式"
+  },
+  "ClassicMap_PreserveHint": {
+    "English": "Keep Shanda/Wemade client maps readable by domestic editors and game servers. Turn off only when you need Crystal-only features.",
+    "Chinese": "保持盛大/Wemade 客户端地图可被国内编辑器与游戏服务端读取。仅在需要 Crystal 专有功能时关闭。"
+  },
+  "ClassicMap_Unsupported": {
+    "English": "This map uses features that a classic Mir2 .map cannot store",
+    "Chinese": "当前地图包含盛大原版 .map 无法保存的内容（多层前景、贴图动画或素材库编号超过 255）。请在「设置」中关闭『保存时保留盛大原版 .map 格式』后再保存。"
+  },
+  "ClassicMap_Saved": {
+    "English": "Saved classic Mir2 map {0}",
+    "Chinese": "已保存盛大原版地图 {0}"
+  }
 }
