@@ -39,6 +39,8 @@ namespace CrystalStudio.Formats
         private byte[] Bytes = [];
         public bool IsCrystalVersion1 => Bytes.Length >= 8 && Bytes[0] == 1 && Bytes[1] == 0 &&
             Bytes[2] == (byte)'C' && Bytes[3] == (byte)'#';
+        /// <summary>Full original bytes when the file was decoded by LoadMapType0 (classic Mir2 layout).</summary>
+        public byte[]? ClassicImage { get; private set; }
 
         public MapReader(string FileName)
         {
@@ -114,6 +116,7 @@ namespace CrystalStudio.Formats
             }
 
             //if it's none of the above load the default old school format
+            ClassicImage = Bytes;
             LoadMapType0();
 
         }

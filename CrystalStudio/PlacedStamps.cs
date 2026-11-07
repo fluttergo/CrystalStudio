@@ -164,6 +164,19 @@ internal static class StampMetadata
         if(compressed.Length>Limit)throw new InvalidDataException("Placed-object metadata is too large.");
         var data=compressed.ToArray();w.Write(data);w.Write((long)data.Length);w.Write(SHA256.HashData(data));w.Write(magic);
     }
+    /// <summary>
+    /// Classic .map files cannot carry the trailing stamp metadata block, so Save stores the
+    /// full Crystal copy in a sidecar. Try that when the main file has no metadata of its own.
+    /// </summary>
+    public static void ReadWithSidecar(string path, MapDocument d)
+    {
+        Read(path, d);
+        if (d.MetadataWarning == null && d.PlacedStamps.Count > 0) return;
+        string side = MapDocument.ClassicSidecar(path);
+        if (!File.Exists(side)) return;
+        try { Read(side, d); }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException) { }
+    }
     public static void Read(string path,MapDocument d)
     {
         using var r=new BinaryReader(File.OpenRead(path));if(r.BaseStream.Length<56)return;

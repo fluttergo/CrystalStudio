@@ -41,6 +41,9 @@ internal static class StudioJson
 
 [JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Metadata)]
 [JsonSerializable(typeof(LibrarySettings))]
+[JsonSerializable(typeof(SetImageBindingFile))]
+[JsonSerializable(typeof(List<SetBindingSegment>))]
+[JsonSerializable(typeof(Dictionary<string, int[]>))]
 [JsonSerializable(typeof(AttachedAssetManifest))]
 [JsonSerializable(typeof(AiSettings))]
 [JsonSerializable(typeof(AiEndpointSettings))]

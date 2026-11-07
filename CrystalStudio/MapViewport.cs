@@ -76,6 +76,28 @@ public sealed partial class MapViewport : SceneControl
         if(Document.PlaceStamp(picked.Cells,targetX,targetY,picked.Name,History,InvalidateCell)==null){Message?.Invoke(LocalText.T("Placement blocked \u00b7 Stamp data cannot be placed"));return false;}
         History.Commit();CancelPickup();Changed?.Invoke();Message?.Invoke(LocalText.T("Stamp cloned"));return true;
     }
+    /// <summary>
+    /// Place a resolved .set composition (or any stamp cell list) at the map cell under a
+    /// screen point. Used by drag-and-drop from the Composition Models panel so a composite
+    /// model can be dropped directly onto the open map, exactly like a model-library stamp.
+    /// </summary>
+    public bool DropSetComposition(IReadOnlyList<StampCell> cells, string name, Point screenPoint)
+    {
+        if (cells == null || cells.Count == 0) return false;
+        if (!AllowEdit()) return false;
+        var (x, y) = CellAt(screenPoint);
+        var placement = Document.CheckStampPlacement(cells, x, y);
+        if (!placement.Allowed) { Message?.Invoke(LocalText.Placement(placement)); return false; }
+        var placed = Document.PlaceStamp(cells, x, y, name, History, InvalidateCell);
+        if (placed != null)
+        {
+            Changed?.Invoke();
+            AssetUsed?.Invoke();
+            Message?.Invoke(LocalText.Format("{0} placed", name));
+        }
+        else Message?.Invoke(LocalText.T("Placement blocked · Stamp data or instance limit prevents placement"));
+        return placed != null;
+    }
     public bool GridVisible { get; set; } = true;
     public bool LowCollisionVisible { get; set; }
     public bool HighCollisionVisible { get; set; }

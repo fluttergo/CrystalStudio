@@ -220,7 +220,7 @@ public sealed class EditorReliabilityTests
         for (int y = 0; y < 50; y++) for (int x = 0; x < 50; x++)
             document.Set(x, y, new Cell { BackImage = (blocked ? 0x60000000 : 0) | 1, BackLibrary = 777 });
         Assert.Empty(MapCheck.Run(document, null).Issues);
-        var result = MapCheck.Run(document, new Dictionary<int, CrystalLibrary>());
+        var result = MapCheck.Run(document, new Dictionary<int, IAssetLibrary>());
         Assert.Equal(2500, result.Total); Assert.Equal(1000, result.Issues.Count);
     }
 

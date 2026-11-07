@@ -10,7 +10,7 @@ internal sealed class ObjectExtractionWindow : EditorWindow
     private readonly AssetSourceFormat assetFormat;
     private readonly Func<AiSettings> aiSettings;
     private readonly AiClient aiClient;
-    private readonly ComboBox scope=new(){ItemsSource=new[]{"Current map","Current selection","Map directory"},SelectedIndex=0,MinWidth=150};
+    private readonly ComboBox scope=new(){ItemsSource=new[]{"Current map","Current selection","Map directory","Existing categories"},SelectedIndex=0,MinWidth=150};
     private readonly TextBox directory=new(){Watermark=LocalText.T("Map directory"),MinWidth=180};
     private readonly TextBox resource=new(){Watermark=LocalText.T("Resource folder"),MinWidth=180};
     private readonly TextBox search=new(){Watermark=LocalText.T("Search candidates or source"),MinWidth=170};
@@ -34,6 +34,8 @@ internal sealed class ObjectExtractionWindow : EditorWindow
     private bool running,closed,refreshing;
     private int page;
     private const int PageSize=48;
+    private Point extractionDragStart;
+    private ExtractionCandidate? extractionDragCandidate;
     internal ObjectExtractionWindow(Func<ExtractionInput> current,string? resourceFolder,string indexPath,Action saved,
         AssetSourceFormat assetFormat = AssetSourceFormat.Default, Func<AiSettings>? aiSettings = null, AiClient? aiClient = null)
     {
@@ -160,9 +162,11 @@ internal sealed class ObjectExtractionWindow : EditorWindow
         try
         {
             StudioLog.Info("Extraction.Scan",$"Starting; Scope={scope.SelectedIndex}; Resources={resource.Text}; MapDirectory={directory.Text}; Format={assetFormat}");
-            if(string.IsNullOrWhiteSpace(resource.Text))throw new InvalidDataException("Choose a resource folder.");
-            IEnumerable<ExtractionInput> inputs;
-            if(scope.SelectedIndex==2)
+            bool catalogue = scope.SelectedIndex == 3;
+            if(!catalogue && string.IsNullOrWhiteSpace(resource.Text))throw new InvalidDataException("Choose a resource folder.");
+            IEnumerable<ExtractionInput> inputs = [];
+            if(catalogue) status.Text=LocalText.T("Reading existing categories…");
+            else if(scope.SelectedIndex==2)
             {
                 if(!Directory.Exists(directory.Text))throw new DirectoryNotFoundException(LocalText.T("Choose a map directory."));
                 string folder=Path.GetFullPath(directory.Text!);
@@ -175,11 +179,20 @@ internal sealed class ObjectExtractionWindow : EditorWindow
                 inputs=[input with{Snapshot=ExtractionContent.Snapshot(input.Snapshot!),Selection=scope.SelectedIndex==1?input.Selection:null}];
             }
             running=true;operation.Dispose();operation=new();UpdateState();details.IsEnabled=false;progress.IsIndeterminate=true;
-            Review=null;session=null;await ClearPreviews();RefreshCategories();assets?.Dispose();string folderPath=resource.Text!;
-            assets=await Task.Run(()=>AssetStore.Load(folderPath,assetFormat),operation.Token);
-            var service=new ObjectExtractionService(indexPath,assets);
+            Review=null;session=null;await ClearPreviews();RefreshCategories();assets?.Dispose();assets=null;string folderPath=resource.Text??"";
             var updates=new Progress<ExtractionProgress>(p=>{if(!closed)status.Text=LocalText.Format("{0} · {1:N0} maps · {2:N0} candidates · {3:N0} occurrences\n{4}",LocalText.T(p.Phase),p.Maps,p.Candidates,p.Occurrences,p.Source);});
-            var result=await service.ScanAsync(inputs,operation.Token,updates);
+            // Catalogue mode can list the existing catalogue even without a client resource
+            // folder; previews are simply skipped until one is configured.
+            if(!catalogue||!string.IsNullOrWhiteSpace(folderPath))
+                assets=await Task.Run(()=>AssetStore.Load(folderPath,assetFormat),operation.Token);
+            ExtractionSession result;
+            if(catalogue)
+                result=await Task.Run(()=>ObjectExtractionCatalogue.Load(indexPath,operation.Token,updates),operation.Token);
+            else
+            {
+                var service=new ObjectExtractionService(indexPath,assets!);
+                result=await service.ScanAsync(inputs,operation.Token,updates);
+            }
             if(closed)return;session=result;Review=new(result.Candidates);page=0;RefreshCategories();
             StudioLog.Info("Extraction.Scan",$"Completed; Maps={result.Sources.Count}; Candidates={result.Candidates.Count}; Warnings={result.Warnings.Count}");
             foreach(var warning in result.Warnings)StudioLog.Warning("Extraction.Scan",warning);
@@ -240,6 +253,27 @@ internal sealed class ObjectExtractionWindow : EditorWindow
             if(!requested&&!closed&&image.IsEffectivelyVisible&&e.EffectiveViewport.Intersects(new Rect(image.Bounds.Size)))
             {requested=true;Track(Thumbnail(image,c));}
         };
+        // Drag source: a left-click drag carries the candidate onto the open map so it can
+        // be composed into a new map (drop handled in MainWindow.SetCompositions).
+        panel.Cursor=new Cursor(StandardCursorType.Hand);
+        panel.PointerPressed+=(_,e)=>
+        {
+            if(e.GetCurrentPoint(panel).Properties.IsLeftButtonPressed){extractionDragStart=e.GetPosition(panel);extractionDragCandidate=c;}
+        };
+        panel.PointerMoved+=(_,e)=>
+        {
+            if(extractionDragCandidate==null)return;
+            if(!e.GetCurrentPoint(panel).Properties.IsLeftButtonPressed){extractionDragCandidate=null;return;}
+            var pos=e.GetPosition(panel);
+            if(Math.Abs(pos.X-extractionDragStart.X)>4||Math.Abs(pos.Y-extractionDragStart.Y)>4)
+            {
+                var payload=extractionDragCandidate;extractionDragCandidate=null;
+                var data=new DataObject();data.Set(ExtractionDrag.Candidate,payload);
+                _=DragDrop.DoDragDrop(e,data,DragDropEffects.Copy);
+            }
+        };
+        panel.PointerReleased+=(_,_)=>{extractionDragCandidate=null;};
+        panel.PointerCaptureLost+=(_,_)=>{extractionDragCandidate=null;};
         return panel;
     }
     private void Track(Task task){previewTasks.Add(task);_ = task.ContinueWith(_=>Dispatcher.UIThread.Post(()=>previewTasks.Remove(task)),TaskScheduler.Default);}
