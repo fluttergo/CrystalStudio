@@ -40,6 +40,15 @@ public sealed partial class MapDocument
         Width = width; Height = height;
     }
     public AssetSourceFormat SourceFormat { get; internal set; }
+    /// <summary>
+    /// Original bytes when this document was opened from a classic Mir2 .map. Kept so Save can
+    /// write the same layout back (game clients and domestic editors cannot read Crystal maps)
+    /// and so untouched cells stay byte-for-byte identical.
+    /// </summary>
+    public byte[]? ClassicSourceImage { get; internal set; }
+    /// <summary>Set false to force the Crystal editing format on the next save.</summary>
+    public bool PreserveClassicFormat { get; set; } = true;
+    internal static string ClassicSidecar(string path) => path + ".crystal";
     private readonly Dictionary<int, Cell> cells = [];
     private readonly Dictionary<int, Cell> presentationCells = [];
     private static readonly Cell empty = new();
@@ -64,6 +73,8 @@ public sealed partial class MapDocument
         var legacy = new MapReader(path);
         if (!MapDimensions.CanRoundTrip(legacy.Width, legacy.Height)) throw new InvalidDataException("Invalid map dimensions.");
         var d = new MapDocument(legacy.Width, legacy.Height) { SourceFormat = format };
+        byte[]? classic = legacy.ClassicImage;
+        d.ClassicSourceImage = classic != null && LegacyMapWriter.IsClassicImage(classic, d.Width, d.Height) ? classic : null;
         bool sanxiuIds = format == AssetSourceFormat.Sanxiu && legacy.IsCrystalVersion1;
         for (int x = 0; x < d.Width; x++) for (int y = 0; y < d.Height; y++)
         {
@@ -76,33 +87,83 @@ public sealed partial class MapDocument
             }
             d.Set(x, y, c);
         }
-        StampMetadata.Read(path, d);
+        StampMetadata.ReadWithSidecar(path, d);
         return d;
     }
     public void Save(string path) => SaveCore(path, true);
     internal void SaveNew(string path) => SaveCore(path, false);
+
+    /// <summary>Export a classic Mir2 .map that game clients, 996 and domestic editors can load.</summary>
+    public void SaveClassic(string path)
+    {
+        MapDimensions.Validate(Width, Height);
+        byte[]? source = ClassicSourceImage is { } image && LegacyMapWriter.IsClassicImage(image, Width, Height)
+            ? image : null;
+        byte[] header = source != null ? source[..LegacyMapWriter.HeaderSize]
+            : LegacyMapWriter.CreateHeader(path, Width, Height);
+        AtomicFile.Write(path, stream => LegacyMapWriter.Write(stream, this, header, source), backup: true);
+        if (PlacedStamps.Count > 0)
+            AtomicFile.Write(ClassicSidecar(path), WriteCrystal);
+        else TryDeleteSidecar(path);
+    }
+
     private void SaveCore(string path, bool overwrite)
     {
         MapDimensions.Validate(Width, Height);
+        byte[]? source = ClassicSourceImage is { } image && LegacyMapWriter.IsClassicImage(image, Width, Height)
+            ? image : null;
+        bool classic = PreserveClassicFormat && ClassicSourceImage != null;
+        // After a crop/expand the original byte image no longer matches the dimensions; still
+        // stay in the classic layout (with a freshly built header) instead of silently switching
+        // back to the Crystal editing format.
+        byte[] header = classic
+            ? source != null ? source[..LegacyMapWriter.HeaderSize] : LegacyMapWriter.CreateHeader(path, Width, Height)
+            : [];
         AtomicFile.Write(path, stream =>
         {
-            using var w = new BinaryWriter(stream, System.Text.Encoding.UTF8, leaveOpen: true);
-            w.Write((short)1); w.Write((byte)'C'); w.Write((byte)'#'); w.Write(checked((short)Width)); w.Write(checked((short)Height));
-            for (int x = 0; x < Width; x++) for (int y = 0; y < Height; y++)
-            {
-                Cell cell = Get(x, y);
-                if (SourceFormat == AssetSourceFormat.Sanxiu)
-                {
-                    cell = cell.Copy();
-                    if (cell.MiddleImage != 0 && cell.MiddleLibrary is >= 1000 and < 2000)
-                        cell.MiddleLibrary -= 1000;
-                    if (cell.Foreground is { Library: >= 2000 and < 3000 } front)
-                        cell.Foreground = front with { Library = (short)(front.Library - 2000) };
-                }
-                CellCodec.Write(w, cell, true);
-            }
-            StampMetadata.Write(w, d: this);
+            if (classic) LegacyMapWriter.Write(stream, this, header, source);
+            else WriteCrystal(stream);
         }, overwrite: overwrite, backup: overwrite);
+        if (classic)
+        {
+            // A classic .map cannot carry the trailing stamp metadata block. Keep the editor's
+            // remembered stamps in a sidecar so the map can still be edited as usual.
+            if (PlacedStamps.Count > 0) AtomicFile.Write(ClassicSidecar(path), WriteCrystal);
+            else TryDeleteSidecar(path);
+            try { ClassicSourceImage = File.ReadAllBytes(path); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { }
+        }
+        else TryDeleteSidecar(path);
+    }
+
+    private void WriteCrystal(Stream stream)
+    {
+        using var w = new BinaryWriter(stream, System.Text.Encoding.UTF8, leaveOpen: true);
+        w.Write((short)1); w.Write((byte)'C'); w.Write((byte)'#'); w.Write(checked((short)Width)); w.Write(checked((short)Height));
+        for (int x = 0; x < Width; x++) for (int y = 0; y < Height; y++)
+        {
+            Cell cell = Get(x, y);
+            if (SourceFormat == AssetSourceFormat.Sanxiu)
+            {
+                cell = cell.Copy();
+                if (cell.MiddleImage != 0 && cell.MiddleLibrary is >= 1000 and < 2000)
+                    cell.MiddleLibrary -= 1000;
+                if (cell.Foreground is { Library: >= 2000 and < 3000 } front)
+                    cell.Foreground = front with { Library = (short)(front.Library - 2000) };
+            }
+            CellCodec.Write(w, cell, true);
+        }
+        StampMetadata.Write(w, d: this);
+    }
+
+    private static void TryDeleteSidecar(string path)
+    {
+        try
+        {
+            string side = ClassicSidecar(path);
+            if (File.Exists(side)) File.Delete(side);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { }
     }
 }
 public record StampCell(int X, int Y, Cell Cell);

@@ -11,7 +11,7 @@ public record Sprite(RasterImage Bitmap, int X, int Y, int OriginalWidth = 0, in
     public int Height => OriginalHeight > 0 ? OriginalHeight : Bitmap.PixelHeight;
 }
 public readonly record struct SpriteHeader(int Width, int Height, int X, int Y);
-public sealed class CrystalLibrary
+public sealed class CrystalLibrary : IAssetLibrary
 {
     public string Path { get; }
     public int Count => offsets.Length;
@@ -105,7 +105,7 @@ public sealed class CrystalLibrary
         byte[] raw = new byte[checked(w * h * 4)]; using (var gzip = new GZipStream(new MemoryStream(r.ReadBytes(length)), CompressionMode.Decompress)) { gzip.ReadExactly(raw); if (gzip.ReadByte() != -1) throw new InvalidDataException("Unexpected sprite pixel length."); }
         var bitmap = RasterImage.Create(w, h, 96, 96, RasterFormats.Bgra32, null, raw, w * 4);  return new(bitmap, x, y);
     }
-    internal Sprite? DecodeOverview(BinaryReader reader, int index, int level, CancellationToken cancellation = default)
+    public Sprite? DecodeOverview(BinaryReader reader, int index, int level, CancellationToken cancellation = default)
     {
         cancellation.ThrowIfCancellationRequested();
         if (index < 0 || index >= Count) return null;
@@ -204,7 +204,7 @@ public sealed class CrystalLibrary
 }
 public sealed class AssetStore : IDisposable
 {
-    public Dictionary<int, CrystalLibrary> Libraries { get; } = [];
+    public Dictionary<int, IAssetLibrary> Libraries { get; } = [];
     public AssetSourceFormat Format { get; }
     private readonly ConcurrentDictionary<(int, int), Sprite> cache = [];
     private readonly ConcurrentDictionary<(int, int), byte> pending = [];
@@ -351,11 +351,12 @@ public sealed class AssetStore : IDisposable
         }
         catch (Exception ex) { StudioLog.Error("Assets.Load", ex, $"Root={root}; Format={format}"); store.Dispose(); throw; }
     }
-    private void Add(int id, string root, string relative) { string path = System.IO.Path.Combine(root, relative.Replace('\\', System.IO.Path.DirectorySeparatorChar) + ".lib"); if (File.Exists(path)) Libraries[id] = new(path); }
+    private void Add(int id, string root, string relative) { string path = System.IO.Path.Combine(root, relative.Replace('\\', System.IO.Path.DirectorySeparatorChar) + ".lib"); if (File.Exists(path)) Libraries[id] = new CrystalLibrary(path); }
     private void Register(string root)
     {
         root = DataPaths.ResolveLibraryFolder(root);
         if (Format == AssetSourceFormat.Sanxiu) { RegisterSanxiu(root); return; }
+        if (Format == AssetSourceFormat.Shanda) { RegisterShanda(root); return; }
         // IDs follow the reference editor's Crystal library table.
         string map = Directory.Exists(System.IO.Path.Combine(root, "Map")) ? System.IO.Path.Combine(root, "Map") : root;
         Add(0, map, @"WemadeMir2\Tiles"); Add(1, map, @"WemadeMir2\Smtiles"); Add(2, map, @"WemadeMir2\Objects");
@@ -391,6 +392,54 @@ public sealed class AssetStore : IDisposable
         }
         if (Libraries.Count == 0)
             throw new InvalidDataException("No Sanxiu map libraries found. Select the Data folder or its Map folder.");
+    }
+
+    // Registers Shanda/Wemade .wzl/.wzx and .wil/.wix libraries. The same artwork is registered
+    // under both the Wemade ID family (0/1/2...) and the Shanda 2012 family (100/110/120...) so
+    // that old Type-0 maps and newer Shanda maps both resolve to the right sprites.
+    private void RegisterShanda(string root)
+    {
+        var candidates = new List<string> { root };
+        string? map = DataPaths.FindMapFolder(root);
+        if (map != null)
+        {
+            candidates.Add(map);
+            candidates.Add(System.IO.Path.Combine(map, "ShandaMir2"));
+            candidates.Add(System.IO.Path.Combine(map, "WemadeMir2"));
+        }
+        candidates.Add(System.IO.Path.Combine(root, "ShandaMir2"));
+        candidates.Add(System.IO.Path.Combine(root, "WemadeMir2"));
+        candidates.Add(System.IO.Path.GetFullPath(System.IO.Path.Combine(root, "..")));
+        var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var directory in candidates)
+        {
+            if (!Directory.Exists(directory) || !visited.Add(System.IO.Path.GetFullPath(directory))) continue;
+            foreach (string indexFile in Directory.EnumerateFiles(directory))
+            {
+                string ext = System.IO.Path.GetExtension(indexFile);
+                if (ext is not (".wzx" or ".wix")) continue;
+                string name = System.IO.Path.GetFileNameWithoutExtension(indexFile);
+                // Known named libraries (Tiles/Objects/...): register under both Wemade and Shanda ID families.
+                if (FlatClientLibraries.TryMapIds(name, out int wemadeId, out int shandaId))
+                {
+                    IAssetLibrary? library = AssetLibraryFactory.TryCreate(System.IO.Path.Combine(directory, name));
+                    if (library == null) continue;
+                    if (wemadeId >= 0) Libraries[wemadeId] = library;
+                    if (shandaId >= 0) Libraries[shandaId] = library;
+                    continue;
+                }
+                // Numeric libraries: Shanda/Wemade clients name libraries 0.wzl..255.wzl (a byte index).
+                // Register such files directly under their numeric library ID so all 256 slots resolve.
+                if (int.TryParse(name, out int numericId) && numericId is >= 0 and <= 255)
+                {
+                    IAssetLibrary? library = AssetLibraryFactory.TryCreate(System.IO.Path.Combine(directory, name));
+                    if (library == null) continue;
+                    Libraries[numericId] = library;
+                }
+            }
+        }
+        if (Libraries.Count == 0)
+            throw new InvalidDataException("No Shanda (.wzl/.wzx/.wil/.wix) libraries found. Select the Data folder or its Map folder.");
     }
 
     private static bool TryMapId(string name, string prefix, int baseId, out int id)

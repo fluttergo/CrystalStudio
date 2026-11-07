@@ -204,3 +204,11 @@ internal sealed class ExtractionReview
         Change(remaining.Append(merged).ToList());
     }
 }
+
+// Shared clipboard format for carrying an ExtractionCandidate from the extraction window
+// onto the main map editor (drop handled in MainWindow.SetCompositions). A single source
+// of truth keeps the drag source and drop target in sync.
+internal static class ExtractionDrag
+{
+    public const string Candidate = "application/x-crystal-extraction-candidate";
+}

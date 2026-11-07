@@ -10,7 +10,7 @@ internal sealed record MapCheckResult(List<MapIssue> Issues, int Total);
 
 internal static class MapCheck
 {
-    internal static MapCheckResult Run(MapDocument document, IReadOnlyDictionary<int, CrystalLibrary>? libraries,
+    internal static MapCheckResult Run(MapDocument document, IReadOnlyDictionary<int, IAssetLibrary>? libraries,
         CancellationToken cancellation = default)
     {
         var issues = new List<MapIssue>();

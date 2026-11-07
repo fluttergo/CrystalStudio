@@ -149,6 +149,7 @@ public partial class MainWindow : EditorWindow
             {
 
                 settings = settingsStore.Load();
+                ApplySetNumbering(settings.ZeroBasedSetNumbers);
 
                 if (string.IsNullOrWhiteSpace(settings.LibraryFolder)) OpenSettings(true);
 
@@ -226,7 +227,11 @@ public partial class MainWindow : EditorWindow
         for (int i = 0; i < c.ForegroundImages.Count; i++)
         {
             var f = c.ForegroundImages[i];
-            groups.Add((LocalText.Format("Object {0}", i + 1), LocalText.Format("{0}\nFrames {1} \u00b7 Tick {2} \u00b7 Flag {3}", ImageInfo(f.Library, f.Image & 0x7FFF), f.Frames, f.Tick, LocalText.T((f.Image & 0x8000) != 0 ? "on" : "off")), LibraryInfo(f.Library)));
+            // Front.Frames packs the additive blend flag into bit 0x80; show the plain
+            // animation length so an animated light reads "10+blend", not "138 frames".
+            string framesText = (f.Frames & 0x80) != 0
+                ? (f.Frames & 0x7F) + "+blend" : (f.Frames & 0x7F).ToString();
+            groups.Add((LocalText.Format("Object {0}", i + 1), LocalText.Format("{0}\nFrames {1} \u00b7 Tick {2} \u00b7 Flag {3}", ImageInfo(f.Library, f.Image & 0x7FFF), framesText, f.Tick, LocalText.T((f.Image & 0x8000) != 0 ? "on" : "off")), LibraryInfo(f.Library)));
         }
         groups.Add(("Metadata", LocalText.Format("Light {0} \u00b7 Door {1} \u00b7 Offset {2}", c.Light, c.Door, c.DoorOffset), "Light Value, Door Index and Door Offset"));
         groups.Add(("Tile Animation", LocalText.Format("Image {0} \u00b7 Offset {1} \u00b7 Frames {2}", c.TileAnimation, c.TileOffset, c.TileFrames), "Tile Animationation image, offset and frame count"));
@@ -364,6 +369,7 @@ public partial class MainWindow : EditorWindow
         ConfigureResponsivePalette(palette);
 
         docking.Add("Palette", CreatePaletteTabs(palette), Dock.Right, 3);
+        docking.Add(LocalText.T("Composition Models"), CreateSetCompositionPanel(), Dock.Right, 3.5);
 
         active.Margin = new Thickness(10);
 
@@ -506,6 +512,30 @@ public partial class MainWindow : EditorWindow
 
     private void SaveAsClick(object s, RoutedEventArgs e) { if (!busy) SaveMap(true); }
 
+    private void ExportClassicMapClick(object s, RoutedEventArgs e)
+    {
+        if (busy || activeMap?.IsStamp == true) return;
+        var picker = new SaveFileDialog
+        {
+            Filter = "Classic Mir2 map (*.map)|*.map",
+            FileName = mapPath == null ? "0.map" : Path.GetFileName(mapPath),
+            InitialDirectory = mapPath == null ? MapCreationPaths.DefaultDirectory(settings.LibraryFolder) : Path.GetDirectoryName(mapPath),
+            DefaultExt = ".map", AddExtension = true, OverwritePrompt = true
+        };
+        if (picker.ShowDialog(this) != true) return;
+        try
+        {
+            Viewport.Document.SaveClassic(picker.FileName);
+            Status.Text = LocalText.Format("Saved classic Mir2 map {0}", Path.GetFileName(picker.FileName));
+            StudioLog.Info("Map.ExportClassic", $"Path={picker.FileName}; Size={Viewport.Document.Width}x{Viewport.Document.Height}");
+        }
+        catch (Exception exception)
+        {
+            StudioLog.Error("Map.ExportClassic", exception, $"Path={picker.FileName}");
+            MessageBox.Show(this, exception.Message, LocalText.T("Export failed"));
+        }
+    }
+
     private void DarkModeClick(object s, RoutedEventArgs e) => ThemeService.SetDarkOverride(DarkModeToggle.IsChecked);
 
     private bool SaveMap(bool saveAs = false)
@@ -524,6 +554,7 @@ public partial class MainWindow : EditorWindow
         try
         {
             if (mapPath == null && activeMap?.KeepSourceFormat != true) Viewport.Document.SourceFormat = settings.AssetFormat;
+            Viewport.Document.PreserveClassicFormat = settings.PreserveOriginalMapFormat;
             if (overwrite) Viewport.Document.Save(target); else Viewport.Document.SaveNew(target);
             mapPath = target; RememberMap(target); Viewport.History.Saved();
             if (activeMap != null) ForgetRecovery(activeMap);
@@ -545,7 +576,7 @@ public partial class MainWindow : EditorWindow
 
     {
 
-        var dialog = new SettingsWindow(settingsStore.Load(), async (root, format, ai) =>
+        var dialog = new SettingsWindow(settingsStore.Load(), async (root, format, ai, preserveClassic) =>
 
         {
 
@@ -553,7 +584,7 @@ public partial class MainWindow : EditorWindow
             var next = !string.IsNullOrWhiteSpace(root) && (librariesChanged || assets == null)
                 ? await Task.Run(() => AssetStore.Load(root, format)) : null;
 
-            var updated = settingsStore.Load() with { LibraryFolder = string.IsNullOrWhiteSpace(root) ? null : DataPaths.GetClientRoot(root), AssetFormat = format, Ai = ai };
+            var updated = settingsStore.Load() with { LibraryFolder = string.IsNullOrWhiteSpace(root) ? null : DataPaths.GetClientRoot(root), AssetFormat = format, Ai = ai, PreserveOriginalMapFormat = preserveClassic };
 
             try { await Task.Run(() => settingsStore.Save(updated)); }
 
@@ -568,6 +599,7 @@ public partial class MainWindow : EditorWindow
             if (closed) { next.Dispose(); return; }
             InstallLibraries(next);
             await RefreshMapBrowserAsync(updated.LibraryFolder);
+            await RefreshSetCompositionsAsync(updated.LibraryFolder);
 
         }, firstSetup)
 
@@ -596,6 +628,7 @@ public partial class MainWindow : EditorWindow
         catch { next.Dispose(); throw; }
         if (closed) { next.Dispose(); return; }
         InstallLibraries(next);
+        await RefreshSetCompositionsAsync(root);
 
     }
 
@@ -856,7 +889,7 @@ public partial class MainWindow : EditorWindow
 
     private bool PatternPalette => Viewport.Tool == EditorTool.Brush && AssetLayout(Viewport.Library, Viewport.Layer) != TilePatternLayout.None;
 
-    private List<int> FilteredIndices(CrystalLibrary lib)
+    private List<int> FilteredIndices(IAssetLibrary lib)
 
     {
 

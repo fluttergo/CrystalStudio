@@ -7,9 +7,9 @@ public sealed class SettingsWindow : EditorWindow
 
     public SettingsWindow(string? currentFolder, AssetSourceFormat currentFormat,
         Func<string, AssetSourceFormat, Task> apply, bool firstSetup = false)
-        : this(new LibrarySettings(currentFolder, AssetFormat: currentFormat), (folder, format, _) => apply(folder, format), firstSetup) { }
+        : this(new LibrarySettings(currentFolder, AssetFormat: currentFormat), (folder, format, _, _) => apply(folder, format), firstSetup) { }
 
-    public SettingsWindow(LibrarySettings current, Func<string, AssetSourceFormat, AiSettings, Task> apply, bool firstSetup = false)
+    public SettingsWindow(LibrarySettings current, Func<string, AssetSourceFormat, AiSettings, bool, Task> apply, bool firstSetup = false)
     {
         string? currentFolder = current.LibraryFolder;
         var currentFormat = current.AssetFormat;
@@ -34,10 +34,17 @@ public sealed class SettingsWindow : EditorWindow
         panel.Children.Add(new TextBlock { Text = LocalText.T("Libraries load from Data; maps are listed from Map. Legacy Data selections are converted to the client root."), TextWrapping = TextWrapping.Wrap, Margin = new(0, 5, 0, 5) });
         panel.Children.Add(new TextBlock { Text = LocalText.T("Asset format"), Margin = new(0, 14, 0, 5) });
         var defaultFormat = new RadioButton { Name = "DefaultAssetFormat", GroupName = "AssetSourceFormat",
-            Content = LocalText.T("Default (Crystal libraries)"), IsChecked = currentFormat != AssetSourceFormat.Sanxiu };
+            Content = LocalText.T("Default (Crystal libraries)"), IsChecked = currentFormat is not (AssetSourceFormat.Sanxiu or AssetSourceFormat.Shanda) };
         var sanxiuFormat = new RadioButton { Name = "SanxiuAssetFormat", GroupName = "AssetSourceFormat",
             Content = LocalText.T("不紧张\\三修格式"), IsChecked = currentFormat == AssetSourceFormat.Sanxiu };
-        panel.Children.Add(defaultFormat); panel.Children.Add(sanxiuFormat);
+        var shandaFormat = new RadioButton { Name = "ShandaAssetFormat", GroupName = "AssetSourceFormat",
+            Content = LocalText.T("Shanda format (.WZL+.WZX/.WIL+.WIX)"), IsChecked = currentFormat == AssetSourceFormat.Shanda };
+        panel.Children.Add(defaultFormat); panel.Children.Add(sanxiuFormat); panel.Children.Add(shandaFormat);
+        var preserveClassic = new CheckBox { Name = "PreserveClassicMapFormat", Content = LocalText.T("Preserve classic .map format on save"),
+            IsChecked = current.PreserveOriginalMapFormat, Margin = new(0, 10, 0, 0) };
+        panel.Children.Add(preserveClassic);
+        panel.Children.Add(new TextBlock { Text = LocalText.T("Keep Shanda/Wemade client maps readable by domestic editors and game servers. Turn off only when you need Crystal-only features."),
+            TextWrapping = TextWrapping.Wrap, FontSize = 11, Opacity = 0.75, Margin = new(20, 3, 0, 14) });
         var ai = new AiSettingsPanel(current.Ai ?? new());
         panel.Children.Add(new Expander { Name = "AiSettings", Header = LocalText.T("AI settings"), Content = ai,
             HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new(0, 14, 0, 14) });
@@ -74,13 +81,20 @@ public sealed class SettingsWindow : EditorWindow
         };
         save.Click += async (_, _) =>
         {
-            error.IsVisible = false; saving = true; save.IsEnabled = false; browse.IsEnabled = false; cancel.IsEnabled = false; languages.IsEnabled = false; defaultFormat.IsEnabled = false; sanxiuFormat.IsEnabled = false; save.Content = LocalText.T("Checking Libraries\u2026");
-            try { var nextAi = ai.Read(); ai.IsEnabled = false; await apply(folder.Text ?? "", sanxiuFormat.IsChecked == true ? AssetSourceFormat.Sanxiu : AssetSourceFormat.Default, nextAi); saving = false; DialogResult = true; }
+            error.IsVisible = false; saving = true; save.IsEnabled = false; browse.IsEnabled = false; cancel.IsEnabled = false; languages.IsEnabled = false; defaultFormat.IsEnabled = false; sanxiuFormat.IsEnabled = false; shandaFormat.IsEnabled = false; preserveClassic.IsEnabled = false; save.Content = LocalText.T("Checking Libraries\u2026");
+            try
+            {
+                var nextAi = ai.Read(); ai.IsEnabled = false;
+                AssetSourceFormat chosen = shandaFormat.IsChecked == true ? AssetSourceFormat.Shanda
+                    : sanxiuFormat.IsChecked == true ? AssetSourceFormat.Sanxiu
+                    : AssetSourceFormat.Default;
+                await apply(folder.Text ?? "", chosen, nextAi, preserveClassic.IsChecked == true); saving = false; DialogResult = true;
+            }
             catch (Exception ex)
             {
                 StudioLog.Error("Settings.Save",ex,$"Root={folder.Text}");
                 error.Text = (ex.Message); error.IsVisible = true;
-                saving = false; ai.IsEnabled = true; save.IsEnabled = true; browse.IsEnabled = true; cancel.IsEnabled = true; languages.IsEnabled = true; defaultFormat.IsEnabled = true; sanxiuFormat.IsEnabled = true; save.Content = (firstSetup ? LocalText.T("Save and Start") : LocalText.T("Save Changes"));
+                saving = false; ai.IsEnabled = true; save.IsEnabled = true; browse.IsEnabled = true; cancel.IsEnabled = true; languages.IsEnabled = true; defaultFormat.IsEnabled = true; sanxiuFormat.IsEnabled = true; shandaFormat.IsEnabled = true; preserveClassic.IsEnabled = true; save.Content = (firstSetup ? LocalText.T("Save and Start") : LocalText.T("Save Changes"));
             }
         };
     }

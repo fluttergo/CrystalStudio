@@ -2,10 +2,11 @@ using System.IO;
 using System.Text.Json;
 namespace CrystalStudio;
 
-public enum AssetSourceFormat { Default, Sanxiu }
+public enum AssetSourceFormat { Default, Sanxiu, Shanda }
 
 public sealed record LibrarySettings(string? LibraryFolder = null, string? Language = null,
-    AssetSourceFormat AssetFormat = AssetSourceFormat.Default, AiSettings? Ai = null);
+    AssetSourceFormat AssetFormat = AssetSourceFormat.Default, AiSettings? Ai = null,
+    bool ZeroBasedSetNumbers = false, bool PreserveOriginalMapFormat = true);
 
 public sealed class SettingsStore
 {

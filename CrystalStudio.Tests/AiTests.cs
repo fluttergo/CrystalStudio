@@ -312,7 +312,7 @@ public sealed class AiTests
     {
         AiSettings? saved = null;
         var ai = new AiSettings(Endpoint("gemini", AiRole.Vision), Endpoint("sdwebui", AiRole.Image), Endpoint("zhipu", AiRole.Chat));
-        var window = new SettingsWindow(new LibrarySettings(Ai: ai), (_, _, value) => { saved = value; return Task.CompletedTask; });
+        var window = new SettingsWindow(new LibrarySettings(Ai: ai), (_, _, value, _) => { saved = value; return Task.CompletedTask; });
         window.Show(); await Task.Delay(50); Dispatcher.UIThread.RunJobs();
         try
         {
